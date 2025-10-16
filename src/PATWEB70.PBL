@@ -6,6 +6,8 @@
 . Modifications :
 .                   
 .----------------------------------------------------------------------
+. V11.05.09 06/10/2025  J.Tan            TSK 0965990
+.           Mod to read PTCNDRSM - Which variable for Separation mode
 . V11.05.08 05/09/2025  Thanh T          TSK 0949457
 .           Recompiled for PATSHT6 changes
 . V11.05.07 24/06/2025  Ebon Clements   TSK 0962602
@@ -2003,7 +2005,7 @@ PTCNPLB1  FORM      1
 .
 .----------------------------------------------------------------------
 PRGID     INIT      "PATWEB70"
-VERSION   INIT      "V11.05.08"
+VERSION   INIT      "V11.05.09"
 PRGNAM    INIT      "Patient Label Server"
 .----------------------------------------------------------------------
 .
@@ -3564,7 +3566,8 @@ RDCTRL00  READ      CONTROLF,TEN;*54,CFILENO,*79,CAPPRVNO
           READ      CONTROLF,SIXTY9;*69,MHCNUSE
           READ      CONTROLF,TWENTY;*196,PTCNUCRD
           READ      CONTROLF,SEVENTY7;*202,PTCNOCSC,*240,PTCNAXEU
-          READ      CONTROLF,TWENTY1;*138,PTCNNHII
+          READ      CONTROLF,TWENTY1;*45,PTCNDRSM:    * Var for Sep. Mode
+                                     *138,PTCNNHII
 .
 .         control file reads for printing aae forms
 .

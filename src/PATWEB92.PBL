@@ -8,6 +8,9 @@
 . Modifications :
 .
 .------------------------------------------------------------------------
+. V11.05.05 09/10/2025  Ebon Clements  TSK 0968096
+.           Added custom print-key attribute for bulk A4 labels sheet
+.           printing - BPEA0000
 . V11.05.04 02/06/2025  Don Nguyen     TSK 0960938
 .           Recompiled for PATNAMCD
 . V11.05.03 07.01.2025 DA Sarkies      TSK 0954547
@@ -1950,7 +1953,7 @@ ATTEXT    INIT      "at"
 .
 .-----------------------------------------------------------
 PRGID     INIT      "PATWEB92" 
-VERSION   INIT      "V11.05.04"
+VERSION   INIT      "V11.05.05"
 PRGNAM    INIT      "Hospital List Server"
 .-----------------------------------------------------------
 .
@@ -10643,6 +10646,7 @@ BPEA1500  IF        ASTAT = 1
               WRITE     HTMLFILE;"<td>&nbsp;",WBDESC,"</td>":
                                  "<td>",FBOKDATE,"</td>":
                                  "<td><input type=checkbox":
+                                 " print-key='",URNUMBER,"|",ADMISSNO,"'":
                                  " name=admissno":
                                  " value=#"",ADMISSNO,"#" checked></td></tr>"
               ADD       ONE,ADMICTR1   
@@ -10758,6 +10762,7 @@ BPEA3100      MOVE      SP70,APOIDESC
               WRITE     HTMLFILE;"<td>&nbsp;",WBDESC,"</td>":
                                  "<td>",FBOKDATE,"</td>":
                                  "<td><input type=checkbox":
+                                 " print-key='",URNUMBER,"|",ADMISSNO,"'":
                                  " name=admissno":
                                  " value=#"",ADMISSNO,"#" checked></td></tr>"
               ADD       ONE,ADMICTR1

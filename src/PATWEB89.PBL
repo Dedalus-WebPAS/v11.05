@@ -5,6 +5,14 @@
 .
 . Modifications :
 .------------------------------------------------------------------------
+. V11.05.35 14/10/2025 J.Tan             TSK 0968040
+.           Mod ACAT0000 check template 032(Chg Pre-adm) to display Active code
+. V11.05.34 09/10/2025 Nikitha Bhaskar   TSK 0966963
+.           Modified error message at OUADMF93. 
+. V11.05.33 02/10/2025 Nikitha Bhaskar   TSK 0962784
+.           Added and called new routines WRHIS000, CHAUD000.
+. V11.05.32 02.10.2025 DA Sarkies        TSK 0967778
+.           Added second key in WPMNPL00 to account for an increased counter
 . V11.05.31 19/09/2025 Thanh T           TSK 0937505
 .           Added OPDECO00, OPDECA00, GTEXDS00, AUEXDS00 and CLEXDS00 for
 .           extended procedure description 
@@ -3691,6 +3699,7 @@
           INC       EMRVCDFD/INC
           INC       EMRICDFD/INC
           INC       EOCLNKFD/INC
+          INC       EMRCHAFD/INC
           INC       IBAALVFD/INC
           INC       IBAPOLFD/INC
           INC       IBAPOSFD/INC
@@ -4013,6 +4022,7 @@ BEDRWARD  INIT      "~~B"
 .XCNTRCEFR  FORM      1
 .XCEFFDATE  DIM       8
 BMIINDIC  DIM       1
+CHNDVALU  DIM       80
 CNTRFLAG  FORM      1
 CNTITEM   FORM      3
 CALCTOTD  FORM      4
@@ -4086,6 +4096,7 @@ DREASLD1  DIM       50
 DREASLD2  DIM       50
 DCRTUSRN  DIM       30
 DDELUSRN  DIM       30
+DA08FLAG  FORM      1                       * A08 Discharge msg to be broadcast
 .
 EXPCMTFI  FILE      ASCII,FIXED=128
 EXPCMTNM  DIM       8
@@ -4094,6 +4105,7 @@ EXPCMTFL  FORM      1
 OPCOMCNT  FORM      3
 OPCOMLIN  DIM       70
 OPCOMTYP  DIM       3
+ORGLVALU  DIM       80
 .
 MVITTYPE  DIM       1
 MVITSTAT  DIM       1
@@ -4107,6 +4119,7 @@ FRSTGNAM  DIM       40
 FULLGNAM  DIM       80
 HOSPCODE  DIM       4                                                 *I-250985
 HOSPITAL  DIM       25                                                *I-250985
+HOUR      DIM       2
 HFHIFUND  FORM      2
 .
 IGNWRNFL  DIM       1
@@ -5087,7 +5100,7 @@ AUTOMVMR  DIM       1        * Auto move (track) MR to Admitting Ward
 .
 .---------------------------------------------------------------------------
 PRGID     INIT      "PATWEB89"
-VERSION   INIT      "V11.05.31"
+VERSION   INIT      "V11.05.35"
 PRGNAM    INIT      "Admissions Web Server"
 .---------------------------------------------------------------------------
 .
@@ -9880,7 +9893,7 @@ OUADMF92  MOVE      "Can't Find Master Details",WEBTITLE
           MOVE      ONE,EXIT
           GOTO      OUADMF99
 .
-OUADMF93  MOVE      "Patient is not admitted",WEBTITLE
+OUADMF93  MOVE      "Current Visit is not a Pre-admission",WEBTITLE
           CALL      ADMERR00
           GOTO      OUADMF98
 .
@@ -9906,6 +9919,9 @@ ACAT0000  COMPARE   FOUR,REPORTNO           * All report 4 admission pages
 .
           COMPARE   ONE,REPORTNO
           GOTO      ACAT9999 IF NOT EQUAL
+.
+          MATCH     "032",TEMPLATE           * Change Pre Adm details
+          GOTO      ACAT9000 IF EQUAL
 .
           MATCH     "11",TEMPLATE            * Pre Adm Prev IP details
           GOTO      ACAT9000 IF EQUAL
@@ -13490,16 +13506,30 @@ EMER0000  MATCH     SP70,EMADMISS
             MOVE      PTMIS076,EMVIEBED
           ENDIF
 .
+          MOVE      ZERO,DA08FLAG           * Set 'No' to call A08 Discharge msg
           BRANCH    IPADMDAT,EMER0500       * No IP ADM Date default
 .
-          COMPARE   ZERO,EMVIYN02     * Check to see if this a c-type
+          COMPARE   ZERO,EMVIYN02           * Check to see if this a c-type
           IF        @EQUAL
+            PACK      ORGLVALU,EMVIDDAT,EMVIDTIM,SP70
             MOVE      PTMIS001,EMVIDDAT       * Discharge Date in EMR
             MOVE      PTMIS002,EMVIDTIM       * Discharge Time in EMR
+            PACK      CHNDVALU,EMVIDDAT,EMVIDTIM,SP70 
+            COMPARE   THREE,EMVISTAT          * check if Discharged
+            IF        @EQUAL
+              MOVE      ONE,DA08FLAG          * Set 'Yes' to call A08 Dishg msg
+              CALL      WRHIS000              * Write History Audit table
+              CALL      CHAUD000              * Write Change Aufit table
+            ENDIF 
           ENDIF
 .
 EMER0500  CALL      UPEMVIS1
 .
+          IF        DA08FLAG = ONE
+            CALL      EDMESS00         * Call A08 Discharge msg to be broadcast
+            MOVE      ZERO,DA08FLAG    * Set 'No' to call A08 Discharge msg
+          ENDIF
+.          
           CALL      EMRINP00           * Create the same data for INP and EMR
 .
           PACK      KEY6,PTMIS068,SP70
@@ -47376,7 +47406,7 @@ WPMNPL00  MATCH     "3",PTCNUNET
           ADD       ONE,CNTPMSNP
           MOVE      CNTPMSNP,PMNPCNTR
           RJUSTIFY  PMNPCNTR
-          PACK      KEY28,PMNPURNO,PMNPRDAT,PMNPRTIM,PMNPCNTR
+          PACK      KEY28,PMNPURNO,PMNPRDAT,PMNPRTIM,PMNPCNTR,SP70
 .
           IF        IBCNMHOS=ONE
             MOVE      WBSEHOSP,PMNPHOSP
@@ -47402,6 +47432,7 @@ WPMNPL10  CALL      RAPMNPL1
             ADD       ONE,CNTPMSNP
             MOVE      CNTPMSNP,PMNPCNTR
             RJUSTIFY  PMNPCNTR
+            PACK      KEY28,PMNPURNO,PMNPRDAT,PMNPRTIM,PMNPCNTR,SP70
             GOTO      WPMNPL10
           ENDIF
 .
@@ -47967,6 +47998,77 @@ CLEXDS10  CALL      RKOPDED1
 .
 CLEXDS99  RETURN
 .
+.----------------------------------------------------------------------------
+. WRHIS000 -  Write to Emergency History Audit Table
+.----------------------------------------------------------------------------
+WRHIS000  PACK      KEY22,EMVIADMN,Z70
+          CALL      RSEMHIS1
+          CALL      RPEMHIS1
+          BRANCH    OVRCD,WRHIS999
+.
+          MOVE      EMVIADMN,DIM8
+          MATCH     DIM8,EMHIVIS             * Same Visit Number
+          
+          GOTO      WRHIS999 IF NOT EQUAL
+.
+          CALL      IBACLOCK
+          PACK      EMHIDAT,CCC,CYY,CMM,CDD     
+          REP       " 0",EMHIDAT                 * Current Date
+.
+          UNPACK    CTIMEIS,HOUR,D1,MIN,D1,SEC   * Current time
+          PACK      EMHITIM,HOUR,MIN,SEC,SP70    * Time in hhmmss
+.
+          MOVE      "UPDIS",EMHIUPT              * Update Discharge Update Type 
+.
+          MOVE      USERID,EMHIEUS               * Web User Id Created
+          PACK      EMHICDAT,CCC,CYY,CMM,CDD     * Date Created
+          REP       " 0",EMHICDAT
+          CLOCK     TIME,EMHICTIM                * Time Created
+          MOVE      USERID,EMHICUID              * Web User Id Created
+          MOVE      SP70,EMHIUDAT                * Date Updated
+          MOVE      SP70,EMHIUTIM                * Time Update
+          MOVE      SP70,EMHIUUID                * Web User Id Updated
+          MOVE      SP70,EMHISPA
+.
+          PACK      KEY22,EMHIVIS,EMHIDAT,EMHITIM,SP70
+          CALL      RAEMHIS1
+          IF        OVRCD=1
+            CALL      WREMHIS1                 * write New History record exists
+          ENDIF
+.         
+WRHIS999  RETURN
+.----------------------------------------------------------------------------
+. CHAUD000 -  Write to Emergency Field Change Audit Table
+.----------------------------------------------------------------------------
+CHAUD000  CLOSE     PRSPMIA1                     * Free up some open files
+          CLOSE     PMSIPLA1
+.
+          OPEN      EMRCHAA1,"emrchaaf"         * Open EMR Field Change Audit
+.
+          PACK      EMCHVISN,EMVIADMN,SP70     * Visit number
+.
+          CALL      IBACLOCK
+          PACK      EMCHDATE,CCC,CYY,CMM,CDD   * Curremt Date
+          REPLACE   " 0",EMCHDATE
+          CLOCK     TIME,EMCHTIME              * Current Time
+          MOVE      "07",EMCHUPTY              * Update Type - 07 
+          MOVE      SP70,EMCHREAS              * Reason for Change
+          MOVE      USERID,EMCHUSID            * User Id
+          MOVE      ORGLVALU,EMCHOVAL          * Original Value
+          MOVE      CHNDVALU,EMCHCVAL          * Changed Value
+.
+          PACK      KEY24,EMCHVISN,EMCHDATE,EMCHTIME,SP70
+          CALL      RAEMCHA1
+          IF        OVRCD=1
+            CALL      WREMCHA1
+          ENDIF
+.
+CHAUD990  CLOSE     EMRCHAA1                   * Close EMR Field Change Audit
+.
+          OPEN      PRSPMIA1,"prspmiaf"        * Re open original files
+          OPEN      PMSIPLA1,"pmsiplaf"
+.
+CHAUD999  RETURN
 .-----------------------------------------------------------
           INC       ADMAUDIT
           INC       ACCEXTRA                                          *I-153670
@@ -48185,6 +48287,7 @@ CLEXDS99  RETURN
           INC       EMRVISIO/INC
           INC       EMRVCDIO/INC
           INC       EMRICDIO/INC
+          INC       EMRCHAIO/INC
           INC       IBAPOLIO/INC
           INC       IBAPOSIO/INC
           INC       IBAALVIO/INC

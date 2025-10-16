@@ -12,6 +12,8 @@
 .*                                                                            *
 .*      MODIFICATIONS:                                                        *
 .******************************************************************************
+.*        V11.05.02 02/10/2025  J.Tan         TSK 0967602                     *
+.*                  Fixed F*I Format error - HF membership number             *
 .*        V11.05.01 29/09/2025  J.Tan         TSK 0967602                     *
 .*                  Fixed F*I Format error                                    *
 .*        V11.04.01 06.02.2024  DA Sarkies    TSK 0936282                     *
@@ -245,18 +247,18 @@ WPINVAMT  DIM        15       15      96
 WTINVAMT  DIM       15        15     127
 .AFUNDH   DIM        6        6      142
 .AFNDTB   DIM        8        8      148
-.AFNDMM   DIM        10       10     156
-.PTELEB   DIM        12       12     166
-WDDAY     DIM        2        2      178
-WDMON     DIM        2        2      180
-WDYER     DIM        2        2      182
-WDCEN     DIM        2        2      185
-CMNTLINE  DIM        70       70     186
-.REMLSTL  DIM        3        3      256
-.LSTLDAT  DIM        8        8      259
-WPINVTYP  DIM        1        1      267
-WPINVSYS  DIM        1        1      268
-TEMP28    DIM        28       28     269
+.AFNDMM   DIM        19       19     156
+.PTELEB   DIM        12       12     175
+WDDAY     DIM        2        2      187
+WDMON     DIM        2        2      189
+WDYER     DIM        2        2      191
+WDCEN     DIM        2        2      194
+CMNTLINE  DIM        70       70     195
+.REMLSTL  DIM        3        3      265
+.LSTLDAT  DIM        8        8      268
+WPINVTYP  DIM        1        1      276
+WPINVSYS  DIM        1        1      277
+TEMP19    DIM        19       19     278
 .                             EOR    297
 .
 XTINVAMT  FORM      12.2
@@ -629,7 +631,7 @@ Z30       INIT      "zzzzzzzzzzzzzzzzzzzzzzzzzzzzzz"
 .-----------------------------------------------------------------------
 PRGID     INIT      "NZPBIL23"
 PRGNAM    INIT      "Aged Trial Balance"
-VERSION   INIT      "V11.05.01"
+VERSION   INIT      "V11.05.02"
 .-----------------------------------------------------------------------
 +
 .         START OF PROGRAM
@@ -1163,7 +1165,7 @@ CHKCNT  PACK            FROMDATE,CCENT,CYEAR,CMON,CDAY
         MOVE            ZERO TO XTPAT120
         MOVE            ZERO TO XTSUBREB
         MOVE            ZERO TO XTSUBPAT
-        MOVE            SP70,TEMP28
+        MOVE            SP70,TEMP19
 .
         CLOCK           TIME,CTIMEIS
 .
@@ -1595,7 +1597,7 @@ WRTT     MOVE        UNIQUE,XUNIQUE
                                  WPINVAMT,TINVNO,XDAY,XMON,XYEAR,XCENT,WTINVAMT:
                                  AFUNDH,AFNDTB,AFNDMM:
                                  D12PTELB,WDDAY,WDMON,WDYER,WDCEN,CMNTLINE:
-                                 REMLSTL,LSTLDAT,WPINVTYP,WPINVSYS,TEMP28
+                                 REMLSTL,LSTLDAT,WPINVTYP,WPINVSYS,TEMP19
 .
         RETURN
 .
@@ -2202,12 +2204,13 @@ WRTTDY   MOVE        UNIQUE,XUNIQUE
          MOVE        DDYER,WDYER
          MOVE        DDCEN,WDCEN
 .
+.kkkk
          WRITE       TEMPSEQ,SEQ;ACLAIM,HFUND,XAURNO,XAADMNO,PSNAME,PGNAME:
                                 SORTDIM,XUNIQUE,PTITL,D12PTELP:
                                 WPINVAMT,TINVNO,XDAY,XMON,XYEAR,XCENT,WTINVAMT:
                                 AFUNDH,AFNDTB,AFNDMM:
                                 D12PTELB,WDDAY,WDMON,WDYER,WDCEN,CMNTLINE:
-                                REMLSTL,LSTLDAT,WPINVTYP,WPINVSYS,TEMP28
+                                REMLSTL,LSTLDAT,WPINVTYP,WPINVSYS,TEMP19
 .
         ADD         XTINVAMT TO TOTDAYS
         MOVE        ZERO TO XTOTPAID
@@ -2491,7 +2494,7 @@ DAYREP  MOVE          ZERO TO AADMNO
                                WTINVAMT:
                                AFUNDH,AFNDTB,AFNDMM:
                                D12PTELB,WDDAY,WDMON,WDYER,WDCEN,CMNTLINE:
-                               REMLSTL,LSTLDAT,WPINVTYP,WPINVSYS,TEMP28
+                               REMLSTL,LSTLDAT,WPINVTYP,WPINVSYS,TEMP19
         GOTO          DAYEND IF OVER
 .
         MOVE          WDDAY,DDDAY
@@ -2999,7 +3002,7 @@ PRTCONTE  MATCH     SP30,STARTNM
           ADD       THREE,CLNO
 .
 PRTCONTF  PRINT    *N,*3,"U/R",*12,"Adm.",*32,"Dischrge":
-                   *48,DIM9,*56,"Tel.",*65,"Invoice":
+                   *48,DIM9,*57,"Tel.",*65,"Invoice":
                    *73,"Invoice":
                    *89,"Invoice",*98,"Membership Details":
                    *121,"Last Letter",*N:
@@ -3010,7 +3013,7 @@ PRTCONTF  PRINT    *N,*3,"U/R",*12,"Adm.",*32,"Dischrge":
                    *110,"Mem.No.",*121,"Code Sent",*N:
                    *1,"-------- --------",*19,"------------":
                    *32,"--------":
-                   *44,"--------------",*56,"--------",*65,"-------":
+                   *44,"-----------",*56,"--------",*65,"-------":
                    *73,"--------":
                    *85,"------------",*98,"----  -----":
                    *110,"-------",*121,"------------"

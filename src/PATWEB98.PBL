@@ -5,6 +5,11 @@
 .
 . Modifications :
 .---------------------------------------------------------------------
+. V11.05.23  15/10/2025  Alina Bhari    TSK 0947952
+.            Formatted discharge date and admission date of linked visit in 
+.            DD/MM/YYYY and time - FHIR2200,FHIR2300,FHIR2400                  
+.            Displayed the admission source class of linked visit           
+.            - FHIR2500,FHIR2600                                             
 . V11.05.22  25/09/2025  Jacob Jackson  TSK 0965749
 .            On supervisor 'Change Claim' screen, disable ability to change 
 .            ICWA claim types. Throw error if it has been submitted.
@@ -3516,7 +3521,7 @@ NORETURN  DIM       1      * No return (button) flag
 .
 .------------------------------------------------------------------------
 PRGID     INIT      "PATWEB98"
-VERSION   INIT      "V11.05.22"
+VERSION   INIT      "V11.05.23"
 PRGNAM    INIT      "Patient Enquiries Template Server"
 .------------------------------------------------------------------------
           CALL      WEBINT00       * Initialise Fifo Etc.
@@ -10526,8 +10531,8 @@ FHIR0000  UNPACK    DIM127,DIM1,KEY3,DIM127
                              FHIR0600,FHIR0700,FHIR0800,FHIR0900,FHIR1000:
                              FHIR1100,FHIR1200,FHIR1300,FHIR1400,FHIR1500:
                              FHIR1600,FHIR1700,FHIR1800,FHIR1900,FHIR2000:
-                             FHIR2100
-
+                             FHIR2100,FHIR2200,FHIR2300,FHIR2400,FHIR2500:
+                             FHIR2600
           WRITE     HTMLFILE;"Invalid Tag";
           GOTO      FHIR9999
 .
@@ -10932,6 +10937,103 @@ FHIR2100  COMPARE   THREE,ASTAT             * Discharged status?
           ENDIF
 .
           WRITE     HTMLFILE;WBSENAM;
+          GOTO      FHIR9999
+.
+.         This label is not related to FHIR
+FHIR2200  MATCH     SP70,DDATE
+          IF        @EQUAL
+            WRITE     HTMLFILE;SP70;
+          ELSE
+            UNPACK    DDATE,CCENT,CYEAR,CMON,CDAY
+            WRITE     HTMLFILE;CDAY,SLASH,CMON,SLASH,CCENT,CYEAR;
+          ENDIF
+          GOTO      FHIR9999
+.
+.         This label is not related to FHIR
+FHIR2300  MATCH     SP70,PTDSLSDN
+          IF        @EQUAL
+            WRITE     HTMLFILE;SP70;
+            GOTO      FHIR9999
+          ENDIF
+.         For Statistical discharged visit
+.         Display the admission date of the linked visit
+          MOVE      ADMISSNO,DIM8
+          PACK      KEY8,PTDSLSDN,SP70
+          CALL      RDMISS1
+          IF        OVRCD=1
+            WRITE     HTMLFILE;SP70;
+          ELSE
+            UNPACK    ADATE,CCENT,CYEAR,CMON,CDAY
+            WRITE     HTMLFILE;CDAY,SLASH,CMON,SLASH,CCENT,CYEAR;
+          ENDIF
+.
+          MOVE      DIM8,ADMISSNO
+          GOTO      FHIR9999
+.
+.         This label is not related to FHIR
+FHIR2400  MATCH     SP70,PTDSLSDN
+          IF        @EQUAL
+            WRITE     HTMLFILE;SP70;
+            GOTO      FHIR9999
+          ENDIF
+.         For Statistical discharged visit
+.         Display the admission time of the linked visit
+          MOVE      ADMISSNO,DIM8
+          PACK      KEY8,PTDSLSDN,SP70
+          CALL      RDMISS1
+          IF        OVRCD=1
+            WRITE     HTMLFILE;SP70;
+          ELSE
+            WRITE     HTMLFILE;ATIME;
+          ENDIF
+.
+          MOVE      DIM8,ADMISSNO
+          GOTO      FHIR9999
+.
+.         This label is not related to FHIR
+FHIR2500  MATCH     SP70,PTDSLSDN
+          IF        @EQUAL
+            WRITE     HTMLFILE;SP70;
+            GOTO      FHIR9999
+          ENDIF
+.         For Statistical discharged visit
+.         Display the admission Source of the linked visit
+          MOVE      ADMISSNO,DIM8
+          PACK      KEY8,PTDSLSDN,SP70
+          CALL      RDMISS1
+          IF        OVRCD=1
+            WRITE     HTMLFILE;SP70;
+          ELSE
+            MOVE      "S ",CATEGORY
+            MOVE      ASRCE,CODE
+            CALL      GETCOD00
+            WRITE     HTMLFILE;TDESC;
+          ENDIF
+.
+          MOVE      DIM8,ADMISSNO
+          GOTO      FHIR9999
+.
+.         This label is not related to FHIR
+FHIR2600  MATCH     SP70,PTDSLSDN
+          IF        @EQUAL
+            WRITE     HTMLFILE;SP70;
+            GOTO      FHIR9999
+          ENDIF
+.         For Statistical discharged visit
+.         Display the admission Class of the linked visit
+          MOVE      ADMISSNO,DIM8
+          PACK      KEY8,PTDSLSDN,SP70
+          CALL      RDMISS1
+          IF        OVRCD=1
+            WRITE     HTMLFILE;SP70;
+          ELSE
+            MOVE      "P ",CATEGORY
+            MOVE      ACLSS,CODE
+            CALL      GETCOD00
+            WRITE     HTMLFILE;TDESC;
+          ENDIF
+.
+          MOVE      DIM8,ADMISSNO
           GOTO      FHIR9999
 .
 FHIR9999  RETURN

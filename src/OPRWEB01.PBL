@@ -5,6 +5,9 @@
 .
 . Modifications  :
 . ---------------------------------------------------------------------------
+. V11.05.16 13/10/2025  Ebon Clements  TSK 0962780
+.           Added using clinic or surgeon parameter OPCNCLSU test to get
+.           surgeon name - GSURNS00
 . V11.05.15 17/09/2025  Thanh T        TSK 0937505
 .           Added GTEXDS00 and AUEXDS00 for extended procedure description 
 . V11.05.14 18/08/2025  Alina Bhari    TSK 0965023
@@ -2777,7 +2780,7 @@ WEEKNUMB  FORM      3
 .***********************************************************************
 PRGID     INIT      "OPRWEB01"
 PRGNAM    INIT      "Theatre Information Server"
-VERSION   INIT      "V11.05.15"
+VERSION   INIT      "V11.05.16"
 .***********************************************************************
           CALL      WEBINT00       * Initialise Fifo Etc.
           CALL      INIT0000       * Open Files
@@ -21467,12 +21470,21 @@ GSURNS00  MOVE      SP70,DOCFNAME
           MATCH     SP70,OPDACLIN
           GOTO      GSURNS99 IF EQUAL
 .
-          PACK      KEY10,OPDACLIN,SP70
-          CALL      RDPMHCP1
+          PACK      KEY6,OPDACLIN,SP70
+.
+          COMPARE   ZERO,OPCNCLSU        
+          IF        @EQUAL
+            CALL      RDOPCLI1
+            IF        OVRCD=0
+              PACK      KEY6,OPCLDOCT,SP70
+            ENDIF
+          ENDIF
+.
+          CALL      RDDOCT1
           IF        OVRCD<>1
-            MOVE      PMHCTITL,FMTTITLE
-            MOVE      PMHCGNAM,FMTGNAME
-            MOVE      PMHCSNAM,FMTSNAME
+            MOVE      DTITL,FMTTITLE
+            MOVE      DGNAME,FMTGNAME
+            MOVE      DSNAME,FMTSNAME
             CALL      DOCNM000
           ENDIF
 .

@@ -1,4 +1,4 @@
-//jsVersion  : V11.05.24
+//jsVersion  : V11.05.25
 //========================================================================
 // Global Variables
 //========================================================================
@@ -860,7 +860,10 @@ function PageLoad(e)
 
   InitialiseForms(setfocus);
   InitialiseHiddenElements();
-  loginCookieCheck();
+  if(document.location.href!=='about:blank')
+  {
+    loginCookieCheck();
+  }
 
   var patMenu = document.getElementById('PatientMenu');
   if (patMenu) 

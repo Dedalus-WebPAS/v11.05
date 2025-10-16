@@ -1,4 +1,4 @@
-//jsVersion  : V11.05.00
+//jsVersion  : V11.05.01
 //--------------------------------------------------------------------------
 function Table(Name,Border,Cellspacing,Cellpadding,Width,Align,TableLocation) {
    this.name = Name;
@@ -360,7 +360,7 @@ function getDiagnosis(SearchField,ReturnSelect,DescField) {
   }
 
   var serverURL   = "../cgi-bin/emrweb08.pbl?reportno=1" +
-                    "&valdcode=" + SearchField.value.replace(/ /g,"+");
+                    "&valdcode=" + encodeURIComponent(SearchField.value.replace(/ /g,"+"));
 
   var ReturnValue = null;
 

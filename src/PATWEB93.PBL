@@ -7,6 +7,9 @@
 . Modifications : 
 .
 .-------------------------------------------------------------------------
+. V11.05.15 07/10/2025  Ebon Clements  TSK 0968096  
+.           Added custom print-key attribute for bulk A4 labels sheet
+.           printing - CBEDG300
 . V11.05.14 30/09/2025  Bella Turco    TSK 0955574
 .           Fixed order of WRPTATR3 keypack in DIDEUC50                       
 . V11.05.13 03/09/2025  Peter Vela     TSK 0947378
@@ -2498,7 +2501,7 @@ TZFILE    FILE      ASCII, FIXED=256
 .
 .------------------------------------------------------------------------------
 PRGID     INIT      "PATWEB93"
-VERSION   INIT      "V11.05.14"
+VERSION   INIT      "V11.05.15"
 PRGNAM    INIT      "Ward Patient List Server"
 .------------------------------------------------------------------------------
 .
@@ -12715,7 +12718,8 @@ CBEDG200  WRITE     HTMLFILE;"<td>&nbsp;</td>";
 CBEDG300  MATCH     "1",PRNTLABL
           IF        @EQUAL
             WRITE     HTMLFILE;"<td><input type=checkbox name=inplabar ":
-                               "value='",AADMNO,"' ></td>";
+                               "print-key='",AURNO,"|",AADMNO,"'":
+                               " value='",AADMNO,"' ></td>";
           ENDIF
 .
           IF     SJOGVIEW=ONE

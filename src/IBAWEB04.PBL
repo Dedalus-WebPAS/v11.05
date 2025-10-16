@@ -24,6 +24,8 @@
 .*                                                                            *
 .* Modifications  :                                                           *
 .*                                                                            *
+.*        V11.05.07 13/10/2025  Peter Vela       TSK 0966932                  *
+.*                  Fixed match of ACDCCG15 and DIM at LACC7010               *
 .*        V11.05.06 09/09/2025  Peter Vela       TSK 0966812                  *
 .*                  Fixed EPDSEG09 validation in WTFR0000/SDTR0000            *
 .*                  Linked to task 0959673                                    *
@@ -4071,7 +4073,7 @@ NEWSTRNG  DIM       500
 .-----------------------------------------------------------------------
 PRGID     INIT      "IBAWEB04"
 PRGNAM    INIT      "WebServices In Hospital Claims Extract"
-VERSION   INIT      "V11.05.06"
+VERSION   INIT      "V11.05.07"
 .-----------------------------------------------------------------------
 +
 .******************************************************************************
@@ -9911,7 +9913,8 @@ LACC7010  CALL      RDKDTRN1                     * read next record
           PACK      DIM8,TTCENT,TTYEAR,TTMONTH,TTDAY
           REP       " 0",DIM8
           MATCH     ACDCCG15,DIM8
-          GOTO      LACC7100 IF LESS
+.          GOTO      LACC7100 IF LESS
+          GOTO      LACC7010 IF LESS
 .
           MOVE      SVBSEG05,ACDCCG13
           MOVE      SVBSEG06,ACDCCG14

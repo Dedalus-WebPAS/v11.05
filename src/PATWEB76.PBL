@@ -4,6 +4,8 @@
 .
 . Modifications  :
 .---------------------------------------------------------------------
+. V11.05.24 06/10/2025  J.Tan          TSK 0966784
+.           Recompiled for PATCATAI - Fixed printing ICD10 on reprint
 . V11.05.23 29/09/2025  Thanh T        TSK 0937505
 .           Recompiled for PATINVHL changes
 . V11.05.22 24/07/2025  J.Tan          TSK 0962500
@@ -2619,7 +2621,7 @@ CFPAYCOD  DIM       3        * 3M Codefinder PAY Code
 .
 .----------------------------------------------------------------------
 PRGID     INIT      "PATWEB76"
-VERSION   INIT      "V11.05.23"
+VERSION   INIT      "V11.05.24"
 PRGNAM    INIT      "Re-Print Patient Invoice Server"      
 .----------------------------------------------------------------------
 .

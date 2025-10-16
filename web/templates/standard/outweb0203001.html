@@ -1,9 +1,16 @@
-<meta name="TemplateVersion" content="V11.05.01">
+<meta name="TemplateVersion" content="V11.05.03">
 <meta name="TemplateHome"    content="standard">
 <meta name="HelpFileName"    content="NoContextSet.html">
 <meta name="CrossBrowser"    content="true"> 
+<style type=text/css>
+ pre {
+ font-family: arial;
+ }
+</style>
+
 <script type="text/javascript" src="../js/TableSort.js"> </script>
 <script type="text/javascript">
+
 function AppointLink(CaseKeys){
  Site=CaseKeys.substr(0,6);
  if(document.PatientLinks.outpsite.value!=Site) {
@@ -341,7 +348,9 @@ InsertPatientHeader()
 </tr>
 
 <tr><td class=DataLabel>Referring GP		     </td>
-    <td class=DataField>%OUTWEB02.03.348.003 %OUTWEB02.03.348.004 %OUTWEB02.03.348.005    </td>
+    <td class=DataField>
+      <a href='javascript:HCPViewFrame("%OUTWEB02.03.348.001","%OUTWEB02.03.349","%OUTWEB02.03.356")'>
+      %OUTWEB02.03.348.081</a></td>
     <td class=DataLabel>Send Letter</td>
     <td class=DataField>%OUTWEB02.03.327.003.0</td></tr>
 

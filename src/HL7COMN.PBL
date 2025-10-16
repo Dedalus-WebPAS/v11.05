@@ -2,6 +2,8 @@
 .*                              HL7COMN.PBL                                  *
 .*        Contains common HL7 routines used by both HL7CISIN and HL7QUERY    *
 .* Mods:                                                                     *
+.*        V11.05.12 07/10/2025  Davin            TSK 0946211                 *
+.*                  Default PID.25 to "" to signify no multiple birth order  *
 .*        V11.05.11 11/09/2025  Davin            TSK 0949457                 *
 .*                  Added ZXP.76: Email Validation Flag (WRZXP000/PMPXSN21)  *
 .*        V11.05.10 02/07/2025  Davin            TSK 0954308                 *
@@ -2117,9 +2119,10 @@ WRPID999  RETURN
 . Input : PURNO    - UR Number
 . Output: PID024   - Flag Y/N to indicate if multiple Birth details exist
 .         PID025   - Multiple birth order
-.         MULTBTYP - Multiple birth Type of Birth
+.         MULTBTYP - Multiple birth Type of Birth (for ZXP.69)
 .---------------------------------------------------------------------------
-MLTBIR00  MOVE      "N",PID024
+MLTBIR00  MOVE      "N",PID024                   * default to 'N'
+          MOVE      BLANKSTR,PID025              * default to '""'
           PACK      DIM8,SP7,ZERO
           MOVE      SP3,MULTBTYP
 .

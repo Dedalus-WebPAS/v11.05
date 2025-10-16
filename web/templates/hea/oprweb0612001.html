@@ -1,4 +1,4 @@
-<meta name="TemplateVersion" content="V11.05.01">
+<meta name="TemplateVersion" content="V11.05.02">
 <meta name="TemplateHome" content="hea">
 <meta name="HelpFileName" content="NoContextSet.html">
 <meta name="CrossBrowser" content="true">
@@ -645,8 +645,11 @@ function formSubmit(){
       casekey=casekey.replace(/ /g,"+");
       uniqkey=UpdateForm.uniqueky.value;
       uniqkey=uniqkey.replace(/ /g,"+");
+      suplevel=UpdateForm.suprlevl.value;
+      suplevel=suplevel.replace(/ /g,"+");
       if(isWhitespace(UpdateForm.redirect.value)){
-         UpdateForm.redirect.value="oprweb06.pbl?reportno=12&template=001&uniqueky="+uniqkey+"&teamnumb="; 
+         UpdateForm.redirect.value="oprweb06.pbl?reportno=12&template=001&uniqueky="
+         +uniqkey+"&suprlevl="+suplevel+"&teamnumb="; 
       }
       if(UpdateForm.d_opsrg074.checked == true){
          UpdateForm.opsrg074.value = "1";
@@ -1132,7 +1135,6 @@ EventExist="%OPRWEB06.12.843";
 <input type=hidden name=reportno value=12>
 <input type=hidden name=template value=1>
 <input type=hidden name=updatety value="">
-<input type=hidden name=suprlevl value="%OPRWEB06.12.313">
 <input type=hidden name=urnumber value='%OPRWEB06.12.003'>
 <input type=hidden name=casekeys id=casekeys value="%OPRWEB06.12.101">
 <input type=hidden name=uniqueky value='%OPRWEB06.12.110'>
