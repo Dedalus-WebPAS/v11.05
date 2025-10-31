@@ -5,6 +5,8 @@
 .
 . Modifications  :
 .-------------------------------------------------------------------------------
+. V11.05.05 20/10/2025  Ebon Clements  TSK 0961623
+.           Added open of OUTBOKA3 and OUTBB1A1 to OPNOUT00
 . V11.05.04 09/10/2025  J.Tan          TSK 0966942
 .           Mod DELCOR00 - to Clear linked document from the Alert
 . V11.05.03 08.10.2025  DA Sarkies     TSK 0964039
@@ -927,7 +929,7 @@ STRETURN  FORM      1
 .
 .------------------------------------------------------------------------------
 PRGID     INIT      "CLIWEB08"
-VERSION   INIT      "V11.05.04"
+VERSION   INIT      "V11.05.05"
 PRGNAM    INIT      "Patient Correspondence Details"
 .------------------------------------------------------------------------------
 .
@@ -8081,9 +8083,17 @@ OUTFIL99  RETURN
 .------------------------------------------------------------
 . Open Outpatient Files
 .------------------------------------------------------------
-OPNOUT00  PACK      CFNAME,CFILEPRE,FILBOKA6  * Get the name of the BOKA3 file
+OPNOUT00  PACK      CFNAME,CFILEPRE,FILBOKA3  * Get the name of the BOKA3 file
+          CLOSE     OUTBOKA3
+          OPEN      OUTBOKA3,CFNAME           * Open the file
+.
+          PACK      CFNAME,CFILEPRE,FILBOKA6  * Get the name of the BOKA6 file
           CLOSE     OUTBOKA6
           OPEN      OUTBOKA6,CFNAME           * Open the file
+.
+          PACK      CFNAME,CFILEPRE,FILBB1A1  * Get the name of the BB1A1 file
+          CLOSE     OUTBB1A1
+          OPEN      OUTBB1A1,CFNAME           * Open the file
 .
           PACK      CFNAME,CFILEPRE,FILCTYA1  * Get the name of the CTYA1 file
           CLOSE     OUTCTYA1

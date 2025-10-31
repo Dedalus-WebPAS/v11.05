@@ -1,5 +1,5 @@
 /* -------------------------------------------------------------
-   cssVersion : V11.05.00
+   cssVersion : V11.05.01
    ------------------------------------------------------------- */
 .defaultSkin table.mceLayout { 
  width:600px !important;
@@ -53,4 +53,9 @@ tr.obsline {
  white-space:nowrap;
  border-top:1px solid #ccc;
  padding:2px;
+}
+div.resultCom > pre {
+  font-family: 'Courier New', Courier, monospace;
+  white-space: pre-wrap;
+  overflow-wrap: break-word;
 }

@@ -5,6 +5,8 @@
 .
 . Modifications : 
 .------------------------------------------------------------------------------
+.V11.05.08  27/10/2025  Ebon Clements  TSK 0964542
+.           Recompiled for WEBGROUP - Load Codefinder clinician date and time
 .V11.05.07  24/07/2025  J.Tan          TSK 0962500
 .           Mod TPAY0000 to check for U/R number
 .V11.05.06  14/04/2025  Davin            TSK 0951723
@@ -836,10 +838,13 @@
           INC       OPRAVEFD/INC
           INC       OPRCONFD/INC
           INC       OPRCSUFD/INC
+          INC       OPRARDFD/INC
           INC       OPRDEAFD/INC
+          INC       OPRCLIFD/INC
           INC       OPRDEDFD/INC
           INC       OPREQPFD/INC
           INC       OPRSESFD/INC
+          INC       OPRSRGFD/INC
           INC       OPRTRAFD/INC
           INC       OPRTSMFD/INC
           INC       OPROPRFD/INC
@@ -1254,7 +1259,7 @@ LOADFILE  FILE      ASCII,FIXED=200
 TEMP1     FILE      ASCII,FIXED=660
 .------------------------------------------------------------
 PRGID     INIT      "COMWEB80"
-VERSION   INIT      "V11.05.07"
+VERSION   INIT      "V11.05.08"
 PRGNAM    INIT      "Common XML Remote Code Validation Service"
 .------------------------------------------------------------
 .
@@ -1697,6 +1702,8 @@ INIT0000  OPEN      CONTROLF,"controlf"
 .
           OPEN      OBSAUDA1,"obsaudaf"
           OPEN      OPRAVEA1,"opraveaf"
+          OPEN      OPRARDA1,"oprardaf"
+          OPEN      OPRCLIA1,"oprcliaf"
           OPEN      OPRCSUA1,"oprcsuaf"
           OPEN      OPRDETA3,"oprdetaf"
           OPEN      OPRDETA2,"oprdetaf"
@@ -1705,6 +1712,7 @@ INIT0000  OPEN      CONTROLF,"controlf"
           OPEN      OPRDEDA1,"oprdedaf"
           OPEN      OPREQPA1,"opreqpaf"
           OPEN      OPRSESA1,"oprsesaf"
+          OPEN      OPRSRGA1,"oprsrgaf"
           OPEN      OPRTRYA1,"oprtryaf"
           OPEN      OPRTSMA1,"oprtsmaf"
           OPEN      OPROPRA1,"opropraf"
@@ -1753,6 +1761,7 @@ INIT0000  OPEN      CONTROLF,"controlf"
                                  *235,CMDISP,CMDISS,CMDISC,CMDISA
           READ      CONTROLF,TWENTY;*193,PTCNDCLM
           READ      CONTROLF,TWENTY1;*45,PTCNDRSM
+          READ      CONTROLF,FORTY;*111,OPCNCLSU
           READ      CONTROLF,FORTY2;*242,OPCNWHCD
           READ      CONTROLF,SIXTY;*248,MRCN3MCD,*249,MRCN3MCG
           READ      CONTROLF,SIXTY1;*240,MRCNUNWA,*241,MRCNENWA
@@ -8569,10 +8578,13 @@ OPNOUT99  RETURN
           INC       OBSAUDIO/INC
           INC       OPRAVEIO/INC
           INC       OPRCSUIO/INC
+          INC       OPRARDIO/INC
           INC       OPRDEAIO/INC
+          INC       OPRCLIIO/INC
           INC       OPRDEDIO/INC
           INC       OPREQPIO/INC
           INC       OPRSESIO/INC
+          INC       OPRSRGIO/INC
           INC       OPRTRAIO/INC
           INC       OPRTSMIO/INC
           INC       OPROPRIO/INC
@@ -8642,6 +8654,7 @@ OPNOUT99  RETURN
           INC       CLPATCHC
           INC       CLBOKRX1
           INC       WEBGROUP                * Grouper Routines        *I-190768
+          INC       OPRECOVT
           INC       PATDOCCD
           INC       NAMSTRCD
           INC       PATWIS11                * WIES11

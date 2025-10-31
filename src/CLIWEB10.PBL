@@ -6,6 +6,13 @@
 . Modifications
 .
 .-------------------------------------------------------------------------------
+. V11.05.02 24/10/2025  Don Nguyen   TSK 0956680
+.           Fixed bug where the Text Format flag (TEXTFMT) was not set for each
+.           Observation read (OBXHTM00) and the globally set (server) value was
+.           being used instead. We now reset the TEXTFMT flag with each request.
+.           Changed 'resultCom' tag from <span> to <div> for a more accurate
+.           HTML layout and better conversion to PDF; TXTSUM00
+.           Output <br/> (line break) instead of space for empty lines; TXTSUM00
 . V11.05.01 10/04/2025  Peter Vela   TSK 0938168
 .           Fixed RDRECT1 read in RESPRQ00
 . V11.04.08 17/10/2024  Sunny        TSK 0939070
@@ -526,7 +533,7 @@ PRACPROV  DIM       10
 .
 .------------------------------------------------------------
 PRGID     INIT      "CLIWEB10"
-VERSION   INIT      "V11.05.01"
+VERSION   INIT      "V11.05.02"
 PRGNAM    INIT      "Clinical Result Detail Server"
 .------------------------------------------------------------
           CALL      WEBINT00       * Initialise Fifo Etc.
@@ -738,6 +745,7 @@ CLRPAR00  MOVE      ZERO,REPORTNO
           MOVE      ZERO,DISPDIAG
           MOVE      ZERO,HASOBS   
           MOVE      ZERO,MAXOBS
+          MOVE      ZERO,TEXTFMT
 .
           MOVE      ONE,CODECONT
           MOVE      MAXARRAY,FORM3
@@ -3057,6 +3065,8 @@ SUMDET00  MOVE      RELNRTY,F1
           CALL      RSREDA1
 SUMDET50  CALL      RKREDA1
           BRANCH    OVRCD,SUMDET90
+.
+          MOVE      ZERO,TEXTFMT
           PACK      KEY17,REDARDT,REDARTM,REDARUN,SP70
           MATCH     RESULTKY,KEY17
           GOTO      SUMDET90 IF NOT EQUAL
@@ -3066,14 +3076,17 @@ SUMDET50  CALL      RKREDA1
             GOTO      SUMDET50 IF EQUAL
           ENDIF
 .
-          CALL      GETABF00
+          CALL      GETABF00           * Get Abnormal Flag
           CALL      OBXHTM00
 .
           GOTO      SUMDET50
 .
 SUMDET90  WRITE     HTMLFILE;"</table>"
 SUMDET99  RETURN
-.
++
+.------------------------------------------------------------
+. Observation Data (HTML)
+.------------------------------------------------------------
 OBXHTM00  MOVE      "OBX03",KEY5
           PACK      KEY32,RELNLAB,KEY5,REDAOCS,REDAOTY,SP70
           CALL      RDRECT1
@@ -3084,16 +3097,16 @@ OBXHTM00  MOVE      "OBX03",KEY5
           IF        @EQUAL
             PACK      RECTDES,REDAOTY,SP70
           ENDIF
-          MATCH     "TX",REDAVTY
+          MATCH     "TX",REDAVTY            * Text
           GOTO      OBXHTM10 IF EQUAL
 .
-          MATCH     "FT",REDAVTY
+          MATCH     "FT",REDAVTY            * Formatted Text
           GOTO      OBXHTM50 IF NOT EQUAL
+          MOVE      ONE,TEXTFMT
 .
-. Text Result
+. Text Result (Text / Formatted Text)
 .------------------------------------------------------------
-OBXHTM10  
-          MATCH     "1",REDATFL
+OBXHTM10  MATCH     "1",REDATFL
           IF        @EQUAL
             CALL      TXTSUM00
           ELSE
@@ -3166,7 +3179,8 @@ TXTSUM10  CALL      RKREDB1
               MOVE      ZERO,LINECNT
               GOTO      TXTSUM10
             ENDIF
-            WRITE     HTMLFILE;SP1
+.           WRITE     HTMLFILE;SP1
+            WRITE     HTMLFILE;"<br/>";
           ELSE
             MATCH     "Performed at",REDBTXT
             GOTO      TXTSUM20 IF EQUAL
@@ -3187,7 +3201,7 @@ TXTSUM10  CALL      RKREDB1
             COMPARE   ONE,LINECNT
             IF        @EQUAL
               WRITE     HTMLFILE;"<tr><td class=resultPad></td><td colspan=5 class=resultTxt>":
-                                 RECTDES,REDAOSD,"<br/><span class=resultCom>";
+                                 RECTDES,REDAOSD,"<br/><div class=resultCom>";
               IF        TEXTFMT=1
                 WRITE     HTMLFILE;"<pre>";
               ENDIF
@@ -3209,7 +3223,7 @@ TXTSUM99  IF        LINECNT>0
             IF        TEXTFMT=1
               WRITE     HTMLFILE;"</pre>";
             ENDIF
-            WRITE     HTMLFILE;"</span></td></tr>"
+            WRITE     HTMLFILE;"</div></td></tr>"
           ENDIF
           RETURN
 .------------------------------------------------------------

@@ -1,4 +1,4 @@
-<meta name="TemplateVersion" content="V11.05.00">
+<meta name="TemplateVersion" content="V11.05.02">
 <meta name="TemplateHome"    content="standard">
 <meta name="HelpFileName"    content="NoContextSet.html">
 <meta name="CrossBrowser" content="true">
@@ -270,6 +270,9 @@ function GetHTMLPreTagContentsB(HTML) {
   // Return the contents between <pre> and </pre> tags (including newlines)
   notetext = trim(HTML.replace(/<pre>/i,"-").replace(/<\/pre>/i,""));
   notetext = notetext.replace(/-/i,"");     // include first blank line
+  notetext = notetext.replaceAll("&lt;","<");    // Convert to <
+  notetext = notetext.replaceAll("&gt;",">");    // Convert to >
+  notetext = notetext.replaceAll("&amp;","&");   // Convert to &
   return notetext;
 }
 </script>

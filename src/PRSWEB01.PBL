@@ -5,6 +5,8 @@
 .
 . Modifications  :
 .----------------------------------------------------------------------
+. V11.05.02 24/10/2025  Jacob Jackson  TSK 0963648
+.           Add functionality to remove QHAPDC run dates
 . V11.05.01 02/06/2025  Don Nguyen     TSK 0960938
 .           Recompiled for PATNAMCD
 . V11.04.01 05/02/2024  DA Sarkies    TSK 0936282
@@ -410,6 +412,11 @@ FORM3     FORM      3
 SAVURNO   DIM       8
 TEMPVAR   DIM       3
 ZEROS     DIM       20
+SUPERLEV  DIM       1
+QLDSMKEY  DIM       10
+DELETELN  DIM       127
+QHDELKEY  DIM       10
+QHEXYEAR  DIM       4
 .
 . PRS2 PMI Trigger save variables
 SAVXABRG  DIM       3             * indig. status
@@ -441,7 +448,7 @@ REHABDS1  INIT      "First Rehab Admission"
 REHABDS2  INIT      "Re-adm. for Rehab"
 .----------------------------------------------------------------------
 PRGID     INIT      "PRSWEB01"
-VERSION   INIT      "V11.05.01"
+VERSION   INIT      "V11.05.02"
 PRGNAM    INIT      "PRS Extract Enquiries/Maintenance"
 .----------------------------------------------------------------------
           CALL      WEBINT00       * Initialise Fifo Etc.
@@ -660,6 +667,9 @@ CLRPAR10  ADD       ONE,F3       * Clear Key Strokes Array
           MOVE      ZERO,EXSTARTN
           MOVE      ZERO,SHOWCURR
           MOVE      SP70,FILTHOSP
+          MOVE      SP70,SUPERLEV
+          MOVE      SP70,QHDELKEY
+          MOVE      SP70,QHEXYEAR
 .
 CLRPAR99  RETURN
 .------------------------------------------------------------
@@ -892,6 +902,17 @@ SETPAR00  MATCH     "reportno=",QRYNAME
           MATCH     "visitdat=",QRYNAME
           IF        @EQUAL
             MOVE      QRYDATA,VISITDAT
+            GOTO      SETPAR99
+          ENDIF
+.
+          MATCH     "superlev=",QRYNAME
+          IF        @EQUAL
+            PACK      SUPERLEV,QRYDATA,SP70
+          ENDIF
+.
+          MATCH     "qhdelkey=",QRYNAME
+          IF        @EQUAL
+            MOVE      QRYDATA,QHDELKEY
             GOTO      SETPAR99
           ENDIF
 .
@@ -1230,6 +1251,36 @@ UPPR2000  MATCH     PR2VPM01,Z70
 UPPR2999  RETURN
 +
 .******************************************************************************
+.                                  DELPR200                                   *
+.                         Delete a record from pmsqeraf                       *
+.******************************************************************************
+DELPR200  PACK      KEY10,QHDELKEY
+          CALL      RDPMQER1
+          BRANCH    OVRCD,DELPR299
+.
+          MOVE      PMQEYEAR,QHEXYEAR
+.
+          PACK      KEY10,PMQEHOSP,PMQEYEAR,PMQERUNN
+          CALL      DEPMQER1
+.
+          CALL      RSPMQER1   * positional read after delete
+DELPR210  CALL      RKPMQER1   * check for extract runs from later months
+          BRANCH    OVRCD,DELPR299
+.
+          MATCH     QHEXYEAR,PMQEYEAR
+          IF        !@EQUAL
+            GOTO      DELPR299
+          ENDIF
+.
+          PACK      KEY10,PMQEHOSP,PMQEYEAR,PMQERUNN
+          CALL      DEPMQER1
+          CALL      RSPMQER1  * positional read after delete
+.
+          GOTO      DELPR210
+.
+DELPR299  RETURN
++
+.******************************************************************************
 .*                                 WPEI0000                                   *
 .*                        Write A Record To patpeiaf                          *
 .******************************************************************************
@@ -1303,7 +1354,16 @@ WPEI9999  RETURN
 .*************************************************************************
 .                           PRS Extract
 .*************************************************************************
-P2EXT000  MATCH     SP8,URNUMBER
+P2EXT000  MATCH     "007",TEMPLATE
+          IF        @EQUAL
+            MATCH     "D",UPDTTYPE
+            IF        @EQUAL
+              CALL      DELPR200            * delete QGAODC extract run
+              GOTO      P2EXT999
+            ENDIF
+          ENDIF
+.
+          MATCH     SP8,URNUMBER
           GOTO      P2EXT200 IF EQUAL
 .
           PACK      KEY8,URNUMBER,SP70
@@ -3529,7 +3589,7 @@ PPEI9999  RETURN
 . PRS2 Listing
 .------------------------------------------------------------
 RUNS0000  BRANCH    FLDITMNO,RUNS0100,RUNS0200,RUNS0300,RUNS0400,RUNS0500:
-                             RUNS0600
+                             RUNS0600,RUNS0700
 .                                    Year select options
 RUNS0100  CALL      SYSL0000
           GOTO      RUNS9999
@@ -3551,6 +3611,9 @@ RUNS0500  CALL      PREVLINK
           GOTO      RUNS9999
 .                                     PRS2 Qld extract for the selected year
 RUNS0600  CALL      PRSQ0000         
+          GOTO      RUNS9999
+.
+RUNS0700  WRITE     HTMLFILE;SUPERLEV;
           GOTO      RUNS9999
 . 
 RUNS9999  RETURN 
@@ -4311,7 +4374,6 @@ QLDSUM00  CLEAR     PRLEDATE
           MOVE      PMQEEDAT,PRTPDATE
           CALL      PRSDAT00
           MOVE      FBOKDATE,PRLEDATE
-
 .
           MOVE      SP70,PTHSNAME
           MATCH     SP70,PMQEHOSP
@@ -4322,15 +4384,34 @@ QLDSUM00  CLEAR     PRLEDATE
               MOVE      SP70,PTHSNAME
             ENDIF
           ENDIF
-            
 .
-          WRITE     HTMLFILE;"t.addRow(#"#",#"",PMQERUNN,"#",":
-                             "#"",PRLEDATE,"#",":
-                             "#"",PTHSNAME,"#");"
+          MATCH     "1",SUPERLEV
+          IF        @EQUAL
+            CALL      QLDDSE00
+            WRITE     HTMLFILE;"t.addRow(#"#",#"",PMQERUNN,"#",":
+                               "#"",PRLEDATE,"#",":
+                               "#"",PTHSNAME,"#",":
+                               "#"",DELETELN,"#");"
+          ELSE
+            WRITE     HTMLFILE;"t.addRow(#"#",#"",PMQERUNN,"#",":
+                               "#"",PRLEDATE,"#",":
+                               "#"",PTHSNAME,"#");"
+          ENDIF
 .
 QLDSUM99  RETURN
-
-
++
+.------------------------------------------------------------
+. Generate delete links for PRS2 QLD Extract Summary
+.------------------------------------------------------------
+QLDDSE00  MOVE      SP70,QLDSMKEY
+          CLEAR     DELETELN
+          PACK      QLDSMKEY,PMQEHOSP,PMQEYEAR,PMQERUNN
+          APPEND    "javascript:delEntry('",DELETELN
+          APPEND    QLDSMKEY,DELETELN
+          APPEND    "');",DELETELN
+.
+QLDDSE99  RETURN
++
 .------------------------------------------------------------
 . PRS2 Extract Summary
 .------------------------------------------------------------

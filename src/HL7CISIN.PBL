@@ -13,6 +13,11 @@
 .******************************************************************************
 .* Mods      :                                                                *
 .******************************************************************************
+.*       V11.05.16 21/10/2025  Bella Turco      TSK 0960178                   *
+.*                 Recompiled for HL7COMN - added ZXP.77 (Sending Estimated   *
+.*                 DOB Flag)                                                  *
+.*       V11.05.15 15/10/2025  J.Tan            TSK 0967027                   *
+.*                 Recompiled for HL7COMN - Checking Pooling file for Type=018*
 .*       V11.05.14 07/10/2025  Davin            TSK 0946211                   *
 .*                 Recompiled for HL7COMN - Default PID.25 to ""              *
 .*       V11.05.13 18/09/2025  Davin            TSK 0959732                   *
@@ -1264,6 +1269,8 @@
           INC       TFILEVAR/INC
           INC       VISCODFD/INC
           INC       VISXDCFD/INC
+          INC       COMPARFD/INC
+          INC       IBAPOLFD/INC
           INC       WATPROFD/INC
           INC       WATQUEFD/INC
           INC       WEBCONFD/INC
@@ -1641,7 +1648,7 @@ ZEROURNO  INIT      "       0"
 .-----------------------------------------------------------------------
 PRGID     INIT      "HL7CISIN"
 PRGNAM    INIT      "HL7 Broadcast Message Server"
-VERSION   INIT      "V11.05.14"
+VERSION   INIT      "V11.05.16"
 .-----------------------------------------------------------------------
 +
 .******************************************************************************
@@ -2005,6 +2012,26 @@ INIT0600  MOVE      ZERO,HEROTABL
           TRAPCLR   IO
           IF        OVRCD=1
             MOVE      ONE,HEROTABL          * not using HERO Location table
+          ENDIF
+.
+          MOVE      ZERO,COMPTABL
+          MOVE      ZERO,OVRCD              * Trap to check if comparaf exists
+          TRAP      OVERCOND IF IO
+          DISPLAY   *P64:24,"comparaf";
+          OPEN      COMPARA1,"comparaf"
+          TRAPCLR   IO
+          IF        OVRCD=1
+            MOVE      ONE,COMPTABL          * not using common system parameter
+          ENDIF
+.
+          MOVE      ZERO,IBAPTABL
+          MOVE      ZERO,OVRCD              * Trap to check if 2nd index exists
+          TRAP      OVERCOND IF IO
+          DISPLAY   *P64:24,"ibapolaf";
+          OPEN      IBAPOLA2,"ibapolaf"      * open Patient Pooling table
+          TRAPCLR   IO
+          IF        OVRCD=1
+            MOVE      ONE,IBAPTABL          * not using common system parameter
           ENDIF
 .
           IF        OTCNA05R = 1 | OTCNA08R = 1
@@ -18566,6 +18593,8 @@ WZST9999  RETURN
           INC       VISMDTIO/INC
           INC       VISMTXIO/INC
           INC       VISXDCIO/INC
+          INC       COMPARIO/INC
+          INC       IBAPOLIO/INC
           INC       WATOPAIO/INC
           INC       WATOPSIO/INC
           INC       WATPROIO/INC

@@ -1,10 +1,14 @@
-<meta name="TemplateVersion" content="V11.05.02">
-<meta name="TemplateHome" content="nzprivate">
+<meta name="TemplateVersion" content="V11.05.01">
+<meta name="TemplateHome" content="evonz">
 <meta name="CrossBrowser" content="true">
 <meta name="HelpFileName" content="NoContextSet.html">
 <script type="text/javascript" src="../js/oprweb06.js"> </script>
 <script type="text/javascript">
 %START.OF.PAGE
+
+function redirectASA (elem) { elem.value = "oprweb01.pbl|04|901|1|400|200" }
+function resetASA (elem) { elem.value = "Set ASA Score" }
+
 function init()
 {
   setFocusOnTimeArrived();
@@ -32,20 +36,9 @@ function chkTime(field){
   if(isWhitespace(field.value))
     return;
   endTime=UpdateForm.opsrg006.value.replace(/:/g,"");
-  if(isWhitespace(endTime)){
-     alert("Surgery End Time must be entered first");
-     field.value=""
-     return;
-  }
-  OperDate=document.UpdateForm.casekeys.value.substring(3,11);
+  OperDate=document.UpdateForm.casekeys.value.substring(0,8);
   if(document.UpdateForm.currdate.value > OperDate) {
     return;
-  }
-  if(field.value.replace(/:/g,"")<=endTime){
-    if(!confirm(""+field.title+" must be after Surgery End Time." +
-                "\n Do you want to override")) {
-      field.value="";
-    }
   }
 }
 
@@ -123,24 +116,6 @@ function showImplant() {
   DFrameLink(LinkUrl,100,Left,750,350);
 }
 
-function AddMiscItem() {
-  UpdateForm.target="PopUpFrame"
-  if (UpdateDayProc()) {
-    setTimeout('showMiscItem()',100);
-  }
-  UpdateForm.target="";
-}
-
-function showMiscItem() {
-  Left=(document.body.clientWidth-870)/4
-  LinkUrl="patweb75.pbl?reportno=1&template=1" +
-          "&urnumber=" + PatientLinks.urnumber.value.replace(/ /g,"+") +
-          "&admissno=" + PatientLinks.admissno.value.replace(/ /g,"+") +
-          "&casekeys=" + UpdateForm.casekeys.value.replace(/ /g,"+") +
-          "&teamnumb=" + UpdateForm.teamnumb.value.replace(/ /g,"+") ;
-  DFrameLink(LinkUrl,50,Left,1500,530);
-}
-
 function ChkRecovDelay() {
   var timeInRec = UpdateForm.opard077.value;
   var timeThrExit = UpdateForm.opard080.value;
@@ -194,10 +169,6 @@ function UpdateDayProc() {
    // Set Dressing Time to be equal to Surgery End Time. This is required
    // for calculation of Actual Operation Minutes.
    document.UpdateForm.opsrg004.value = document.UpdateForm.opsrg006.value;
-
-   // Set Ready To Depart Time to be equal to the Exit Theatre Complex Time.
-   //This is needed as opard085 is not displayed on the screen
-   document.UpdateForm.opard085.value = document.UpdateForm.opard080.value;
 
    document.UpdateForm.opard043.value = document.UpdateForm.opard077.value
 
@@ -255,19 +226,6 @@ function chkSurgStart() {
   }
 }
 
-// Validate Surgery End Time
-function chkSurgEnd() {
-  if(!isWhitespace(UpdateForm.opsrg006.value)) {
-    if(isWhitespace(UpdateForm.opsrg005.value)) {
-      alert("Surgery Start Time must be entered first.");
-      UpdateForm.opsrg006.value="";
-      UpdateForm.opsrg005.focus(); 
-      return;
-    }
-    valPrepDress();
-  }
-}
-
 function setETTime(extime) {
   document.UpdateForm.opard080.value=extime.value;
   ChgRTD();
@@ -286,7 +244,7 @@ function ChgRTD() {
 function RefreshPage() {
    document.UpdateForm.method="get"
    document.UpdateForm.updatety.value="";
-   document.UpdateForm.template.value="6";
+   document.UpdateForm.template.value="906";
    document.UpdateForm.submit();
 }
 // Link To Procedure List
@@ -305,7 +263,7 @@ function goToStaff() {
   temp=document.UpdateForm.teamnumb.value;
   supr=document.UpdateForm.suprlevl.value;
   UpdateForm.redirect.value="oprweb06.pbl?reportno=12&template=2&casekeys="+
-                             caseKey+"&teamnumb="+temp+"&rdirflag=1"+
+                             caseKey+"&teamnumb="+temp+"&rdirflag=9"+
                              "&suprlevl="+supr;
   UpdateDayProc();
 }
@@ -313,12 +271,12 @@ function goToStaff() {
 // Form Submit
 function formSubmit() {
    if(validateMandatory(UpdateForm)) {
-      casekey=UpdateForm.casekeys.value.substr(0,26);
+      casekey=UpdateForm.casekeys.value.substr(0,23);
       casekey=casekey.replace(/ /g,"+");
       uniqkey=UpdateForm.uniqueky.value
       uniqkey=uniqkey.replace(/ /g,"+");
       if (isWhitespace(UpdateForm.redirect.value)) {
-        UpdateForm.redirect.value="oprweb06.pbl?reportno=12&template=006"+
+        UpdateForm.redirect.value="oprweb06.pbl?reportno=12&template=906"+
                                   "&uniqueky="+uniqkey+"&teamnumb="; 
       }
       if(checkTimeOrder())
@@ -340,7 +298,6 @@ function checkTimeOrder()
  var surgEnTime = UpdateForm.opsrg006;
  var exitThTime = UpdateForm.opard080;
  var dayRecTime = UpdateForm.opard077;
- var ICUtime = UpdateForm.opard083;
 
  var arrayObj = new Array();
 
@@ -348,7 +305,6 @@ function checkTimeOrder()
  arrayObj.push(anseatTime);
  arrayObj.push(dayRecTime);
  arrayObj.push(exitThTime);
- arrayObj.push(ICUtime);
 
  for(var i = 1; i < arrayObj.length; i++)
  {
@@ -407,6 +363,47 @@ function ProcMan() {
     UpdateForm.opdea014.className="";
 }
 
+// Default field values according to 'No Recovery' checkbox checked status
+function SetNoRecovery() {
+  var chkbox = UpdateForm.norecovr;
+  if (chkbox == undefined)
+    return;
+
+  if (chkbox.checked) {
+    // Default 'Into/Out Recovery' field with value of 'Patient out of Theatre'
+    UpdateForm.opard085.value = UpdateForm.opard077.value;  // Recovery Delay
+    UpdateForm.opard085.readOnly = true;
+    UpdateForm.opard085.className = "Readonly";
+	
+    UpdateForm.opard080.value = UpdateForm.opard077.value;  // Out of Recovery
+    UpdateForm.opard080.readOnly = true;
+    UpdateForm.opard080.className = "Readonly";
+  }
+  else {
+    UpdateForm.opard077.readOnly = false;
+    UpdateForm.opard077.className = "";
+    UpdateForm.opard085.readOnly = false;
+    UpdateForm.opard085.className = "";
+    UpdateForm.opard080.readOnly = false;
+    UpdateForm.opard080.className = "";
+  }
+}
+// Validate Patient out of Theatre Time
+function chkSurgEnd() {
+  if(!isWhitespace(UpdateForm.opsrg006.value)) {
+    if(isWhitespace(UpdateForm.opsrg005.value)) {
+      alert("Surgery Start Time must be entered first.");
+      UpdateForm.opsrg006.value="";
+      UpdateForm.opsrg005.focus(); 
+      return;
+    }
+    else {
+      SetNoRecovery();     
+    }
+	valPrepDress();
+  }
+}
+
 // Validate Prep Start/Surgery Start and Dressing/Surgery End Times
 function valPrepDress() {
   var prepTime = trim(document.UpdateForm.opsrg005.value.replace(/:/g,""));
@@ -426,7 +423,6 @@ function valPrepDress() {
     if(!confirm("Warning: The Overnight Indicator is set - Time difference " +
        "between\nSurgery Start time and Surgery End time is greater than " +
        "24 hours!")) {
-      UpdateForm.ovrnight.checked = false;
       UpdateForm.ovrnight.focus();
       return;
     }
@@ -455,7 +451,7 @@ function showBillCommts() {
 function TimeCheck(){
 
   var fieldElement;
-  var theatreDate = "%OPRWEB06.12.401".slice(3,8);
+  var theatreDate = "%OPRWEB06.12.401".slice(0,8);
   var fieldName = "timecheck%STANDARD.01.044.113.064.002".replace(" ", "0");
 
   try{
@@ -532,7 +528,6 @@ InsertPatientHeader()
 <input type=hidden name=opard041>
 <input type=hidden name=opsrg003>
 <input type=hidden name=opsrg004>
-<input type=hidden name=opard085>
 <input type=hidden name=opsrg071 value=" ">
 <input type=hidden name=opard043 value=" ">
 <input type=hidden name="discdate" id="discdate" value="%OPRWEB06.12.353">
@@ -581,165 +576,151 @@ InsertPatientHeader()
 <hr>
 
 <table border="0" cellpadding="0" cellspacing="0" width="100%" align=center>
-<tr><td class=DataLabel>Procedure&nbsp;</td>
-    <td> <input type=text size=116 name=opdea014 maxlength=80 tabindex=1
-          title="Procedure Description" value="%OPRWEB06.12.305"></td></tr>
+<tr><td class=DataLabel>Procedure(s)&nbsp;</td>
+    <td> <input type=text size=116 name=opdea014 maxlength=80
+          title="Procedure Description" value="%OPRWEB06.12.305" readOnly></td></tr>
+<tr><td class=DataLabel><i>(read-only)&nbsp;&nbsp;</i></td>
+    <td> <input type=text size=116 name=opdea015 maxlength=80
+     title="Procedure Description" value="%OPRWEB06.12.343" readOnly></td></tr> 
 <tr><td class=DataLabel>&nbsp;&nbsp;</td>
-    <td> <input type=text size=116 name=opdea015 maxlength=80 tabindex=2
-     title="Procedure Description" value="%OPRWEB06.12.343"></td></tr> 
-<tr><td class=DataLabel>&nbsp;&nbsp;</td>
-    <td> <input type=text size=116 name=opdea016 maxlength=80 tabindex=3
-         title="Procedure Description" value="%OPRWEB06.12.344">
+    <td> <input type=text size=116 name=opdea016 maxlength=80
+         title="Procedure Description" value="%OPRWEB06.12.344" readOnly>
     </td></tr>
 </table>
 
 <br>
 
-<table border="0" cellpadding="0" cellspacing="0" width="100%" align=center>
+<table border="0" cellpadding="0" cellspacing="0" width="70%" align=center>
 <tr><td class=DataLabel>Time Arrived</td>
     <td class=DataField>
       <input type=text name=opard002 size=8 maxlength=8 
-       title="Time Arrived" value="%OPRWEB06.12.502" tabindex=4 id="timecheck02"
+       title="Time Arrived" value="%OPRWEB06.12.502" tabindex="1" id="timecheck02"
        onblur="checkTime(this,this.title);chkAnaesTime();TimeCheck()">
       <img src="../images/DateTimeStamp.gif" class=Icon
        onclick="SetCurrentDateTime(null,UpdateForm.opard002);">
       <img src="../images/TimeLookup.gif" class=Icon
        onclick="TimeLookupFrame(UpdateForm.opard002);"></td>
 
-    <td class=DataLabel>Admitting Nurse</td>
-    <td class=DataField>
-      <input type=text name=opard003 title="Admitting Nurse Code" size=6
-       class=DataField  maxlength=6 value="%OPRWEB06.12.503.1" tabindex=15
-       onblur="validateNurse(opard003,name_opard003);">
-      <input type=text name=name_opard003 title="Admitting Nurse" tabindex=-1
-       class=ReadOnly readonly size=20 maxlength=30 value="%OPRWEB06.12.503.0">
-      <img src="../images/SearchIcon.gif" class=Icon 
-       onclick="NurseSearchFrame(opard003,name_opard003);"></td>
+    <td></td>
 
-    <td class=DataLabel>Procedure Code</td>
-    <td><input type=text size=15 class=Readonly readonly name=mbsitem
-         tabindex=-1 value="%OPRWEB06.12.346">
-        </td>
+    <td></td>
+
     <td><input class="button" type=button name="procbutton" value="Procedures"
          id="procbutton"
-         tabindex=50 onclick="tempDisable(this);goToProcedure();">
+         tabindex="15" onclick="tempDisable(this);goToProcedure();">
     </td></tr>
 
 <tr><td class=DataLabel>Anaesthetic/Prep Time</td>
     <td class=DataField>
       <input type=text name=opard042 size=8 maxlength=8 id="timecheck04"
-       title="Anaesthetic/Prep Time" value="%OPRWEB06.12.542" tabindex=5
+       title="Anaesthetic/Prep Time" value="%OPRWEB06.12.542" tabindex=2
        onblur="checkTime(this,this.title);chkAnaesTime();TimeCheck()">
       <img src="../images/DateTimeStamp.gif" class=Icon
        onclick="SetCurrentDateTime(null,UpdateForm.opard042);">
       <img src="../images/TimeLookup.gif" class=Icon
        onclick="TimeLookupFrame(UpdateForm.opard042);"></td>
 
-    <td class=DataLabel>Anaesthetic</td>
+    <td class=DataLabel>Anaesthetic Method (for reporting)</td>
     <td class=DataField>
-      <select name=opdea003 title="Anaesthetic" tabindex=16>
+     <select name=opdea003 title="Anaesthetic Method" tabindex="9">
         <option></option>
          %OPRWEB06.12.113.2
       </select></td>
 
-    <td class=DataLabel>Implant Items</td>
-    <td><input type=text size=15 readonly tabindex=-1 class=Readonly 
-         value="%OPRWEB06.12.204"></td>
-    <td><input class="button" type=button name="impbutton" value="Add Implant"
-         id="impbutton"
-         tabindex=51 onclick="tempDisable(this);AddImplant();">
+    <td><input class="button" type=button
+	name="asabutton" value="Set ASA Score:" tabindex="16"
+ 	onclick="tempDisable(this);redirectASA(this); PMenuLinkTo(this); resetASA(this)">
+    	<select name=oparuc11 title="ASA Score" disabled>
+    	<option></option>
+         %OPRWEB06.12.545.2
+      </select></td></tr>
+
+<tr><td class=DataLabel>Time Out Performed</td>
+    <td class=DataField><input type=text name=opard029 size=8 maxlength=8
+       title="Anaesthetic/Prep Time" value="%OPRWEB06.12.529" tabindex=3
+       onblur="checkTime(this,this.title);">
+      <img src="../images/DateTimeStamp.gif" class=Icon
+       onClick="SetCurrentDateTime(null,opard029);">
+      <img src="../images/TimeLookup.gif" class=Icon
+       onclick="TimeLookupFrame(opard029);"></td>
+
+    <td></td><td></td>
+    <td><input class="button" type=button value="Staff Members"
+        name="staffbutton" id="staffbutton"
+        tabindex="17" onclick="tempDisable(this);goToStaff();">
     </td></tr>
 
 <tr><td class=DataLabel>Surgery Start</td>
     <td class=DataField>
       <input type=text name=opsrg005 size=8 maxlength=8 id="timecheck06"
-       title="Surgery Start Time" value="%OPRWEB06.12.337" tabindex=6 
+       title="Surgery Start Time" value="%OPRWEB06.12.337" tabindex=4 
        onblur="checkTime(this,this.title);chkSurgStart();TimeCheck()">
       <img src="../images/DateTimeStamp.gif" class=Icon
        onclick="SetCurrentDateTime(null,UpdateForm.opsrg005);">
       <img src="../images/TimeLookup.gif" class=Icon
        onclick="TimeLookupFrame(UpdateForm.opsrg005);"></td>
+    <td></td><td></td>
 
-    <td class=DataLabel>Overnight Indicator</td>
-    <td><input type=checkbox name=ovrnight title="Overninght Indicator"
-        tabindex=17 value="1" onblur="valPrepDress();"></td>
-
-    <td class=DataLabel>Miscellaneous Items</td>
-    <td><input type=text size=15 readonly tabindex=-1 class=Readonly
-         value=%OPRWEB06.12.213></td>
-    <td><input class="button" type=button name="miscbutton" value="Add Misc Item" 
-         id="miscbutton"
-         tabindex=52 onclick="tempDisable(this);AddMiscItem();">
+    <td><input type=button value="Billing Comments" class="button" tabindex="18"
+           name="btnBillcom" id="btnBillcom"
+           onclick="tempDisable(this);BillingComments();">
     </td></tr>
 
 <tr><td class=DataLabel>Surgery End</td>
     <td class=DataField>
       <input type=text name=opsrg006 size=8 maxlength=8 id="timecheck07"
-       title="Surgery End Time" value="%OPRWEB06.12.338" tabindex=7
+       title="Surgery End Time" value="%OPRWEB06.12.338" tabindex="5"
        onblur="checkTime(this,this.title);chkSurgEnd();TimeCheck()">
       <img src="../images/DateTimeStamp.gif" class=Icon
        onclick="SetCurrentDateTime(null,UpdateForm.opsrg006);">
       <img src="../images/TimeLookup.gif" class=Icon
        onclick="TimeLookupFrame(UpdateForm.opsrg006);"></td>
-<td class=DataLabel>Estimated Discharge Time</td>
-    <td class=DataField>
-      <input type=text name=opard103 size=8 maxlength=8 tabindex=18
-       title="Estimated Discharge Time" value="%OPRWEB06.12.599.003"
-       onblur="checkTime(this,this.title);">
-      <img src="../images/TimeLookup.gif" class=Icon
-       onclick="TimeLookupFrame(opard103);"></td>
 
-    <td class=DataLabel>Time to ICU</td>
-    <td class=DataField>
-      <input type=text name=opard083 size=8 maxlength=8
-       title="Time to ICU" value="%OPRWEB06.12.583" tabindex=31 
-       onBlur="checkTime(this,this.title);chkTime(this);setETTime(this);">
-      <img src="../images/DateTimeStamp.gif" class=Icon
-       onclick="SetCurrentDateTime(null,UpdateForm.opard083);">
-      <img src="../images/TimeLookup.gif" class=Icon
-       onclick="TimeLookupFrame(UpdateForm.opard083);"></td>
-
-    <td><input class="button" type=button value="Staff Members"
-        name="staffbutton" id="staffbutton"
-        tabindex=53 onclick="tempDisable(this);goToStaff();">
-    </td></tr>
+    <td class=DataLabel>Overnight Indicator</td>
+    <td><input type=checkbox name=ovrnight title="Overninght Indicator"
+        tabindex="11" value="1" onblur="valPrepDress();"></td>
+    <td></td>
 
 <tr>
- <td class=DataLabel>Time in Recovery-Day</td>
+ <td class=DataLabel>OT Out / Time in Recovery</td>
     <td class=DataField>
-      <input type=text name=opard077 maxlength=8 tabindex=8 id="timecheck12"
+      <input type=text name=opard077 maxlength=8 tabindex=6 id="timecheck12"
        title="Time in Recovery - Day" value="%OPRWEB06.12.577" size=8
        onBlur="checkTime(this,this.title);chkTime(this);ProcMan();ChkRecovDelay();TimeCheck()">
       <img src="../images/DateTimeStamp.gif" class=Icon
        onclick="SetCurrentDateTime(null,UpdateForm.opard077);">
       <img src="../images/TimeLookup.gif" class=Icon
        onclick="TimeLookupFrame(UpdateForm.opard077);"></td>
-    <td class=DataLabel>Nurse Attend Pat 1</td>
-    <td class=DataField>
-      <input type=text name=opard078 size=6 value="%OPRWEB06.12.578.1"
-       title="Nurse Attend Pa1 1 - Code" tabindex=19
-       onblur="validateNurse(opard078,name_opard078);">
-      <input type=text readonly name=name_opard078 class=Readonly size=20
-       title="Nures Attend Pat 1" tabindex=-1 value="%OPRWEB06.12.578.0">
-      <img src="../images/SearchIcon.gif" class=Icon
-       onclick="NurseSearchFrame(opard078,name_opard078);">
-    </td>
 
-    <td class=DataLabel>Time Patient Died</td>
-    <td class=DataField>
-      <input type=text name=opard082 size=8 maxlength=8 
-       title="Time Patient Died" value="%OPRWEB06.12.582" 
-       onBlur="checkTime(this,this.title);" tabindex=32>
-      <img src="../images/DateTimeStamp.gif" class=Icon
-       onclick="SetCurrentDateTime(null,UpdateForm.opard082);">
-      <img src="../images/TimeLookup.gif" class=Icon
-       onclick="TimeLookupFrame(UpdateForm.opard082);"></td>
+ <td class=DataLabel>PACU/Recovery Not Required</td>
+    <td><input type=checkbox name=norecovr title="No Recovery for this Patient"
+        tabindex="12" onclick="SetNoRecovery();"></td>
 
     <td>&nbsp;</td></tr>
 
+<tr><td class=DataLabel>Ready to Depart Time</td>
+    <td class=DataField>
+	<input type=text name=opard085 size=8 maxlength=8 tabindex="7"
+       title="Exit Theatre Complex Time" value="%OPRWEB06.12.585" id="timecheck14"
+       onBlur="checkTime(this,this.title);chkTime(this);ChkRecovDelay();TimeCheck()">
+      <img src="../images/DateTimeStamp.gif" class=Icon
+       onclick="SetCurrentDateTime(null,opard085);">
+      <img src="../images/TimeLookup.gif" class=Icon
+       onclick="TimeLookupFrame(opard085);"></td>
+	   
+    <td class=DataLabel>Recovery Delay Reason</td>
+    <td class=DataField colspan=2>
+      <select name=opard084 title="Recovery Delay Reason" tabindex="14">
+        <option></option>
+         %OPRWEB06.12.584.2
+      </select>
+	   
+	   </tr>
+
+
 <tr><td class=DataLabel>Exit Theatre Complex</td>
     <td class=DataField>
-      <input type=text name=opard080 size=8 maxlength=8 tabindex=9
+      <input type=text name=opard080 size=8 maxlength=8 tabindex="8"
        title="Exit Theatre Complex Time" value="%OPRWEB06.12.580" id="timecheck14"
        onBlur="checkTime(this,this.title);chkTime(this);ChkRecovDelay();TimeCheck()">
       <img src="../images/DateTimeStamp.gif" class=Icon
@@ -747,45 +728,20 @@ InsertPatientHeader()
       <img src="../images/TimeLookup.gif" class=Icon
        onclick="TimeLookupFrame(UpdateForm.opard080);"></td>
 
-    <td class=DataLabel>Nurse Attend Pat 2</td>
-    <td class=DataField>
-      <input type=text name=opard079 size=6 value="%OPRWEB06.12.579.1"
-       title="Nurse Attend Pat 2 - Code" tabindex=20
-       onblur="validateNurse(opard079,name_opard079);">
-      <input type=text readonly name=name_opard079 class=Readonly size=20
-       title="Nurse Attend Pat 2" tabindex=-1 value="%OPRWEB06.12.579.0">
-      <img src="../images/SearchIcon.gif" class=Icon
-       onclick="NurseSearchFrame(opard079,name_opard079);"></td>
+    <td></td><td></td>
 
-    <td class=DataLabel>Reason for Overnight</td>
-    <td class=DataField>
-      <select name=opard086 title="Reason for Overnight" tabindex=33>
-        <option></option>
-         %OPRWEB06.12.586.2
-      </select></td>
+    <td></td><td></td>
+    
     <td>&nbsp;</td></tr>
 
-<tr><td class=DataLabel>Op Registration Form</td>
-    <td class=DataField><input type=checkbox name=printreg value="1" tabindex=10
-    onclick="SetPrinter(UpdateForm.schdprnt);"></td>
-    <td class=DataLabel>Printer</td>
-    <td><select name=schdprnt title="Printer" class="SelectBig" tabindex=21>
-        <option></option>
-        %STANDARD.01.001.IBAOPR45.01
-        </select>
-    </td>
+    <td></td><td></td>
+	
+    <td></td><td></td>	
 
-    <td class=DataLabel>Recovery Delay Reason</td>
-    <td class=DataField colspan=2>
-      <select name=opard084 title="Recovery Delay Reason" tabindex=34>
-        <option></option>
-         %OPRWEB06.12.584.2
-      </select></td>
-    <td>&nbsp;</td>
-  </tr>
 </table>
 
-<table border="0" cellpadding="0" cellspacing="0" width="100%" align=center>
+<table border="0" cellpadding="0" cellspacing="0" width="70%" align=center>
+<tr><td>&nbsp;</td><td>&nbsp;</td></tr>
 <tr><td class=DataLabel>Theatre Comments</td>
     <td class=DataField>
         <div id=CommentText></div> 
@@ -797,20 +753,16 @@ InsertPatientHeader()
        <textarea wrap=hard cols=70 rows=6 id=extprcmt name=extprcmt
               title="Extended Procedure Description"
               onkeydown="LimitText(this,999,69930);"
-              tabindex=40>%OPRWEB06.12.143.024</textarea>
+              tabindex=20>%OPRWEB06.12.143.024</textarea>
     </td>
 </tr>
 
 <tr><td colspan=2 align=center><br>
-    <input type=button value="Billing Comments" class="button"
-           tabindex=60
-           name="btnBillcom" id="btnBillcom"
-           onclick="tempDisable(this);BillingComments();">
-    <input type=button value="Update" class="button" tabindex=61 
+    <input type=button value="Refresh" class="button" tabindex="31"
+           onclick="RefreshPage();">
+    <input type=button value="Save" class="button" tabindex="32" 
            name="btnUpdate" id="btnUpdate"
            onclick="tempDisable(this);UpdateDayProc();">
-    <input type=button value="Cancel" class="button" tabindex=62
-           onclick="RefreshPage();">
 </td></tr>
 </table>
 </form>
@@ -829,14 +781,14 @@ InsertPatientHeader()
 </div>
 
 <span id=ThtrCom style="display:none">
-  <textarea wrap=hard cols=70 rows=3 name=opcom008 tabindex=38
+  <textarea wrap=hard cols=70 rows=3 name=opcom008 tabindex=19 
    onkeydown="LimitText(this,999,69930);"> 
 %OPRWEB06.12.143.008
   </textarea>
 </span>
 
 <span id=BookCom style="display:none">
-  <textarea wrap=hard cols=70 rows=3 name=opcom008 tabindex=38
+  <textarea wrap=hard cols=70 rows=3 name=opcom008 tabindex=19 
    onkeydown="LimitText(this,999,69930);"> 
 %OPRWEB06.12.143.009
   </textarea>
@@ -854,17 +806,9 @@ var impCount = %OPRWEB06.12.203
 if (impCount > 1){
   document.UpdateForm.impbutton.className="RedButton";}
 
-var firstMisc = "%OPRWEB06.12.213"
-if (firstMisc != "         "){
-  document.UpdateForm.miscbutton.className="RedButton";}
-
 var staffExist = "%OPRWEB06.12.214"
 if (staffExist == "1"){
   document.UpdateForm.staffbutton.className="RedButton";}
-
-// Default MBS Item from Booking
-if (isWhitespace(document.UpdateForm.mbsitem.value))
-  document.UpdateForm.mbsitem.value="%OPRWEB06.12.345";
 
 // Default Comment from Booking
 if (%OPRWEB06.12.211 == 0)                       // First display of this page?
@@ -872,15 +816,23 @@ if (%OPRWEB06.12.211 == 0)                       // First display of this page?
 else
   CommentText.innerHTML = ThtrCom.innerHTML;     // No, use Day Proc comments
 
-// Set exit theatre complex time to be mandatory if there is a time to ICU
-if (!isWhitespace(UpdateForm.opard083.value)) {
-  UpdateForm.opard080.className= "Mandatory"
-}
-
 // Billing Comments exists?
 var billCmntsInd = "%OPRWEB06.12.355";
 if (billCmntsInd == "1") {
   UpdateForm.btnBillcom.className = UpdateForm.btnBillcom.className +
   " RedButton";
 }
+
+// Patient into/out of Recovery times the same?
+if (!isWhitespace(UpdateForm.opard077.value)) {
+  if (UpdateForm.opard077.value == UpdateForm.opard080.value) {
+    UpdateForm.norecovr.checked = true;
+	UpdateForm.opard085.readOnly = true;
+    UpdateForm.opard085.className = "Readonly";
+	document.UpdateForm.opard085.value = document.UpdateForm.opard080.value;
+    UpdateForm.opard080.readOnly = true;
+    UpdateForm.opard080.className = "Readonly";
+  }
+}
+
 </script>

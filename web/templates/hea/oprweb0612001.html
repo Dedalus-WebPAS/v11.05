@@ -1,4 +1,4 @@
-<meta name="TemplateVersion" content="V11.05.02">
+<meta name="TemplateVersion" content="V11.05.03">
 <meta name="TemplateHome" content="hea">
 <meta name="HelpFileName" content="NoContextSet.html">
 <meta name="CrossBrowser" content="true">
@@ -725,57 +725,57 @@ function AnaestheticMand() {
 
 function ToggleCA(){
   dU = document.UpdateForm;
-  if(dU.d_opsrg074.checked){
-    dU.opsrg005.className = "Readonly";
+  if(dU.d_opsrg074.checked){                         // Case Abandoned checked
+    dU.opsrg005.className = "Readonly";              // Surgery Started
     dU.opsrg005.readOnly = true;
-    dU.opsrg006.className = "Readonly";
+    dU.opsrg006.className = "Readonly";              // Surgery Completed
     dU.opsrg006.readOnly = true;
-    dU.opsrg080.className = "";
+    dU.opsrg080.className = "";                      // Patient Into Theatre
     dU.opsrg080.readOnly = false;
-    dU.opsrg081.className = "";
+    dU.opsrg081.className = "";                      // Patient Out of Theatre
     dU.opsrg081.readOnly = false;
-    if (dU.distimes.value == "0") {
-      if (!isWhitespace(dU.opsrg005.value)) {
+    if (dU.distimes.value == "0") {                  // distimes = 0
+      if (!isWhitespace(dU.opsrg005.value)) {        // Surgery Started n blank
         if (VariableNameExists('CaseAbandonedGrey')) {
           if (CaseAbandonedGrey == false) {
-            dU.opsrg005.className = "";
+            dU.opsrg005.className = "";              // Surgery Started
             dU.opsrg005.readOnly = false;
-            dU.opsrg006.className = "";
+            dU.opsrg006.className = "";              // Surgery Completed
             dU.opsrg006.readOnly = false;
           }
         }
       }
     }
-    else {
-      dU.opsrg005.className = "Readonly";
+    else {                                           // distimes = 1
+      dU.opsrg005.className = "Readonly";            // Surgery Started
       dU.opsrg005.readOnly = true;
-      dU.opsrg006.className = "Readonly";
+      dU.opsrg006.className = "Readonly";            // Surgery Completed
       dU.opsrg006.readOnly = true;
-      dU.opsrg080.className = "Readonly";
+      dU.opsrg080.className = "Readonly";            // Patient Into Theatre
       dU.opsrg080.readOnly = true;
-      dU.opsrg081.className = "Readonly";
+      dU.opsrg081.className = "Readonly";            // Patient Out of Theatre
       dU.opsrg081.readOnly = true;
     }
   }
-  else {
-    if (dU.distimes.value == "0") {
-      dU.opsrg005.className = "";
+  else {                                             // Case Abandoned unchecked
+    if (dU.distimes.value == "0") {                  // distimes = 0
+      dU.opsrg005.className = "";                    // Surgery Started
       dU.opsrg005.readOnly = false;
-      dU.opsrg006.className = "";
+      dU.opsrg006.className = "";                    // Surgery Completed
       dU.opsrg006.readOnly = false;
-      dU.opsrg080.className = "";
+      dU.opsrg080.className = "";                    // Patient Into Theatre
       dU.opsrg080.readOnly = false;
-      dU.opsrg081.className = "";
+      dU.opsrg081.className = "";                    // Patient Out of Theatre
       dU.opsrg081.readOnly = false;
     }
-    else {
-      dU.opsrg005.className = "Readonly";
+    else {                                           // distimes = 1
+      dU.opsrg005.className = "Readonly";            // Surgery Started
       dU.opsrg005.readOnly = true;
-      dU.opsrg006.className = "Readonly";
+      dU.opsrg006.className = "Readonly";            // Surgery Completed
       dU.opsrg006.readOnly = true;
-      dU.opsrg080.className = "Readonly";
+      dU.opsrg080.className = "Readonly";            // Patient Into Theatre
       dU.opsrg080.readOnly = true;
-      dU.opsrg081.className = "Readonly";
+      dU.opsrg081.className = "Readonly";            // Patient Out of Theatre
       dU.opsrg081.readOnly = true;
     }
   }
@@ -938,7 +938,6 @@ function checkDisableAllTimes() {
   if(f.suprlevl.value=="1") { return; }
 
   if (isWhitespace(document.UpdateForm.opard080.value)) { return; }
-
   document.UpdateForm.distimes.value = "1";
 
   document.UpdateForm.opard039.className="Readonly";
@@ -1181,8 +1180,8 @@ EventExist="%OPRWEB06.12.843";
 <input type=hidden name=d_opsrg028 id=d_opsrg028 value="%OPRWEB06.12.366">
 <input type=hidden name=errcode  value="0">
 <input type=hidden name=distimes id=distimes value="0">
-<input type=hidden name=sessdate id=distimes value="">
-<input type=hidden name=sesstime id=distimes value="">
+<input type=hidden name=sessdate id=sessdate value="">
+<input type=hidden name=sesstime id=sesstime value="">
 
 <table border="0" cellpadding="0" cellspacing="0" width="100%" align=center>
 <tr><td class=HeadingCell align=left>
@@ -1232,8 +1231,8 @@ EventExist="%OPRWEB06.12.843";
 <tr><td width=8% class=DataLabel>Procedure&nbsp;</td>
     <td><input type=text size=116 name=opdea014 maxlength=80 tabindex=1
           title="Procedure Description" value="%OPRWEB06.12.305"></td>
-    <td width=2%><img src="../images/HelpIcon.gif" class=Icon
-     onmouseover='showPopUp(ProcedureDescInfo);'></td>
+    <td width=2%><img src="../images/HelpIcon.gif" id=iconProc class=Icon
+     onmouseover='showPopUpDayProc(ProcedureDescInfo,"iconProc");'></td>
     <td width=100%></td></tr>
 <tr><td class=DataLabel>&nbsp;&nbsp;</td>
     <td> <input type=text size=116 name=opdea015 maxlength=80 tabindex=1
@@ -1246,8 +1245,8 @@ EventExist="%OPRWEB06.12.843";
 
 <br>
 <table border="0" cellpadding="1" cellspacing="0" width="100%" align=center>
-<tr><td width=2%><img src="../images/HelpIcon.gif" class=Icon
-     onmouseover='showPopUp(TimeCalledForInfo);'></td>
+<tr><td width=2%><img src="../images/HelpIcon.gif" class=Icon id=iconTSF
+     onmouseover='showPopUpDayProc(TimeCalledForInfo,"iconTSF");'></td>
     <td width=11%>Time Sent For</td>
     <td width=11%> 
     <input type=text name=opard039 id=opard039 size=8 maxlength=8
@@ -1265,8 +1264,8 @@ EventExist="%OPRWEB06.12.843";
     <td class=DataField>&nbsp;</td>
 </tr>
 
-<tr><td width=2%><img src="../images/HelpIcon.gif" class=Icon
-     onmouseover='showPopUp(TimeOfArrivalInfo);'></td>
+<tr><td width=2%><img src="../images/HelpIcon.gif" class=Icon id=iconTOA
+     onmouseover='showPopUpDayProc(TimeOfArrivalInfo,"iconTOA");'></td>
     <td class=DataLabel width=11%>Time of Arrival</td>
     <td class=DataField width=11%>
     <input type=text name=opard002 id=opard002 size=8 maxlength=8
@@ -1292,8 +1291,8 @@ EventExist="%OPRWEB06.12.843";
     <td class=DataField>&nbsp;</td>
 </tr>  
 
-<tr><td width=2%><img src="../images/HelpIcon.gif" class=Icon
-     onmouseover='showPopUp(WheelsInTimeInfo);'></td>
+<tr><td width=2%><img src="../images/HelpIcon.gif" class=Icon id=iconPIT
+     onmouseover='showPopUpDayProc(WheelsInTimeInfo,"iconPIT");'></td>
     <td class=DataLabel>Patient Into Theatre</td>
     <td class=DataField><input type=text name=opsrg080 id=opsrg080 size=8
        maxlength=8 title="Patient Into Theatre" value="%OPRWEB06.12.680"
@@ -1332,8 +1331,8 @@ EventExist="%OPRWEB06.12.843";
 </table>
 
 <table border="0" cellpadding="1" cellspacing="0" width="100%" align=center>
-<tr><td width=2%><img src="../images/HelpIcon.gif" class=Icon
-     onmouseover='showPopUp(SurgicalTimeOutInfo);'></td>
+<tr><td width=2%><img src="../images/HelpIcon.gif" class=Icon id=iconSTO
+     onmouseover='showPopUpDayProc(SurgicalTimeOutInfo,"iconSTO");'></td>
     <td width=11% class=DataLabel>Surgical Time Out</td>
     <td width=11% class=DataField><input type=text name=opard029 id=opard029 size=8
        maxlength=8 title="Surgical Time Out" value="%OPRWEB06.12.529"
@@ -1343,8 +1342,8 @@ EventExist="%OPRWEB06.12.843";
        onclick="SetCurrentDateTime(null,opard029);checkTOA();checkPOOT();">
       <img src=../images/TimeLookup.gif class=Icon
        onclick="TimeLookupFrame(opard029);"></td>
-    <td width=2%><img src="../images/HelpIcon.gif" class=Icon
-     onmouseover='showPopUp(AnaestheticTimeOutInfo);'></td>
+    <td width=2%><img src="../images/HelpIcon.gif" class=Icon id=iconATO
+     onmouseover='showPopUpDayProc(AnaestheticTimeOutInfo,"iconATO");'></td>
     <td width=120px class=DataLabel>Anaesthetic Time Out</td>
     <td width=140px class=DataField><input type=text name=opard061 id=opard061
        size=8 maxlength=8 title="Anaesthetic Time Out"
@@ -1355,7 +1354,7 @@ EventExist="%OPRWEB06.12.843";
                 checkTimeArrival();">
       <img src=../images/TimeLookup.gif class=Icon
        onclick="TimeLookupFrame(opard061);"></td>
-    <td width=70px class=DataLabel>Not applicable</td>
+    <td width=70px class=DataLabel>Not Applicable</td>
     <td><input type=checkbox name="d_opard026" id="d_opard026"
          title="Anaesthetic Time Out Not Applicable"
          value="" onclick="chkAnaesTimeOutNotApplicable();"
@@ -1367,8 +1366,8 @@ EventExist="%OPRWEB06.12.843";
 </table>
 
 <table border="0" cellpadding="1" cellspacing="0" width="100%" align=center>
-<tr><td width=2%><img src="../images/HelpIcon.gif" class=Icon
-     onmouseover='showPopUp(AnaestheticAdministrationInfo);'></td>
+<tr><td width=2%><img src="../images/HelpIcon.gif" class=Icon id=iconAS
+     onmouseover='showPopUpDayProc(AnaestheticAdministrationInfo,"iconAS");'></td>
     <td width=11% class=DataLabel>Anaesthetic Started</td>
     <td width=11% class=DataField>
       <input type=text name=opard042 id=opard042 size=8 maxlength=8
@@ -1393,8 +1392,8 @@ EventExist="%OPRWEB06.12.843";
          %OPRWEB06.12.545.2
       </select></td></tr>
 
-<tr><td width=2%><img src="../images/HelpIcon.gif" class=Icon
-     onmouseover='showPopUp(SurgeryStartInfo);'></td>
+<tr><td width=2%><img src="../images/HelpIcon.gif" class=Icon id=iconSS
+     onmouseover='showPopUpDayProc(SurgeryStartInfo,"iconSS");'></td>
     <td class=DataLabel>Surgery Started</td>
     <td class=DataField>
       <input type=text name=opsrg005 id=opsrg005 size=8 maxlength=8
@@ -1412,8 +1411,8 @@ EventExist="%OPRWEB06.12.843";
     <td class=DataField>&nbsp;</td>
 </tr>
 
-<tr><td width=2%><img src="../images/HelpIcon.gif" class=Icon
-     onmouseover='showPopUp(SurgeryEndInfo);'></td>
+<tr><td width=2%><img src="../images/HelpIcon.gif" class=Icon id=iconSC
+     onmouseover='showPopUpDayProc(SurgeryEndInfo,"iconSC");'></td>
     <td class=DataLabel>Surgery Completed</td>
     <td class=DataField>
       <input type=text name=opsrg006 id=opsrg006 size=8 maxlength=8
@@ -1437,8 +1436,8 @@ EventExist="%OPRWEB06.12.843";
 <div id="ReasonForRecoveryDIV"></div>
 
 <table border="0" cellpadding="1" cellspacing="0" width="100%" align=center>
-<tr><td width=2%><img src="../images/HelpIcon.gif" class=Icon
-     onmouseover='showPopUp(WheelsOutTimeInfo);'></td>
+<tr><td width=2%><img src="../images/HelpIcon.gif" class=Icon id=iconPOT
+     onmouseover='showPopUpDayProc(WheelsOutTimeInfo,"iconPOT");'></td>
     <td class=DataLabel width=11%>Patient Out of Theatre</td>
     <td class=DataField><input type=text name=opsrg081 id=opsrg081 size=8
        maxlength=8 title="Patient Out of Theatre" value="%OPRWEB06.12.681"
@@ -1459,8 +1458,8 @@ EventExist="%OPRWEB06.12.843";
     <td class=DataField>&nbsp;</td>
 </tr>
 
-<tr><td width=2%><img src="../images/HelpIcon.gif" class=Icon
-     onmouseover='showPopUp(TimeInRecoveryDayInfo);'></td>
+<tr><td width=2%><img src="../images/HelpIcon.gif" class=Icon id=iconPACU
+     onmouseover='showPopUpDayProc(TimeInRecoveryDayInfo,"iconPACU");'></td>
     <td class=DataLabel width=11%>Time in PACU</td>
     <td class=DataField width=11%>
       <input type=text name=opard077 id=opard077 size=8 maxlength=8 tabindex=23
@@ -1489,8 +1488,8 @@ EventExist="%OPRWEB06.12.843";
        %OPRWEB06.12.516.2
       </select></td></tr>
 
-<tr><td width=2%><img src="../images/HelpIcon.gif" class=Icon
-     onmouseover='showPopUp(ReadyToDepartInfo);'></td>
+<tr><td width=2%><img src="../images/HelpIcon.gif" class=Icon id=iconRTDT
+     onmouseover='showPopUpDayProc(ReadyToDepartInfo,"iconRTDT");'></td>
     <td class=DataLabel>Ready to Depart Time</td>
     <td class=DataField>
       <input type=text name=opard085 id=opard085 size=8 maxlength=8
@@ -1521,8 +1520,8 @@ EventExist="%OPRWEB06.12.843";
       </select></td></tr>
 
 <tr><td width=2%>
-    <img src="../images/HelpIcon.gif" class=Icon
-     onmouseover='showPopUp(ExitTheatreComplexInfo);'></td>
+    <img src="../images/HelpIcon.gif" class=Icon id=iconETC
+     onmouseover='showPopUpDayProc(ExitTheatreComplexInfo,"iconETC");'></td>
     <td class=DataLabel>Exit Theatre Complex</td>
     <td class=DataField>
       <input type=text name=opard080 id=opard080 size=8 maxlength=8 tabindex=30
@@ -1559,8 +1558,9 @@ EventExist="%OPRWEB06.12.843";
     <td><input type=hidden name=opsrg073 value=" ">
         <input type=checkbox name=d_opsrg073 value="1" tabindex=35></td></tr>
 
-<tr><td width=2% class="AddInfoLeft"><img src="../images/HelpIcon.gif" class=Icon
-     onmouseover='showPopUp(TimeToICUInfo);'></td>
+<tr><td width=2% class="AddInfoLeft"><img src="../images/HelpIcon.gif" 
+     id=iconICU class=Icon
+     onmouseover='showPopUpDayProc(TimeToICUInfo,"iconICU");'></td>
     <td class="DataLabel">Time to ICU</td>
     <td class="DataField AddInfoRight">
       <input type=text name=opard083 id=opard083 size=8 maxlength=8
@@ -1580,8 +1580,9 @@ EventExist="%OPRWEB06.12.843";
     <td><input type=hidden name=opsrg076 value=" ">
         <input type=checkbox name=d_opsrg076 value="1" tabindex=38></td></tr>
 
-<tr><td width=2% class="AddInfoLeft"><img src="../images/HelpIcon.gif" class=Icon
-     onmouseover='showPopUp(TimePatientDiedInfo);'></td>
+<tr><td width=2% class="AddInfoLeft"><img src="../images/HelpIcon.gif" 
+     id=iconTPD class=Icon
+     onmouseover='showPopUpDayProc(TimePatientDiedInfo,"iconTPD");'></td>
     <td class="DataLabel">Time Patient Deceased</td>
     <td class="DataField AddInfoRight">
       <input type=text name=opard082 id=opard082 size=8 maxlength=8
@@ -1596,8 +1597,7 @@ EventExist="%OPRWEB06.12.843";
     <td class=DataLabel>&nbsp;</td>
     <td class=DataField>&nbsp;</td></tr>
 
-<tr><td width=2% class="AddInfoLeft AddInfoBottom"><img src="../images/HelpIcon.gif" class=Icon
-     onmouseover='showPopUp(TimePatientDiedInfo);'></td>
+<tr><td width=2% class="AddInfoLeft AddInfoBottom"></td>
     <td class="DataLabel AddInfoBottom">Case Abandoned</td>
     <td class="AddInfoRight AddInfoBottom"><input type=checkbox name=d_opsrg074 
         title="Case Abandoned" value="1" onclick="ToggleCA()" tabindex=39></td>
@@ -2198,8 +2198,8 @@ Reason for Overnight
 
 <span id="ReasonForRecoverySPAN1" style="display:none">
 <table border="0" cellpadding="1" cellspacing="0" width="100%" align=center>
-<tr><td width=2%><img src="../images/HelpIcon.gif" class=Icon
-     onmouseover='showPopUp(ReadyForRecoveryInfo);'></td>
+<tr><td width=2%><img src="../images/HelpIcon.gif" class=Icon id=iconRFR1
+     onmouseover='showPopUpDayProc(ReadyForRecoveryInfo,"iconRFR1");'></td>
   <td width=11%>Ready for Recovery</td>
   <td><input type=text name=opard060 id=opard060 size=8 maxlength=8
      title="Ready for Recovery" value="%OPRWEB06.12.560" tabindex=21
@@ -2221,8 +2221,8 @@ Reason for Overnight
 
 <span id="ReasonForRecoverySPAN3" style="display:none">
 <table border="0" cellpadding="1" cellspacing="0" width="100%" align=center>
-<tr><td width=2%><img src="../images/HelpIcon.gif" class=Icon
-     onmouseover='showPopUp(ReadyForRecoveryInfo);'></td>
+<tr><td width=2%><img src="../images/HelpIcon.gif" class=Icon id=iconRFR2
+     onmouseover='showPopUpDayProc(ReadyForRecoveryInfo,"iconRFR2");'></td>
   <td width=11%>Ready for Recovery</td>
   <td><input type=text name=opard062 id=opard062 size=8 maxlength=8
      title="Ready for Recovery" value="%OPRWEB06.12.562" tabindex=21
@@ -2236,8 +2236,8 @@ Reason for Overnight
 
 <span id="ReasonForRecoverySPAN4" style="display:none">
 <table border="0" cellpadding="1" cellspacing="0" width="100%" align=center>
-<tr><td width=2%><img src="../images/HelpIcon.gif" class=Icon
-     onmouseover='showPopUp(ReadyForRecoveryInfo);'></td>
+<tr><td width=2%><img src="../images/HelpIcon.gif" class=Icon id=iconRFR3
+     onmouseover='showPopUpDayProc(ReadyForRecoveryInfo,"iconRFR3");'></td>
   <td width=11%>Ready for Recovery</td>
   <td><input type=text name=opard063 id=opard063 size=8 maxlength=8
      title="Ready for Recovery" value="%OPRWEB06.12.563" tabindex=21
@@ -2251,8 +2251,8 @@ Reason for Overnight
 
 <span id="ReasonForRecoverySPAN5" style="display:none">
 <table border="0" cellpadding="1" cellspacing="0" width="100%" align=center>
-<tr><td width=2%><img src="../images/HelpIcon.gif" class=Icon
-     onmouseover='showPopUp(ReadyForRecoveryInfo);'></td>
+<tr><td width=2%><img src="../images/HelpIcon.gif" class=Icon id=iconRFR4
+     onmouseover='showPopUpDayProc(ReadyForRecoveryInfo,"iconRFR4");'></td>
   <td width=11%>Ready for Recovery</td>
   <td><input type=text name=opard064 id=opard064 size=8 maxlength=8
      title="Ready for Recovery" value="%OPRWEB06.12.564" tabindex=21

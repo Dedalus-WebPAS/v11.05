@@ -1,3 +1,4 @@
+. V11.05.01 29/10/2025 ZY C-0968827 Fixed desc of PMTSAIDS
 . V9.12.001 08/09/2009 DS  Added pmtsrtdt, pmtsrttm, pmtsrtbk  CAR 205397       
 . V9.07.001 17/08/2006 EC  Added PMTSRUNO and PMTSTRNO CAR 110245               
 . V9.06.001 24/04/2006 EC  Fixed desc of PMTSAIDS CAR 102863                    
@@ -61,7 +62,7 @@ PMTSFACL  DIM       3      3        961   Facility (Cat fa)
 PMTSTRNS  DIM       3      3        964   Transport In (Cat OB)              
 PMTSMOBL  DIM       3      3        967   Mobility (Cat pn)                  
 PMTSBOOK  DIM       1      1        970   Pick Up Transport Booked 0=No 1=Yes
-PMTSAIDS  DIM       3      3        971   Aides (CAT po)                     
+PMTSAIDS  DIM       3      3        971   Aids (CAT po)                     
 PMTSMENT  DIM       3      3        974   Mental State (Cat pp)              
 PMTSSPEC  DIM       3      3        977   Special Arrangements (Cat SA)      
 PMTSCCEN  DIM       10     10       980   Cost Centre                        

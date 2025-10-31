@@ -5,6 +5,8 @@
 .
 . Modifications :
 .---------------------------------------------------------------------
+. V11.05.24  24/10/2025  J.Tan          TSK 0963838
+.            Added VALDDT00 to validate Supervisor Change Transfer Date/Time
 . V11.05.23  15/10/2025  Alina Bhari    TSK 0947952
 .            Formatted discharge date and admission date of linked visit in 
 .            DD/MM/YYYY and time - FHIR2200,FHIR2300,FHIR2400                  
@@ -3016,6 +3018,9 @@ SAVCLMNO  DIM       20
 SAVKEY3   DIM       3
 SAVETRID  DIM       24
 SAVKEY24  DIM       24
+SAVADOCT  DIM       6
+SAVWRDBD  DIM       6
+SAVATYPE  DIM       3
 SHOWMAP   FORM      1
 SHOWSJOG  FORM      1
 REASCHNG  DIM       3
@@ -3521,7 +3526,7 @@ NORETURN  DIM       1      * No return (button) flag
 .
 .------------------------------------------------------------------------
 PRGID     INIT      "PATWEB98"
-VERSION   INIT      "V11.05.23"
+VERSION   INIT      "V11.05.24"
 PRGNAM    INIT      "Patient Enquiries Template Server"
 .------------------------------------------------------------------------
           CALL      WEBINT00       * Initialise Fifo Etc.
@@ -20306,7 +20311,14 @@ TRNSUP12  CLEAR     HTMLLINK
             GOTO      TRNSUP15
           ENDIF
 .
-          APPEND    "javascript:ChangeTranDateTime('",HTMLLINK
+          MATCH     ANSC,TMOVE
+          IF        !@EQUAL
+            APPEND    "javascript:DispLeaveRetError()",HTMLLINK
+            GOTO      TRNSUP15
+          ELSE
+            APPEND    "javascript:ChangeTranDateTime('",HTMLLINK
+          ENDIF
+.
           APPEND    BEDTRKEY,HTMLLINK
           APPEND    "')",HTMLLINK
 .
@@ -29026,6 +29038,11 @@ UPDTRN30  PACK      KEY30,TRANSKEY,SP70        * transfer date/time update
           COMPARE   SEVENTY2,TRNSUPTY
           GOTO      UPDTRN35 IF EQUAL          * care type date/time update
 .
+.         Changing Transfer Date/Time
+.
+          CALL      VALDDT00                   * Validate
+          BRANCH    OVRCD,UPDTRN86,UPDTRN87
+.
           MATCH     Z70,TRNTODAT               * update date/time
           IF        !@EQUAL
             PACK      KEY30,TADMN,TRNTODAT,TRNTOTIM,TWARD,TBED,SP70
@@ -29331,6 +29348,34 @@ UPDTRN71  MATCH     Z70,TRNTORES               * update resident
 UPDTRN80  ADD       ONE,TRNCOUNT
           GOTO      UPDTRN55
 .
+UPDTRN86  UNPACK    TDATE,CCENT,CYEAR,CMON,CDAY
+          CALL      PACDATE
+          REP       " 0",CPCDATE
+.
+          CLEAR     WEBTITLE
+          APPEND    "Transfer Date/time must be before ",WEBTITLE
+          APPEND    CPCDATE,WEBTITLE
+          APPEND    SP2,WEBTITLE
+          APPEND    TTIME,WEBTITLE
+          RESET     WEBTITLE
+.
+          CALL      WEBERR00
+          GOTO      UPDTRN98
+.
+UPDTRN87  UNPACK    TDATE,CCENT,CYEAR,CMON,CDAY
+          CALL      PACDATE
+          REP       " 0",CPCDATE
+.
+          CLEAR     WEBTITLE
+          APPEND    "Transfer Date/time must be after ",WEBTITLE
+          APPEND    CPCDATE,WEBTITLE
+          APPEND    SP2,WEBTITLE
+          APPEND    TTIME,WEBTITLE
+          RESET     WEBTITLE
+.
+          CALL      WEBERR00
+          GOTO      UPDTRN98
+.
 UPDTRN88  CLEAR     WEBTITLE
           APPEND    "This visit has been confirmed by ICWA and the ",WEBTITLE
           APPEND    "Claim Type cannot be updated.",WEBTITLE
@@ -29597,6 +29642,90 @@ INSTRN60  MOVE      TRNTOWRD,TWARD
           MOVE      ZERO,EXIT
 .
 INSTRN99  RETURN
++
+.-----------------------------------------------------------------------------
+.         Validate Transfer Date/Time
+.-----------------------------------------------------------------------------
+VALDDT00  MOVE      ZERO,OVRCD
+          MATCH     "C",TMOVE
+          GOTO      VALDDT99 IF NOT EQUAL    * Not a change record
+.
+          UNPACK    TRANSKEY,KEY8,KEY16,SAVWRDBD  * Admission,Date/Time,Ward/Bed
+.
+.         Check if this is the last transfer record for the admission
+.
+          CALL      RDKTRAN2
+          BRANCH    OVRCD,VALDDT10
+.
+          MATCH     DTADMN,KEY8           * check same admision no ?
+          GOTO      VALDDT10 IF NOT EQUAL
+.
+.         This is not the last Transfer record
+.         Check if the change date/time is after the Last rec. in transfer file
+.
+          PACK      KEY30,KEY8,Z70
+          CALL      RDSTRAN2
+          CALL      RDPTRAN2
+          BRANCH    OVRCD,VALDDT80
+.
+          MATCH     DTADMN,KEY8          * check same admision no ?
+          GOTO      VALDDT80 IF NOT EQUAL
+.
+.         The new transfer date/time must be before the last Date/time change
+.
+          MATCH     TDATE,TRNTODAT
+          GOTO      VALDDT80 IF LESS
+          GOTO      VALDDT91 IF NOT EQUAL
+.
+          MATCH     TTIME,TRNTOTIM
+          GOTO      VALDDT91 IF NOT LESS
+.
+          GOTO      VALDDT80
+.
+.         This is the last Transfer record
+.         Check for previous Ward/bed or Adm.type change
+.
+VALDDT10  PACK      KEY30,TRANSKEY,SP70
+          CALL      RDTRAN2              * reposition
+          BRANCH    OVRCD,VALDDT80
+.
+          MOVE      ATYPE,SAVATYPE       * save Adm.type
+.
+          CALL      RDPTRAN2
+          BRANCH    OVRCD,VALDDT80
+.
+          MATCH     DTADMN,KEY8          * check same admision no ?
+          GOTO      VALDDT80 IF NOT EQUAL
+.
+          PACK      KEY6,TWARD,TBED
+          MATCH     KEY6,SAVWRDBD        * check ward/bed
+          GOTO      VALDDT20 IF NOT EQUAL
+.
+          MATCH     TATYPE,SAVATYPE      * check admission type
+          GOTO      VALDDT10 IF EQUAL
+.
+.         The new transfer date/time must be after the previous change
+.
+VALDDT20  MATCH     TRNTODAT,TDATE
+          GOTO      VALDDT80 IF LESS
+          GOTO      VALDDT92 IF NOT EQUAL
+.
+          MATCH     TRNTOTIM,TTIME
+          GOTO      VALDDT92 IF NOT LESS
+.
+VALDDT80  PACK      KEY30,TRANSKEY,SP70
+          CALL      RDTRAN2              * reposition
+.
+          MOVE      ZERO,OVRCD
+          GOTO      VALDDT99
+.
+VALDDT91  MOVE      ONE,OVRCD
+          GOTO      VALDDT99
+.
+VALDDT92  MOVE      TWO,OVRCD
+          GOTO      VALDDT99
+.
+VALDDT99  RETURN
 +
 .-----------------------------------------------------------------------------
 . If using EDWARD write trigger records to pmswadaf

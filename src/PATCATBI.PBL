@@ -30,6 +30,8 @@
 .--------------------------------------------------------------------------
 .
 .        VERSION  :
+.         V11.05.08 24/10/2025  J.Tan          TSK 0946593
+.                   Fixed COPTION generating CP Theatre fee sort
 .         V11.05.07 10/10/2025  J.Tan          TSK 0946593
 .                   Mod CP zero thea.fee to sort using perdiem fees (SORTDONE)
 .         V11.05.06 17/07/2025  J.Tan          TSK 0961277
@@ -10797,7 +10799,6 @@ GETIT24  CALL      GTHR0000                 * get normal theatre charge
          BRANCH    EXIT OF GETIT90
          CALL      CIPAT000                 * Set No of Inv. from Contract
 .
-         ADD       ONE,COPTION
          OPEN      PATITEM1,"patitemn"
          PACK      KEY17 WITH TITEMNO,OPRDATE,SP70
          CALL      PATITMRD

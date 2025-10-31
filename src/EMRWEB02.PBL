@@ -6,6 +6,9 @@
 . Modifications :
 .
 .----------------------------------------------------------------------
+. V11.05.18 16/10/2025  Nikitha B      TSK 0967649
+.           Added to check for invalid and end date for Active alerts to skip 
+.           them from printing at OUTALR10.
 . V11.05.17 11/09/2025  Nikitha B      TSK 0965462
 .           Recomplied for EMRCHMAN.PBL
 . V11.05.16 23/07/2025  Thanh T        TSK 0959732
@@ -3720,7 +3723,7 @@ SVCRCNTR  FORM      3       Count
 .
 .-----------------------------------------------------------
 PRGID     INIT      "EMRWEB02"
-VERSION   INIT      "V11.05.17"
+VERSION   INIT      "V11.05.18"
 PRGNAM    INIT      "Emergency Details Server"
 .-----------------------------------------------------------
 .
@@ -32728,16 +32731,38 @@ OUTALR10  CALL      RKPTALR1
 .
           MATCH     KEY2,PTALCATG
           GOTO      OUTALR99 IF NOT EQUAL
+. 
+          CALL      IBACLOCK
+          PACK      CURRDATE,CCC,CYY,CMM,CDD
+          REP       " 0",CURRDATE
 .
 . -- only print alerts with indicator 3=P ---
+.
           PACK      KEY5,KEY2,PTALCODE,SP70
           CALL      RDCODE1
           BRANCH    OVRCD,OUTALR10
 .
           MATCH     ANSP,TCINDC3
+          GOTO      OUTALR50 IF EQUAL
+.
+          MATCH     ANSA,TCINDC3            * Check active alert
           GOTO      OUTALR10 IF NOT EQUAL
 .
-          MATCH     "2",KEY1
+. Check active alert's Inavtive date & End Date
+.
+          MATCH     SP70,PTALEDAT
+          GOTO      OUTALR30 IF EQUAL        * No End Date
+.
+          MATCH     PTALEDAT,CURRDATE
+          GOTO      OUTALR10 IF NOT LESS     * alert end date passed ?
+.
+OUTALR30  MATCH     SP70,PTALDTIN
+          GOTO      OUTALR50 IF EQUAL        * No Inactive Date
+.
+          MATCH     PTALDTIN,CURRDATE
+          GOTO      OUTALR10 IF NOT LESS     * alert inactive date passed ?
+.
+OUTALR50  MATCH     "2",KEY1
           IF        @EQUAL
             WRITE     HTMLFILE;"<tr><td>",TDESC,"</td><td>";
           ELSE
@@ -32745,32 +32770,32 @@ OUTALR10  CALL      RKPTALR1
           ENDIF
 .  
           MATCH     "2",KEY1
-          GOTO      OUTALR15 IF EQUAL
+          GOTO      OUTALR55 IF EQUAL
           MATCH     "1",KEY1
           GOTO      OUTALR10 IF NOT EQUAL
 .
 . *** output comments from pmsalnaf for this alert ***
 .
-OUTALR15  MOVE      ZERO,F6
+OUTALR55  MOVE      ZERO,F6
           PACK      KEY19,PTALURNO,PTALCATG,PTALCODE,PTALCNTR,SP70
           CALL      RSPMALN1
-OUTALR20  CALL      RKPMALN1
-          BRANCH    OVRCD,OUTALR29
+OUTALR60  CALL      RKPMALN1
+          BRANCH    OVRCD,OUTALR65
 .
           MATCH     PTALURNO,PMANURNO
-          GOTO      OUTALR29 IF NOT EQUAL
+          GOTO      OUTALR65 IF NOT EQUAL
 .
           MATCH     PMANACAT,PTALCATG
-          GOTO      OUTALR29 IF NOT EQUAL
+          GOTO      OUTALR65 IF NOT EQUAL
 .
           MATCH     PMANACOD,PTALCODE
-          GOTO      OUTALR29 IF NOT EQUAL
+          GOTO      OUTALR65 IF NOT EQUAL
 .
           MATCH     PMANCNTR,PTALCNTR
-          GOTO      OUTALR29 IF NOT EQUAL
+          GOTO      OUTALR65 IF NOT EQUAL
 .
           MATCH     SP70,PMANCOMM
-          GOTO      OUTALR29 IF EQUAL
+          GOTO      OUTALR65 IF EQUAL
 .
           IF        F6=0
             MATCH     "1",KEY1
@@ -32786,9 +32811,9 @@ OUTALR20  CALL      RKPMALN1
             WRITE     HTMLFILE;PMANCOMM
           ENDIF
           ADD       ONE,F6
-          GOTO      OUTALR20
+          GOTO      OUTALR60
 .
-OUTALR29  MATCH     "2",KEY1
+OUTALR65  MATCH     "2",KEY1
           IF        @EQUAL
             WRITE     HTMLFILE;"</td></tr>";
           ENDIF

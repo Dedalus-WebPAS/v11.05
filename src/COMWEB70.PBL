@@ -6,6 +6,8 @@
 . Modifications :
 .
 .------------------------------------------------------------------------------
+. V11.05.17 27/10/2025  Ebon Clements  TSK 0964542
+.           Recompiled for WEBGROUP - Load Codefinder clinician date and time
 . V11.05.16 10/10/2025  J.Tan          TSK 0946593
 .           Recompiled for PATCATBI - Sort Casepayment Theatre fee items
 . V11.05.15 06/10/2025  J.Tan          TSK 0966784
@@ -766,6 +768,7 @@
           INC       PATCMTFD/INC
           INC       OBSPCOFD/INC
           INC       OPRARDFD/INC
+          INC       OPRCLIFD/INC
           INC       OPRPMBFD/INC
           INC       OPRDEAFD/INC
           INC       OPRDECFD/INC
@@ -1214,7 +1217,7 @@ OBB       INIT      "("
 .
 .----------------------------------------------------------------------
 PRGID     INIT      "COMWEB70"
-VERSION   INIT      "V11.05.16"
+VERSION   INIT      "V11.05.17"
 PRGNAM    INIT      "Patient Polling Server         "
 .----------------------------------------------------------------------
 .
@@ -1336,6 +1339,7 @@ INIT0000  OPEN      IBAPRTA1,"ibaprtaf"        * For Printer Selection
           OPEN      OPRDETA2,"oprdetaf"
           OPEN      OPRDETA3,"oprdetaf"
           OPEN      OPRSESA1,"oprsesaf"
+          OPEN      OPRSRGA1,"oprsrgaf"
           OPEN      OPRTSMA1,"oprtsmaf"
 .
           OPEN      PATAFEA1,"patafeaf"
@@ -1379,6 +1383,7 @@ INIT0000  OPEN      IBAPRTA1,"ibaprtaf"        * For Printer Selection
           OPEN      PATDGWA1,"patdgwaf"
           OPEN      PATTFEE1,"pattfeef"
           OPEN      OPRARDA1,"oprardaf"
+          OPEN      OPRCLIA1,"oprcliaf"
           OPEN      OPRDETC1,"oprdetcf"
           OPEN      PATCTFA1,"patctfaf"
           OPEN      PATHLFA1,"pathlfaf"
@@ -1546,6 +1551,7 @@ INIT0000  OPEN      IBAPRTA1,"ibaprtaf"        * For Printer Selection
                                  *238,CMDISA       * associated disease prefix
           READ      CONTROLF,TWENTY1;*45,PTCNDRSM
           READ      CONTROLF,TWENTY1;*217,CMDISL   * prefix for LOS disease
+          READ      CONTROLF,FORTY;*111,OPCNCLSU
           READ      CONTROLF,FIFTY9;*63,CFFMORB    * allow free format desc
           READ      CONTROLF,SIXTY;*133,MRCNEPSC:  * coding in single screen
                                    *147,MRCNSOMV:  * send MV Hrs to grouper
@@ -3967,6 +3973,7 @@ PATSTRYR
           INC       PATSGCIO/INC
           INC       PATSRBIO/INC
           INC       OPRARDIO/INC
+          INC       OPRCLIIO/INC
           INC       OPRPMBIO/INC
           INC       OPRDEAIO/INC
           INC       OPRDECIO/INC
@@ -4052,6 +4059,7 @@ PATSTRYR
           INC       DGCLIS15
           INC       DGCLIWLD
           INC       NAMSTRCD
+          INC       OPRECOVT
           INC       PATGILOS
           INC       PATM10T9
           INC       PATMASTM

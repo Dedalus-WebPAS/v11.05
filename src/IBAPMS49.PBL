@@ -8,6 +8,8 @@
 .* Mods    :                                                                  *
 .*                                                                            *
 .******************************************************************************
+.*        V11.05.10 23.10.2025  Alina Bhari    TSK 0937787                    *
+.*                  Correctly Opened PATPTDA1,PATMTDA1 after isbuild -OYTD0000*
 .*        V11.05.09 24.09.2025  Alina Bhari    TSK 0962345                    *
 .*                  Report 999 when no record found for triage score -GTRIA800*
 .*        V11.05.08 30.06.2025  Alina Bhari    TSK 0955908                    *
@@ -2535,7 +2537,7 @@ YEARNAME  INIT      "patytd"
 .
 PRGID     INIT      "IBAPMS49"
 PRGNAM    INIT      "Process Data For PRS/2"
-VERSION   INIT      "V11.05.09"
+VERSION   INIT      "V11.05.10"
 +
 .******************************************************************************
 .*                                   ML0000                                   *
@@ -3219,6 +3221,7 @@ OYTD0000  UNPACK    CHCSED,CCENT,CYEAR,CMON,CDAY
           APPEND    "isbuild patptdaf 250 UC1-8",CMDLINE
           RESET     CMDLINE
           EXECUTE   CMDLINE,TASKID          * Create PTD file
+          OPEN      PATPTDA1,"patptdaf"
 .
           CLEAR     CMDLINE
           APPEND    "iserase patmtdaf",CMDLINE
@@ -3229,6 +3232,7 @@ OYTD0000  UNPACK    CHCSED,CCENT,CYEAR,CMON,CDAY
           APPEND    "isbuild patmtdaf 250 UC1-8",CMDLINE
           RESET     CMDLINE
           EXECUTE   CMDLINE,TASKID          * Create MTD file
+          OPEN      PATMTDA1,"patmtdaf"
           GOTO      OYTD9000
 .
 OYTD1000  DISPLAY   *P1:24,*EL,*B,"Date range file not set up for this run.  ";

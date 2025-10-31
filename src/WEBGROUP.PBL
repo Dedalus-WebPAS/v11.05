@@ -10,6 +10,10 @@
 .*                  Grouper, PC Grouper (CME) and TurboGrouper.               *
 .* Modifications  :                                                           *
 .*----------------------------------------------------------------------------*
+.*        V11.05.09 27/10/2025  Ebon Clements    TSK 0964542                  *
+.*                  Call GOPDST00 at GODTM900 to get the operation            *
+.*                  date and time when MBS items not found                    *
+.*                  Default clinician if no mbs items found CLTC0000 GOCLN000 *
 .*        V11.05.08 25/09/2025  Nikitha B        TSK 0966964                  *
 .*                  Formatted error at LODENC93.                              *
 .*        V11.05.07 29/05/2025  Ebon Clements    TSK 0950532                  *
@@ -5503,7 +5507,12 @@ GODTM400  CALL      RDKMMBS1                * Get the earliest
           GOTO      GODTM400
 .
 .                                           * last chance - set default times
-GODTM900  MATCH     SP8,OPERDATE
+GODTM900  CALL      GOPDST00
+          MOVE      D8,OPERDATE
+          MOVE      D5,OPERSTME
+          MOVE      DIM5,OPERETME
+.
+          MATCH     SP8,OPERDATE
           IF        @EQUAL
             MOVE      DDATE,OPERDATE
             MATCH     "1",MRCNOPDT          * change default to Admiss.Date ?
@@ -5545,14 +5554,6 @@ GOCLN000  REP       " 0",MRCNCLIN            * 0=NotUsed 1=Displayed 2=Mandatory
             GOTO      GOCLN999
           ENDIF
 .
-          PACK      KEY11,AADMNO,SP70
-          CALL      RDSMMBS1                * Check if MBS item exits
-          CALL      RDKMMBS1               
-          BRANCH    OVRCD,GOCLN999
-.
-          COMPARE   AADMNO,MMADMN           * Correct admission
-          GOTO      GOCLN999 IF NOT EQUAL
-.
           PACK      KEY31,ADMISSNO,SP70
           CALL      RSOPDEA2
 GOCLN200  CALL      RKOPDEA2                * Read fist theatre record
@@ -5574,6 +5575,16 @@ GOCLN200  CALL      RKOPDEA2                * Read fist theatre record
             GOTO      GOCLN999 IF EQUAL
 .
             PACK      KEY10,OPSECLIN,SP70     * Valid HCP
+.
+            COMPARE   ZERO,OPCNCLSU           * Using clinic or surgeon
+            IF        @EQUAL
+              PACK      KEY6,OPSECLIN,SP70
+              CALL      RDOPCLI1
+              IF        OVRCD=0
+                PACK      KEY10,OPCLDOCT,SP70
+              ENDIF
+            ENDIF
+.
             CALL      RDPMHCP1
             BRANCH    OVRCD,GOCLN999
 .
@@ -5602,16 +5613,60 @@ GOCLN999  RETURN
 CLTC0000  MOVE      ONE,MMRECN
           PACK      KEY11,ADMISSNO,MMRECN,SP70
           CALL      RDMMBS1
+          IF        OVRCD=0
+            GOTO      CLTC3000
+          ENDIF
+.
+. No MBS, get the 1st oprdetaf row
+.
+          PACK      KEY31,ADMISSNO,SP70
+          CALL      RSOPDEA2
+CLTC1000  CALL      RKOPDEA2                     * read Theatre Booking
           BRANCH    OVRCD,CLTC9999
 .
-          PACK      KEY10,PTMMOPID,SP70
+          MATCH     ADMISSNO,OPDAADMN
+          GOTO      CLTC9999 IF NOT EQUAL
+.
+          COMPARE   THREE,OPDASTAT
+          GOTO      CLTC1000 IF EQUAL
+.
+          MOVE      " 0",DIM2
+          MOVE      "1",DIM1
+          PACK      KEY35,OPDAUNIQ,DIM1,DIM2,Z70
+          CALL      RSOPTSM1
+CLTC2000  CALL      RPOPTSM1
+          BRANCH    OVRCD,CLTC9999
+.
+          MATCH     OPDAUNIQ,OPTSUNID
+          GOTO      CLTC9999 IF NOT EQUAL
+.
+          MATCH     DIM1,OPTSTMNO
+          GOTO      CLTC9999 IF NOT EQUAL
+.
+          MATCH     DIM2,DOPTSSIN
+          GOTO      CLTC2000 IF NOT EQUAL
+.
+          MATCH     OPDADATE,OPTSSDAT
+          GOTO      CLTC2000 IF NOT EQUAL
+.
+          MOVE      OPTSSTIM,DIM4                * Match hour/min only
+          MATCH     OPDAEXPS,DIM4
+          GOTO      CLTC2000 IF NOT EQUAL
+.
+          MATCH     SP70,OPTSSCDE
+          GOTO      CLTC9999 IF EQUAL
+          GOTO      CLTC9999 IF EOS
+.
+          GOTO      CLTC8000
+.
+CLTC3000  PACK      KEY10,PTMMOPID,SP70
           CALL      RDOPDEA3
           BRANCH    OVRCD,CLTC9999
 .
           MOVE      " 0",DIM2
           PACK      KEY35,PTMMOPID,PTMMTMNO,DIM2,Z70
           CALL      RSOPTSM1
-CLTC1000  CALL      RPOPTSM1
+CLTC5000  CALL      RPOPTSM1
           BRANCH    OVRCD,CLTC9999
 .
           MATCH     PTMMOPID,OPTSUNID
@@ -5621,20 +5676,20 @@ CLTC1000  CALL      RPOPTSM1
           GOTO      CLTC9999 IF NOT EQUAL
 .
           MATCH     DIM2,DOPTSSIN
-          GOTO      CLTC1000 IF NOT EQUAL
+          GOTO      CLTC5000 IF NOT EQUAL
 .
           MATCH     OPDADATE,OPTSSDAT
-          GOTO      CLTC1000 IF NOT EQUAL
+          GOTO      CLTC5000 IF NOT EQUAL
 .
           MOVE      OPTSSTIM,DIM4                * Match hour/min only
           MATCH     OPDAEXPS,DIM4
-          GOTO      CLTC1000 IF NOT EQUAL
+          GOTO      CLTC5000 IF NOT EQUAL
 .
           MATCH     SP70,OPTSSCDE
           GOTO      CLTC9999 IF EQUAL
           GOTO      CLTC9999 IF EOS
 .
-          PACK      KEY10,OPTSSCDE,SP70     * Valid HCP
+CLTC8000  PACK      KEY10,OPTSSCDE,SP70     * Valid HCP
           CALL      RDPMHCP1
           BRANCH    OVRCD,CLTC9999
 
@@ -8659,3 +8714,52 @@ VLDCID90  MOVE      SP70,VALDDCID           * Set to spaces
           GOTO      VLDCID99
 .
 VLDCID99  RETURN
+.
+.------------------------------------------------------------------------------
+. Get Operation Date, Start Date and Start Time
+. Input:  ADMISSNO 
+. Output: D8   - Operation Date
+.         D5   - Operation Start Time
+.         DIM5 - Operation End Time
+.------------------------------------------------------------------------------
+GOPDST00  MOVE      SP70,D8
+          MOVE      SP70,D5
+          MOVE      SP70,DIM5
+
+GOPDST10  PACK      KEY31,ADMISSNO,SP70
+          CALL      RSOPDEA2
+GOPDST20  CALL      RKOPDEA2
+          BRANCH    OVRCD,GOPDST99
+.
+          MATCH     ADMISSNO,OPDAADMN
+          GOTO      GOPDST99 IF NOT EQUAL
+.
+          COMPARE   THREE,OPDASTAT
+          GOTO      GOPDST20 IF EQUAL
+.
+          MOVE      "1",DIM1
+          PACK      KEY11,OPDAUNIQ,DIM1,SP70
+          CALL      RDOPSRG1
+          BRANCH    OVRCD,GOPDST99
+.
+          READ      CONTROLF,FORTY2;*235,OPCNFTIM,*237,OPCNTTIM
+          PACK      KEY10,OPDAUNIQ,SP70
+          CALL      RDOPARD1                * Reading Arrival/Departure table
+          BRANCH    OVRCD,GOPDST99
+.
+          CALL      RCVT0000                * determine time in recovery
+.
+.                                           * load Start time from selected
+          LOAD      D5,OPCNFTIM,OPARTCAL,OPARATIM,OPARANAP,OPARANAS:
+                                OPSGTIPS,OPSGTISS,OPSGTISE,OPARANAE:
+                                OPSGTIDR,OPARTIRF,OPARTIRB,OPARTIRD:
+                                OPARTIDP,OPARTETC
+.                                           * load End time from selected
+          LOAD      DIM5,OPCNTTIM,OPARTCAL,OPARATIM,OPARANAP,OPARANAS:
+                                  OPSGTIPS,OPSGTISS,OPSGTISE,OPARANAE:
+                                  OPSGTIDR,OPARTIRF,OPARTIRB,OPARTIRD:
+                                  OPARTIDP,OPARTETC
+.
+          MOVE      OPDADATE,D8
+.
+GOPDST99  RETURN

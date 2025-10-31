@@ -1,4 +1,4 @@
-<meta name="TemplateVersion" content="V11.05.08">
+<meta name="TemplateVersion" content="V11.05.09">
 <meta name="TemplateHome"    content="wahealth">
 <meta name="HelpFileName"    content="NoContextSet.html">
 <meta name="CrossBrowser"    content="true"> 
@@ -63,13 +63,14 @@ if (document.UpdateForm.outbb035.value.substr(3,1)=="2" ||
 
   if (document.UpdateForm.opwamvny.value == '1') {
     var redirectPage = document.getElementById('redirect').value;
-    redirectPage = "patweb89.pbl?reportno=1&template=342" +
+    redirectPage = "patweb89.pbl?reportno=1&template=352" +
          "&urnumber=" + PatientLinks.urnumber.value.replace(/ /g,"+") +
          "&admissno=" + PatientLinks.admissno.value.replace(/ /g,"+") +
          "&casekeys=" + PatientLinks.casekeys.value.replace(/ /g,"+") +
          "&pmext049=" + document.UpdateForm.opwamvny.value + 
          "&chckcomp=" + document.UpdateForm.outbb002.value[3]+"O";
 
+    document.UpdateForm.nextpage.value="1";
 
     var outcome = CheckOutcome();
     if (outcome.length>0){
@@ -80,7 +81,6 @@ if (document.UpdateForm.outbb035.value.substr(3,1)=="2" ||
     }
 
     document.getElementById('redirect').value = redirectPage;
-    document.UpdateForm.nextpage.value="6";
     if(validateMandatory(UpdateForm)) {
       UpdateForm.submit();
     }

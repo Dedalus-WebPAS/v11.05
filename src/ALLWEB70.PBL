@@ -13,6 +13,8 @@
 . Modifications :
 .
 .---------------------------------------------------------------------------
+. V11.05.02 20/10/2025  Thanh T          TSK 0949457
+.           Recompiled for ALLLETCD, ALLLETDF changes
 . V11.05.01 01/09/2025  Thanh T          TSK 0949457  
 .           Recompiled for ALLLETCD, ALLLETDF changes
 .---------------------------------------------------------------------------
@@ -394,7 +396,7 @@ ZERO4     INIT      "0000"
 .
 . ----------------------------------------------------------------------------
 PRGID     INIT      "ALLWEB70"
-VERSION   INIT      "V11.05.01"
+VERSION   INIT      "V11.05.02"
 PRGNAM    INIT      "Print Server - Allied Health Letters"
 . ----------------------------------------------------------------------------
 .

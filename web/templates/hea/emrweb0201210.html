@@ -9,9 +9,9 @@ Cache-Control: no-cache
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<meta name="TemplateVersion" content="V11.05.00">
-<meta name="TemplateHome" content="hea">
-<meta name="CrossBrowser" content="true">
+<meta name="TemplateVersion" content="V11.05.01">
+<meta name="TemplateHome"    content="hea">
+<meta name="CrossBrowser"    content="true">
 <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?v=3&key=%STANDARD.01.044.124.161.050"></script>
 <script type="text/javascript" src="../js/GoogleLibrary.js"> </script>
 <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
@@ -272,9 +272,6 @@ function InitTinyMCE() {
         {title: 'Imaging', 
             description: 'Click Imaging to insert into document ', 
             url: '../html/TemplateImaging.html'},
-//      {title: 'Clinical Notes', 
-//          description: 'Click Note to insert into document ', 
-//          url: '%EMRWEB02.01.001.patweb98.01.108'},
         {title: 'Clinical Notes', 
             description: 'Click Notes ', 
             url: '%EMRWEB02.01.001.cliweb06.05.006'},
@@ -294,42 +291,6 @@ function InitTinyMCE() {
     removed_menuitems: "newdocument",
     custom_elements:"page-footer,page-body,page-header",
 
-/*
-    setup: function(ed) {
-      ed.addMenuItem('results', {
-        text: 'Append Latest Results',
-        context: 'insert',
-        onclick: function() {
-          AppendResults();
-        }
-      });
-      ed.addMenuItem('draft', {
-        text:'Save as Draft',
-        context: 'file',
-        onclick: function() { CreateDocument('D'); }
-      });
-//    ed.addMenuItem('print', {
-//      text:'Print and Save Draft',
-//      context: 'file',
-//      onclick: function() { CreateDocument('P'); }
-//    });
-//    ed.addMenuItem('save', {
-//      text:'Print and Finalise',
-//      context: 'file',
-//      onclick: function() { CreateDocument('F'); }
-//    });
-      ed.addMenuItem('send', {
-        text:'Finalise, Print and Send',
-        context: 'file',
-        onclick: function() { CreateDocument('S'); }
-      });
-      ed.addMenuItem('exit', {
-        text:'Exit',
-        context: 'file',
-        onclick: function() { window.close(); }
-      });
-    }
-*/
 
     //
     // TinyMCE 5 ...
@@ -340,23 +301,6 @@ function InitTinyMCE() {
     },
 
     setup: function (ed) {
-      /*
-      ed.ui.registry.addMenuItem("save", {
-        text: "Save",
-        icon: "save",
-        disabled: true,
-        onSetup: function(api) {
-          if (tinymce.activeEditor.isDirty()==true) {
-            api.setDisabled(false);
-          }
-        },
-        onAction: function() {
-          tinymce.activeEditor.execCommand("mceSave");
-        }
-      });
-      */
-
-
       // Separator menu item
       ed.ui.registry.addMenuItem("separator", {
         text: "|"
@@ -536,13 +480,48 @@ function AppendResults() {
     xmlHttp.open("GET", theURL, false);
     xmlHttp.send();
     if (xmlHttp.status=="200") {
-      var el=tinyMCE.activeEditor.dom.get('clinicalResultsSection');
-      if (el == null) {
+      // Remove any line break (<br/>) that's in the middle of a word
+      var respTxt = xmlHttp.responseText;
+      var regex = /(\w)<br\s*\/?\s*>(\w)/gi;  // <br>, <br/>, <br />, etc.
+      var respTxt = respTxt.replace(regex, '$1$2');
+
+      // Insert results text
+      var elClinResSec = tinyMCE.activeEditor.dom.get('clinicalResultsSection');
+      if (elClinResSec == null) {
         tinyMCE.activeEditor.dom.add(tinyMCE.activeEditor.getBody(),   
-              'span', {id : 'clinicalResults'}, xmlHttp.responseText);
+          'div', {id : 'clinicalResults'}, respTxt);
       } else {
-        tinyMCE.activeEditor.dom.add(el, 'span', {id : 'clinicalResults'}, xmlHttp.responseText);
+        tinyMCE.activeEditor.dom.add(elClinResSec, 'div', {id : 'clinicalResults'},
+          respTxt);
       }
+
+      // Set width of 'clinicalResults' (<div>) to be its parent DIV width
+      var elClinRes = tinyMCE.activeEditor.dom.get('clinicalResults');
+      var parentDiv = elClinRes ? elClinRes.closest('div') : null;
+
+      if (parentDiv != null) {
+        var style = window.getComputedStyle(parentDiv);
+        var width = style.getPropertyValue('width');
+        elClinRes.style.width = width;
+      }
+
+      // Set width of any 'resultTab' (<table>) to be its parent DIV width
+      var arrResTab = elClinResSec.getElementsByClassName('resultTab');
+
+      for (resultTab of arrResTab) {
+        var parentDiv = resultTab ? resultTab.closest('div') : null;
+        if (parentDiv != null) {
+          var style = window.getComputedStyle(parentDiv);
+          var width = style.getPropertyValue('width');
+          resultTab.style.width = width;
+          resultTab.offsetWidth;  // triggers reflow
+
+          // Also set the width of 'resultCom' (<div>) accordingly
+          var resultCom = resultTab.getElementsByClassName('resultCom')[0];
+          resultCom.style.width = parseInt(width,10) + 'px';
+        }
+      }
+
       var myNode = tinyMCE.activeEditor.getDoc().getElementById('clinicalResults') 
       myNode.scrollIntoView(false);
     } else {
@@ -706,7 +685,7 @@ function SaveDocument(documentStatus) {
     UpdateForm.draftdoc.value="1";
   }
   UpdateForm.htmlline.value = tinyMCE.get('documentContent').getContent({format : 'raw'});
-  //alert(UpdateForm.htmlline.value);
+//console.log(UpdateForm.htmlline.value);
   if(bool) {
     theURL=document.UpdateForm.action;
 //

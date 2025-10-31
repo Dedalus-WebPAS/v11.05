@@ -1,4 +1,4 @@
-//jsVersion  : V11.05.00
+//jsVersion  : V11.05.01
 //========================================================================
 // Program   : TheatreScreensHoverInfo.js
 //
@@ -6,6 +6,57 @@
 //
 // Function  : Variables for Theatre Hover Icons
 //=======================================================================
+function showPopUpDayProc(string,popupID,e)
+{
+  if(!e)
+    e = event.srcElement || event.target;
+
+  var popAlert = document.createElement("div");
+  popAlert.setAttribute("id","PopAlert");
+  var span = document.createElement("span");
+  var parent = e.parentNode;
+
+  e.src = "../images/HelpIconHL.gif";
+
+  span.innerText = string;
+
+  popAlert.appendChild(span);
+  parent.appendChild(popAlert);
+
+  var parentID = document.getElementById("PageBodySection");
+  var popIcon = document.getElementById(popupID);
+  var popIconBottom = popIcon.getBoundingClientRect().bottom;
+  var popupHeight = popIcon.clientHeight;
+  popAlert.style.position = "absolute";
+  popAlert.style.background = "#ffffcc";
+  popAlert.style.color = "black";
+  popAlert.style.border = "outset 1px grey";
+  popAlert.style.padding = "5px 5px 5px 5px";
+  popAlert.style.marginLeft ="2px";
+  popAlert.style.marginTop = "0px";
+  popAlert.style.top = popIconBottom + "px";
+  popAlert.style.width = "180px";
+  popAlert.style.left = popIcon.getBoundingClientRect().left + popIcon.width + "px";
+
+  var popAlertID = document.getElementById("PopAlert");
+  var popAlertBottom = popAlertID.getBoundingClientRect().bottom;
+  var parentBottom = parentID.getBoundingClientRect().bottom;
+  var i = popIconBottom;
+
+// if bottom of popup is below visible frame, move popup up until visible
+  while (popAlertBottom > parentBottom) {
+    i -= 5;
+    popAlert.style.top = i + "px";
+    popAlertBottom = popAlertID.getBoundingClientRect().bottom;
+    parentBottom = parentID.getBoundingClientRect().bottom;
+  }
+
+  e.onmouseout = function() {
+    parent.removeChild(popAlert);
+    e.src = "../images/HelpIcon.gif";
+  }
+}
+
 function showPopUpTheatreSess(string,popupTop,widthVal,e)
 {
   if(!e)

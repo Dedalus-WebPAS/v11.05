@@ -1,4 +1,4 @@
-//jsVersion  : V11.05.00
+//jsVersion  : V11.05.01
 //========================================================================
 // Program   : cliweb0801030.js
 //
@@ -98,7 +98,8 @@ function DocumentInitTable() {
        if (t.rows[i][0].match(/\.xls/i)) DocType="OFF";
        OS += "<li class='ItemNote docMarkedAs"+t.rows[i][16]+
              "'><span onclick=\"LinkDoc('"+t.rows[i][0]+"','"+
-             t.rows[i][1]+"','"+t.rows[i][16]+"','"+t.rows[i][2]+"');\">" +
+             t.rows[i][1]+"','"+t.rows[i][16]+"','"+t.rows[i][2]+
+             "','"+t.rows[i][17]+"');\">" +
              "<span class='showDocumentIcon"+DocType +
              "' style='float:left;' ></span>"+ t.rows[i][11]
        if (t.rows[i][16] == markAsCurrentDraft) OS += "  (Current Draft)"
@@ -236,13 +237,20 @@ function viewCliDoc(obsaudky) {
                     "&valdcode=" + obsaudky.replace(/ /g,"+")
   var returnValue = RSExecute(serverURL);
 }
-function LinkDoc(linkurl1,linkurl2,docStatus,detailky) {
+function LinkDoc(linkurl1,linkurl2,docStatus,detailky,isMyHR) {
   viewCliDoc(detailky);
   if (docStatus == '3') {
-    SetCookie('ClinicalDocument',detailky);
-    linkurl="patweb98.pbl?reportno=1&template=320"+
+    if (isMyHR == 'Y') {
+      SetCookie('DischargeDocument',detailky);
+      linkurl="patweb98.pbl?reportno=1&template=322"+
+              "&urnumber=" + document.PatientLinks.urnumber.value.replace(/ /g,"+") +
+              "&admissno=" + document.PatientLinks.admissno.value.replace(/ /g,"+")
+    } else {
+      SetCookie('ClinicalDocument',detailky);
+      linkurl="patweb98.pbl?reportno=1&template=320"+
             "&urnumber=" + document.PatientLinks.urnumber.value.replace(/ /g,"+") +
             "&admissno=" + document.PatientLinks.admissno.value.replace(/ /g,"+") 
+    } 
     location.href=linkurl;
   } else {
     SetCookie('ClinicalDocument','');

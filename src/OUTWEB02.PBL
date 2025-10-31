@@ -5,6 +5,8 @@
 .
 . Modifications  :
 .------------------------------------------------------------------------------
+. V11.05.15 16/10/2025  Zumin Yu       TSK 0964943a
+.           Formatting DNA patient warning message in CHKDNA10
 . V11.05.14 17/09/2025  Ebon Clements  TSK 0965123
 .           Recompiled for WRITBOOK - Set SAVBCOMP for pmsextaf read
 . V11.05.13 18/08/2025  Zumin Yu       TSK 0964943
@@ -3492,7 +3494,7 @@ ATTEXT    INIT      "at"
 .
 .*******************************************************************************
 PRGID     INIT      "OUTWEB02"
-VERSION   INIT      "V11.05.14"
+VERSION   INIT      "V11.05.15"
 PRGNAM    INIT      "Outpatient Processing"
 .*******************************************************************************
 .
@@ -6553,6 +6555,7 @@ CHKDNA00  UNPACK    NEWSLOTK,OBASITE,OBACLIN,OBADATE
           IF        @EQUAL
             MOVE      ONE,FIRSTFLG          * turn off DNA Warning message
           ENDIF
+CADESC
           PACK      KEY36,URNUMBER,FRSTDATE,SP70
           CALL      RDSBOKA3
 CHKDNA10  CALL      RDKBOKA3
@@ -6567,10 +6570,10 @@ CHKDNA10  CALL      RDKBOKA3
               MOVE      ONE,WARNINGF
               WRITE     HTMLFILE;"<RETURN_VALUE TYPE=WARNING>";
             ENDIF
-            WRITE     HTMLFILE;"Patient did not attend the following appointments:",012:
-                               "Date / Time":
-                               SP9,011,"Clinic":
-                               SP25,"    ",011,"Reason",012;
+            WRITE     HTMLFILE;"Patient did not attend the following:",012:
+                                "Date / Time":
+                                011,"Clinic":
+                                011,011,011,"Reason",012;
           ENDIF
 .
           MOVE      OBAOUTNO,KEY8
@@ -6587,7 +6590,7 @@ CHKDNA10  CALL      RDKBOKA3
           PACK      KEY20,OBASITE,OBACLIN,OBADATE,SP70
           CALL      RDCLIA1
           IF        OVRCD=1
-            PACK      KEY14,OBASITE,OBACLIN,OBADATE,Z70
+            PACK      KEY20,OBASITE,OBACLIN,OBADATE,Z70
             CALL      RDSCLIA1          * Read Clinic Record
             CALL      RDPCLIA1          * Read Clinic Record
             BRANCH    OVRCD,CHKDNA10
@@ -6598,7 +6601,7 @@ CHKDNA10  CALL      RDKBOKA3
             MATCH     OBACLIN,OCACLIN
             GOTO      CHKDNA10 IF NOT EQUAL
           ENDIF
-.
+          
           WRITE     HTMLFILE;CDAY,"/",CMON,"/",CCENT,CYEAR,SP1,OBATIME,011:
                              OCADESC,011,TDESC
           ADD       ONE,COUNTDNA

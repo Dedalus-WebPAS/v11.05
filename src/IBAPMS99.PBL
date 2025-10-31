@@ -12,6 +12,9 @@
 .* Modifications  :                                                           *
 .*                                                                            *
 .******************************************************************************
+.*       V11.05.10  27/10/2025  Ebon Clements  TSK 0964542                    *
+.*                  Recompiled for WEBGROUP - Load Codefinder clinician date  *
+.*                  and time                                                  *
 .*       V11.05.09  29/09/2025  Ebon Clements  TSK 0967473                    *
 .*                  Changed to only call the unix grouper script mrtweb02.ed8 *
 .*                  once per batch group - UNIXGR00                           *
@@ -537,8 +540,12 @@
           INC       MEHHONFD/INC
           INC       MEHLERFD/INC
           INC       NHIMASFD/INC
+          INC       OPRCONFD/INC
+          INC       OPRARDFD/INC
+          INC       OPRCLIFD/INC
           INC       OPRDEAFD/INC
           INC       OPRSESFD/INC
+          INC       OPRSRGFD/INC
           INC       OPRTSMFD/INC
           INC       PAT3MIFD/INC            * 3M DRG mapping file
           INC       PATAFEFD/INC            * Additional fee for overnight
@@ -929,7 +936,7 @@ OBB       INIT      "("
 .---------------------------------------------------------------------
 PRGID     INIT      "IBAPMS99"
 PRGNAM    INIT      "DRG Grouper Interface"
-VERSION   INIT      "V11.05.09"
+VERSION   INIT      "V11.05.10"
 .---------------------------------------------------------------------
 .
 +
@@ -1054,9 +1061,12 @@ INIT0000  CALL      DISPHEAD
           DISPLAY   *P56:24,"patfn1af";
           OPEN      PATFN1A1,"patfn1af"
 .
+          OPEN      OPRARDA1,"oprardaf"
+          OPEN      OPRCLIA1,"oprcliaf"
           OPEN      OPRDETA2,"oprdetaf"
           OPEN      OPRDETA3,"oprdetaf"
           OPEN      OPRSESA1,"oprsesaf"
+          OPEN      OPRSRGA1,"oprsrgaf"
           OPEN      OPRTSMA1,"oprtsmaf"
 .
 ...       DISPLAY   *P56:24,"patvw7af";                                *D-51504
@@ -1083,6 +1093,7 @@ INIT0000  CALL      DISPHEAD
                                  *235,CMDISP,*236,CMDISS,*237,CMDISC:
                                  *238,CMDISA
           READ      CONTROLF,TWENTY1;*45,PTCNDRSM
+          READ      CONTROLF,FORTY;*111,OPCNCLSU
           READ      CONTROLF,SIXTY;*133,MRCNEPSC,*248,MRCN3MCD,*249,MRCN3MCG
           READ      CONTROLF,SIXTY1;*240,MRCNUNWA,*241,MRCNENWA
           READ      CONTROLF,EIGHTY;*243,PTCNODRG,*250,PTCNHDPS
@@ -4197,6 +4208,7 @@ WEBERR00   RETURN
           INC       CLPATMAS                * Clear master file variables
           INC       DGCLICAC
           INC       NHOSPDAY                * Calculate bed days in hospital
+          INC       OPRECOVT
           INC       RHIHDAYS                * Calculate Hosp in Home Days   
 .davvy    INC       PATCHGRP                * Replacement for PAT41GRP
           INC       PMIGTNID
@@ -4224,8 +4236,11 @@ WEBERR00   RETURN
           INC       MEHDLSIO/INC
           INC       MEHHONIO/INC
           INC       NHIMASIO/INC
+          INC       OPRARDIO/INC
+          INC       OPRCLIIO/INC
           INC       OPRDEAIO/INC
           INC       OPRSESIO/INC
+          INC       OPRSRGIO/INC
           INC       OPRTSMIO/INC
           INC       PATAFEIO/INC            * Additional fee for overnight
           INC       PATASDIO/INC            * Additional fee for daycase

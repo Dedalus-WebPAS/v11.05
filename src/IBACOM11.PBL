@@ -8,6 +8,9 @@
 .* Function  :   This program will open an eReferral XML doc File and        *
 .*               load the details into obsecoaf or obspcoaf                  *
 .* Mods      :                                                               *
+.* V11.05.02     29/10/2025 Ebon Clements    TSK 0968424                     *
+.*               Set value of OBECURNO when eAdmission is not linked to      *
+.*               to a visit - RDHD2000                                       *
 .* V11.05.01     19/05/2025 Ebon Clements    TSK 0883549                     *
 .*               Populate record created time and  updated time              *
 .* V10.15.01     30/10/2019 Ebon Clements    TSK 0883549                     *
@@ -105,7 +108,7 @@ DASH      INIT      "-"
 .
 PRGID     INIT      "IBACOM11"
 PRGNAM    INIT      "eReferral document history XML load"
-VERSION   INIT      "V11.05.01"
+VERSION   INIT      "V11.05.02"
 +
 .*****************************************************************************
 .*                              MAIN0000                                     *
@@ -253,6 +256,7 @@ RDHD2000  CALL      RKCMERH6
             PACK    OBECINTM,CTIMEIS
             PACK    OBECINUS,SP70
             PACK    OBECFEXT,PDF        
+            PACK    OBECURNO,CMRHURNO,SP70
             PACK    OBECSLID,CWEBCLOC
 .
             PACK    KEY24,OBECEAID,OBECCPID,SP70

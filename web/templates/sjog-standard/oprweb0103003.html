@@ -1,4 +1,4 @@
-<meta name="TemplateVersion" content="V11.05.04">
+<meta name="TemplateVersion" content="V11.05.05">
 <meta name="TemplateHome" content="sjog-standard">
 <meta name="CrossBrowser" content="true">
 <meta name="HelpFileName" content="NoContextSet.html">
@@ -266,12 +266,8 @@ function InitTableSort(TableView) {
 // UNSCHEDULED THEATRE CASES
 
   if (document.theatreForm.sesstype.value.substr(3,1)!="E") {return;}
-
-//  document.getElementById('ThetReqButton').style.display="";
-//  document.getElementById('ThetNewButton').style.display="none";
-
+  document.all.ThetReqButton.style.display="";
   document.title="Unscheduled Theatre Requests"
-
   document.theatreForm.sortview.value=TableView;
 
   switch (TableView) {
@@ -336,6 +332,10 @@ function InitTableSort(TableView) {
   }
 
 }
+function TheatreReq() {
+  SetCookie("TheatreSesReqCookie",location.href);
+  location.href="oprweb01.pbl?reportno=22&template=2"
+}
 
 </script>
 </head>
@@ -390,7 +390,7 @@ function InitTableSort(TableView) {
 <tr><td class=DataLabel>Special Instructions</td>
     <td class=DataField>%OPRWEB01.03.166</td>
     <td class=DataLabel>Unit</td>   
-    <td class=DataField>%OPRWEB01.03.113.0  </td><tr>
+    <td class=DataField>%OPRWEB01.03.113.0  </td></tr>
 
 <tr><td></td><td class=DataField>%OPRWEB01.03.167</td></tr>
 </table>
@@ -404,6 +404,8 @@ function InitTableSort(TableView) {
 <tr><td align=center>
     <input type=button class="button" value="New" id="patientSearch"
      onclick="tempDisable(this); fnPatientSearch();">
+    <input type=button class="button" value="New Request" style="display:none"
+     onclick="tempDisable(this); TheatreReq();" id=ThetReqButton>
     <input type=button class="button" value="Change Theatre" id="changeTheatre"
      onclick='tempDisable(this); ChangeTheatre("%OPRWEB01.03.101");'>
     <input type=button class="button" value="Cancel Session" id="cancelSession"

@@ -8,6 +8,9 @@
 .* Function  :   This program will open an eAdmission XML File and           *
 .*               load the details into pmsehbaf and pmsedbaf                 *
 .* Mods      :                                                               *
+.* V11.05.02     29/10/2025 Ebon Clements    TSK 0968424                     *
+.*               Set value of OBECURNO when eAdmission is not linked to      *
+.*               to a visit - RDHD2000                                       *
 .* V11.05.01     19/05/2025 Ebon Clements    TSK 0883549                     *
 .*               Populate record created time and updated time               *
 .* V10.15.01     30/10/2019 Ebon Clements    TSK 0883549                     *
@@ -110,7 +113,7 @@ DASH      INIT      "-"
 .
 PRGID     INIT      "EADHSXML"
 PRGNAM    INIT      "eAdmission document history XML load"
-VERSION   INIT      "V11.05.01"
+VERSION   INIT      "V11.05.02"
 +
 .*****************************************************************************
 .*                              MAIN0000                                     *
@@ -256,6 +259,7 @@ RDHD2000  CALL      RKPMEHB6
             PACK    OBECINTM,CTIMEIS
             PACK    OBECINUS,SP70
             PACK    OBECFEXT,PDF        
+            PACK    OBECURNO,PMHBURNO,SP70
             PACK    OBECSLID,CWEBCLOC
 .
             CALL    WROBECO1

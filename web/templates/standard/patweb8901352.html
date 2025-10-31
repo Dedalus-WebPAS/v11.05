@@ -157,7 +157,7 @@ function processCompRedirect() {
   + document.PatientLinks.admissno.value.replace(/ /g,"+");
 
   if (document.UpdateForm.scrname.value != "   ") {
-     document.UpdateForm.redirect.value += "&scrname="+ 
+     document.UpdateForm.redirect.value += "&scrname="+
        document.UpdateForm.scrname.value;
   }
 }
@@ -486,10 +486,10 @@ function SubmitClaim() {
          onclick="SetPrinterAlt();">
     </td>
     <td class=DataLabel>Stationery Code</td>
-    <td> <input type=text name=d_statncod size=30
+    <td><input type=text name=d_statncod size=30
      class=ReadOnly readonly>
-     <input type=hidden name=schform1 value="%PATWEB89.01.999.004.0">
-     <input type=hidden name=sfrmdes1></td>
+    <input type=hidden name=schform1 value="%PATWEB89.01.999.004.0">
+    <input type=hidden name=sfrmdes1></td>
     <td class=DataLabel>Printer</td>
     <td><select name=schdprt1 title="Printer" tabindex=34 disabled>
         <option></option>
@@ -600,11 +600,11 @@ if(document.UpdateForm.pmext138.value=="1"){
   } 
 
 function SetCancel() {
- if(!confirm("Warning: Motor Vehicle data will not be updated and\n" + 
+ if(!confirm("Warning: Motor Vehicle data will not be updated and\n" +
              "answer to motor vehicle accident question will revert\n" +
              "to 'No!' Ok to Continue ?")){
    return;
- } 
+ }
 
  var admissno = document.PatientLinks.admissno.value.replace(/ /g,"+");
  var serverURL = "../cgi-bin/comweb81.pbl?reportno=74&valdadmn="+admissno;

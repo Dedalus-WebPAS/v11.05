@@ -1,4 +1,4 @@
-<meta name="TemplateVersion" content="V11.05.01">
+<meta name="TemplateVersion" content="V11.05.02">
 <meta name="TemplateHome" content="standard">
 <meta name="HelpFileName" content="NoContextSet.html">
 <meta name="CrossBrowser" content="true">
@@ -52,8 +52,11 @@ function showHideDiv(e) {
   var showHideOption = document.getElementById("emrcn042").value;
   if (showHideOption > 0) {
     document.getElementById("emrcn042enable").style.display = "inline";
+    document.UpdateForm.emrcn043.classList.add("Mandatory");
   } else {
     document.getElementById("emrcn042enable").style.display = "none";
+    document.UpdateForm.emrcn043.value="";
+    document.UpdateForm.emrcn043.classList.remove("Mandatory");
  }
 }
 

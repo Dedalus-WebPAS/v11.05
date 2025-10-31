@@ -9,6 +9,12 @@
 .*                   the selected date range                                  *
 .* Modifications  :                                                           *
 .******************************************************************************
+.* V11.05.03 29/10/2025  Alina Bhari    TSK 0954635                           *
+.*           corrected the error message with correct category name-ERRORCT1  *
+.*           Default NTAHPSEX as "9" when fat G Ind 3 is blank - SETF1000     *
+.*           Reported NTAHADNN with length of 80 character                    *
+.* V11.05.02 27/10/2025  Alina Bhari    TSK 0954635                           *
+.*           Created state record indentifier of length 80 character-NTAHADNN *
 .* V11.05.01 17/08/2025  Alina Bhari    TSK 0954635                           *
 .*           Added DOYR2025 & Prejuly functionality                           *
 .*           - DOYR2025,JULY2025,INIT0000,DSCD0000                            *
@@ -68,7 +74,7 @@ NTAHEXTR  FILE      ASCII, FIXED=1464
 .
 .Name     Type   Length    Start    Description
 .----     ----   ------    -----    -----------
-.NTAHADMN   DIM     10         1     State Record Identifier
+NTAHADMN   DIM     10         1     State Record Identifier
 .NTAHESID   DIM      9        11     Establishment Identifier.
 .NTAHHGID   DIM      1        20     Hospital geographical Indicator
 .NTAHURNO   DIM     20        21     Person Identifier
@@ -122,158 +128,6 @@ NTAHURS2   DIM      9       136     Area of usual residence SA2
 .NTAHESA4   DIM     20
 .NTAHESA5   DIM     20
 .                           264     Procedure Code Array (Occurs 50)
-NTAHPC01   DIM      8
-NTAHPC02   DIM      8
-NTAHPC03   DIM      8
-NTAHPC04   DIM      8
-NTAHPC05   DIM      8
-NTAHPC06   DIM      8
-NTAHPC07   DIM      8
-NTAHPC08   DIM      8
-NTAHPC09   DIM      8
-NTAHPC10   DIM      8
-NTAHPC11   DIM      8
-NTAHPC12   DIM      8
-NTAHPC13   DIM      8
-NTAHPC14   DIM      8
-NTAHPC15   DIM      8
-NTAHPC16   DIM      8
-NTAHPC17   DIM      8
-NTAHPC18   DIM      8
-NTAHPC19   DIM      8
-NTAHPC20   DIM      8
-NTAHPC21   DIM      8
-NTAHPC22   DIM      8
-NTAHPC23   DIM      8
-NTAHPC24   DIM      8
-NTAHPC25   DIM      8
-NTAHPC26   DIM      8
-NTAHPC27   DIM      8
-NTAHPC28   DIM      8
-NTAHPC29   DIM      8
-NTAHPC30   DIM      8
-NTAHPC31   DIM      8
-NTAHPC32   DIM      8
-NTAHPC33   DIM      8
-NTAHPC34   DIM      8
-NTAHPC35   DIM      8
-NTAHPC36   DIM      8
-NTAHPC37   DIM      8
-NTAHPC38   DIM      8
-NTAHPC39   DIM      8
-NTAHPC40   DIM      8
-NTAHPC41   DIM      8
-NTAHPC42   DIM      8
-NTAHPC43   DIM      8
-NTAHPC44   DIM      8
-NTAHPC45   DIM      8
-NTAHPC46   DIM      8
-NTAHPC47   DIM      8
-NTAHPC48   DIM      8
-NTAHPC49   DIM      8
-NTAHPC50   DIM      8
-.                           664     Diagnosis Array (Occurs 100)
-NTAHD001   DIM      8
-NTAHD002   DIM      8
-NTAHD003   DIM      8
-NTAHD004   DIM      8
-NTAHD005   DIM      8
-NTAHD006   DIM      8
-NTAHD007   DIM      8
-NTAHD008   DIM      8
-NTAHD009   DIM      8
-NTAHD010   DIM      8
-NTAHD011   DIM      8
-NTAHD012   DIM      8
-NTAHD013   DIM      8
-NTAHD014   DIM      8
-NTAHD015   DIM      8
-NTAHD016   DIM      8
-NTAHD017   DIM      8
-NTAHD018   DIM      8
-NTAHD019   DIM      8
-NTAHD020   DIM      8
-NTAHD021   DIM      8
-NTAHD022   DIM      8
-NTAHD023   DIM      8
-NTAHD024   DIM      8
-NTAHD025   DIM      8
-NTAHD026   DIM      8
-NTAHD027   DIM      8
-NTAHD028   DIM      8
-NTAHD029   DIM      8
-NTAHD030   DIM      8
-NTAHD031   DIM      8
-NTAHD032   DIM      8
-NTAHD033   DIM      8
-NTAHD034   DIM      8
-NTAHD035   DIM      8
-NTAHD036   DIM      8
-NTAHD037   DIM      8
-NTAHD038   DIM      8
-NTAHD039   DIM      8
-NTAHD040   DIM      8
-NTAHD041   DIM      8
-NTAHD042   DIM      8
-NTAHD043   DIM      8
-NTAHD044   DIM      8
-NTAHD045   DIM      8
-NTAHD046   DIM      8
-NTAHD047   DIM      8
-NTAHD048   DIM      8
-NTAHD049   DIM      8
-NTAHD050   DIM      8
-NTAHD051   DIM      8
-NTAHD052   DIM      8
-NTAHD053   DIM      8
-NTAHD054   DIM      8
-NTAHD055   DIM      8
-NTAHD056   DIM      8
-NTAHD057   DIM      8
-NTAHD058   DIM      8
-NTAHD059   DIM      8
-NTAHD060   DIM      8
-NTAHD061   DIM      8
-NTAHD062   DIM      8
-NTAHD063   DIM      8
-NTAHD064   DIM      8
-NTAHD065   DIM      8
-NTAHD066   DIM      8
-NTAHD067   DIM      8
-NTAHD068   DIM      8
-NTAHD069   DIM      8
-NTAHD070   DIM      8
-NTAHD071   DIM      8
-NTAHD072   DIM      8
-NTAHD073   DIM      8
-NTAHD074   DIM      8
-NTAHD075   DIM      8
-NTAHD076   DIM      8
-NTAHD077   DIM      8
-NTAHD078   DIM      8
-NTAHD079   DIM      8
-NTAHD080   DIM      8
-NTAHD081   DIM      8
-NTAHD082   DIM      8
-NTAHD083   DIM      8
-NTAHD084   DIM      8
-NTAHD085   DIM      8
-NTAHD086   DIM      8
-NTAHD087   DIM      8
-NTAHD088   DIM      8
-NTAHD089   DIM      8
-NTAHD090   DIM      8
-NTAHD091   DIM      8
-NTAHD092   DIM      8
-NTAHD093   DIM      8
-NTAHD094   DIM      8
-NTAHD095   DIM      8
-NTAHD096   DIM      8
-NTAHD097   DIM      8
-NTAHD098   DIM      8
-NTAHD099   DIM      8
-NTAHD100   DIM      8
-.
 . End of Record            1464
 .
 .
@@ -281,85 +135,239 @@ NTAHD100   DIM      8
 .
 .Name     Type   Length    Start    Description
 .----     ----   ------    -----    -----------
-NTAHADMN   DIM     10         1     State Record Identifier
-NTAHESID   DIM      9        11     Establishment Identifier.
-NTAHHGID   DIM      1        20     Hospital geographical Indicator
-NTAHURNO   DIM     20        21     Person Identifier
-NTAHPSEX   DIM      1        41     Sex
-NTAHGNDR   DIM      1        42     Cat Gi - Gender
-NTAHBDTE   DIM      8        43     Date of Birth
-NTAHPCNT   DIM      4        51     Country of Birth
-NTAHABRG   DIM      1        55     Indigenous status
-NTAHMRTL   DIM      1        56     Marital status
-NTAHURES   DIM      5        57     Area of usual residence
-NTAHPOST   DIM      4        62     Australian postcode
-NTAHUACC   DIM      2        66     Type of usual accommodation
-NTAHPACC   DIM      1        68     Type of accommodation prior to admission
-NTAHLFSA   DIM      1        69     Labour force status - acute hospital and
+NTAHADNN   DIM     80         1     State Record Identifier
+NTAHESID   DIM      9        81     Establishment Identifier.
+NTAHHGID   DIM      1        90     Hospital geographical Indicator
+NTAHURNO   DIM     20        91     Person Identifier
+NTAHPSEX   DIM      1       111     Sex
+NTAHGNDR   DIM      1       112     Cat Gi - Gender
+NTAHBDTE   DIM      8       113     Date of Birth
+NTAHPCNT   DIM      4       121     Country of Birth
+NTAHABRG   DIM      1       125     Indigenous status
+NTAHMRTL   DIM      1       126     Marital status
+NTAHURES   DIM      5       127     Area of usual residence
+NTAHPOST   DIM      4       132     Australian postcode
+NTAHUACC   DIM      2       136     Type of usual accommodation
+NTAHPACC   DIM      1       138     Type of accommodation prior to admission
+NTAHLFSA   DIM      1       139     Labour force status - acute hospital and
 .                                     private psychiatric hospital admissions
-NTAHLFSP   DIM      1        70     Labour force status - public psychiatric
+NTAHLFSP   DIM      1       140     Labour force status - public psychiatric
 .                                     hospital admissions
-NTAHPPPT   DIM      1        71     Admitted patient election status
-NTAHFUND   DIM      1        72     Hospital insurance status
-NTAHPTYP   DIM      1        73     Medicare eligibility status
-NTAHACLM   DIM      2        74     Funding source for hospital patient
-NTAHACRE   DIM      4        76     Care type
-NTAHQDNB   DIM      5        80     Number of qualified days for newborns
-NTAHTPCD   DIM      5        85     Total psychiatric care days
-NTAHXMHL   DIM      1        90     Mental health legal status
-NTAHPSTR   DIM      1        91     Previous specialised treatment
-NTAHDATE   DIM      8        92     Admission date
-NTAHADTM   DIM      4       100     Admission Time
-NTAHDDTE   DIM      8       104     Separation date
-NTAHSPTM   DIM      4       112     Seperation Time
-NTAHTNLD   DIM      5       116     Total number of leave days
-NTAHSRPP   DIM      2       121     Source of referral to public psychiatric
+NTAHPPPT   DIM      1       141     Admitted patient election status
+NTAHFUND   DIM      1       142     Hospital insurance status
+NTAHPTYP   DIM      1       143     Medicare eligibility status
+NTAHACLM   DIM      2       144     Funding source for hospital patient
+NTAHACRE   DIM      4       146     Care type
+NTAHQDNB   DIM      5       150     Number of qualified days for newborns
+NTAHTPCD   DIM      5       155     Total psychiatric care days
+NTAHXMHL   DIM      1       160     Mental health legal status
+NTAHPSTR   DIM      1       161     Previous specialised treatment
+NTAHDATE   DIM      8       162     Admission date
+NTAHADTM   DIM      4       170     Admission Time
+NTAHDDTE   DIM      8       174     Separation date
+NTAHSPTM   DIM      4       182     Seperation Time
+NTAHTNLD   DIM      5       186     Total number of leave days
+NTAHSRPP   DIM      2       191     Source of referral to public psychiatric
 .                                     hospitals
-NTAHCLSS   DIM      1       123     Urgency of admission
-NTAHASRC   DIM      1       117     Mode of admission
-NTAHMOFS   DIM      2       118     Mode of separation
-NTAHRTFC   DIM      1       120     Referral to further care (mental health care)
-NTAHBWHT   DIM      4       121     Weight
-NTAHIDUS   DIM      1       125     Intended length of hospital stay
-NTAHNDHH   DIM      5       126     Number of days of hospital-in-the-home care
-NTAHCHCE   DIM      9       131     Contracted hospital care establishment
+NTAHCLSS   DIM      1       193     Urgency of admission
+NTAHASRC   DIM      1       194     Mode of admission
+NTAHMOFS   DIM      2       195     Mode of separation
+NTAHRTFC   DIM      1       197     Referral to further care (mental health care)
+NTAHBWHT   DIM      4       198     Weight
+NTAHIDUS   DIM      1       202     Intended length of hospital stay
+NTAHNDHH   DIM      5       203     Number of days of hospital-in-the-home care
+NTAHCHCE   DIM      9       208     Contracted hospital care establishment
 .                                     identifier
-NTAHICPS   DIM      1       140     Inter-hospital contracted patient status
-NTAHLOSI   DIM      5       141     Length of Stay in Intensive Care Unit
-NTAHDCIV   DIM      5       146     Duration of Continuous Invasive Ventilatory 
+NTAHICPS   DIM      1       217     Inter-hospital contracted patient status
+NTAHLOSI   DIM      5       218     Length of Stay in Intensive Care Unit
+NTAHDCIV   DIM      5       223     Duration of Continuous Invasive Ventilatory
 .                                   Support
-NTAHEIMW   DIM      9       151     Establishment Identifier for hospital
-NTAHESA1   DIM     20       160
-NTAHESA2   DIM     20       180
-NTAHESA3   DIM     20       200
-NTAHESA4   DIM     20       220
-NTAHESA5   DIM     20       240
+NTAHEIMW   DIM      9       228     Establishment Identifier for hospital
+.                                   NTAHESA1-NTAHESA5 
+NTAHESA1   DIM     20       237
+NTAHESA2   DIM     20       257
+NTAHESA3   DIM     20       277
+NTAHESA4   DIM     20       297
+NTAHESA5   DIM     20       317
+.                                   NTAHPC01-NTAHPC50
+NTAHPC01   DIM      8       337
+NTAHPC02   DIM      8       345
+NTAHPC03   DIM      8       353
+NTAHPC04   DIM      8       361
+NTAHPC05   DIM      8       369
+NTAHPC06   DIM      8       377
+NTAHPC07   DIM      8       385
+NTAHPC08   DIM      8       393
+NTAHPC09   DIM      8       401
+NTAHPC10   DIM      8       409
+NTAHPC11   DIM      8       417
+NTAHPC12   DIM      8       425
+NTAHPC13   DIM      8       433
+NTAHPC14   DIM      8       441
+NTAHPC15   DIM      8       449
+NTAHPC16   DIM      8       457
+NTAHPC17   DIM      8       465
+NTAHPC18   DIM      8       473
+NTAHPC19   DIM      8       481
+NTAHPC20   DIM      8       489
+NTAHPC21   DIM      8       497
+NTAHPC22   DIM      8       505     
+NTAHPC23   DIM      8       513
+NTAHPC24   DIM      8       521
+NTAHPC25   DIM      8       529
+NTAHPC26   DIM      8       537
+NTAHPC27   DIM      8       545
+NTAHPC28   DIM      8       553
+NTAHPC29   DIM      8       561
+NTAHPC30   DIM      8       569
+NTAHPC31   DIM      8       577
+NTAHPC32   DIM      8       585     
+NTAHPC33   DIM      8       593
+NTAHPC34   DIM      8       601
+NTAHPC35   DIM      8       609
+NTAHPC36   DIM      8       617
+NTAHPC37   DIM      8       625
+NTAHPC38   DIM      8       633
+NTAHPC39   DIM      8       641
+NTAHPC40   DIM      8       649
+NTAHPC41   DIM      8       657
+NTAHPC42   DIM      8       665
+NTAHPC43   DIM      8       673
+NTAHPC44   DIM      8       681
+NTAHPC45   DIM      8       689
+NTAHPC46   DIM      8       685
+NTAHPC47   DIM      8       697
+NTAHPC48   DIM      8       705
+NTAHPC49   DIM      8       713
+NTAHPC50   DIM      8       721
+.                                NTAHPD001-100 
+NTAHD001   DIM      8       729
+NTAHD002   DIM      8       737
+NTAHD003   DIM      8       745
+NTAHD004   DIM      8       753
+NTAHD005   DIM      8       761
+NTAHD006   DIM      8       769
+NTAHD007   DIM      8       777
+NTAHD008   DIM      8       785
+NTAHD009   DIM      8       793
+NTAHD010   DIM      8       801
+NTAHD011   DIM      8       809
+NTAHD012   DIM      8       817
+NTAHD013   DIM      8       825
+NTAHD014   DIM      8       833
+NTAHD015   DIM      8       841
+NTAHD016   DIM      8       849
+NTAHD017   DIM      8       857
+NTAHD018   DIM      8       865
+NTAHD019   DIM      8       873
+NTAHD020   DIM      8       881
+NTAHD021   DIM      8       889
+NTAHD022   DIM      8       897
+NTAHD023   DIM      8       905
+NTAHD024   DIM      8       913
+NTAHD025   DIM      8       921
+NTAHD026   DIM      8       929
+NTAHD027   DIM      8       937
+NTAHD028   DIM      8       945
+NTAHD029   DIM      8       953
+NTAHD030   DIM      8       961
+NTAHD031   DIM      8       969
+NTAHD032   DIM      8       977
+NTAHD033   DIM      8       985
+NTAHD034   DIM      8       993
+NTAHD035   DIM      8      1001
+NTAHD036   DIM      8      1009
+NTAHD037   DIM      8      1017 
+NTAHD038   DIM      8      1025
+NTAHD039   DIM      8      1033
+NTAHD040   DIM      8      1041
+NTAHD041   DIM      8      1049
+NTAHD042   DIM      8      1057
+NTAHD043   DIM      8      1065
+NTAHD044   DIM      8      1073
+NTAHD045   DIM      8      1081
+NTAHD046   DIM      8      1089
+NTAHD047   DIM      8      1097
+NTAHD048   DIM      8      1105
+NTAHD049   DIM      8      1113
+NTAHD050   DIM      8      1121
+NTAHD051   DIM      8      1129
+NTAHD052   DIM      8      1137
+NTAHD053   DIM      8      1145
+NTAHD054   DIM      8      1153
+NTAHD055   DIM      8      1161
+NTAHD056   DIM      8      1169
+NTAHD057   DIM      8      1177
+NTAHD058   DIM      8      1185
+NTAHD059   DIM      8      1193
+NTAHD060   DIM      8      1201
+NTAHD061   DIM      8      1209
+NTAHD062   DIM      8      1217
+NTAHD063   DIM      8      1225
+NTAHD064   DIM      8      1233
+NTAHD065   DIM      8      1241
+NTAHD066   DIM      8      1249
+NTAHD067   DIM      8      1257
+NTAHD068   DIM      8      1265
+NTAHD069   DIM      8      1273
+NTAHD070   DIM      8      1281
+NTAHD071   DIM      8      1289
+NTAHD072   DIM      8      1297
+NTAHD073   DIM      8      1305
+NTAHD074   DIM      8      1313
+NTAHD075   DIM      8      1321
+NTAHD076   DIM      8      1329
+NTAHD077   DIM      8      1337
+NTAHD078   DIM      8      1345
+NTAHD079   DIM      8      1353
+NTAHD080   DIM      8      1361
+NTAHD081   DIM      8      1369
+NTAHD082   DIM      8      1377
+NTAHD083   DIM      8      1385
+NTAHD084   DIM      8      1393
+NTAHD085   DIM      8      1401
+NTAHD086   DIM      8      1409
+NTAHD087   DIM      8      1417
+NTAHD088   DIM      8      1425
+NTAHD089   DIM      8      1433
+NTAHD090   DIM      8      1441
+NTAHD091   DIM      8      1449
+NTAHD092   DIM      8      1457
+NTAHD093   DIM      8      1465
+NTAHD094   DIM      8      1473
+NTAHD095   DIM      8      1481
+NTAHD096   DIM      8      1489
+NTAHD097   DIM      8      1497
+NTAHD098   DIM      8      1505
+NTAHD099   DIM      8      1513
+NTAHD100   DIM      8      1521
 .
-NTAHMHEI   DIM     80       1460    Mental health episode identifier
+NTAHMHEI   DIM     80       1529    Mental health episode identifier
 .                                   METEOR: 751899
-NTAHPITP   DIM      7       1480    Primary impairment type METEOR: 681412
-NTAHFIMS   DIM      1       1487    Functional Independence Measure (FIM) score 
+NTAHPITP   DIM      7       1609    Primary impairment type METEOR: 681412
+NTAHFIMS   DIM      1       1616    Functional Independence Measure (FIM) score
 .                                   array METEOR: 717982
-NTAHRUGS   DIM      2       1488    Resource Utilisation Groups- Activities of 
+NTAHRUGS   DIM      2       1617    Resource Utilisation Groups- Activities of
 .                                   Daily Living (RUG-ADL) total score
 .                                   METEOR: 764211
-NTAHHNOS   DIM      1       1490    Health of the Nation Outcome Scale 65+ 
+NTAHHNOS   DIM      1       1619    Health of the Nation Outcome Scale 65+
 .                                   (HoNOS 65+) score array METEOR: 748292
-NTAHSMSE   DIM      1       1491    Standardised Mini-Mental State Examination
+NTAHSMSE   DIM      1       1620    Standardised Mini-Mental State Examination
 .                                   (SMMSE) score array
-NTAHPCLK   DIM      50      1492    Palliative care linking key
-NTAHQIDC   DIM      7       1542    Quarter Indicator
-NTAHNU22   DIM      9       1549    NWAU22
-NTAHNU23   DIM      9       1558    NWAU23
-NTAHNU24   DIM      9       1567    NWAU24
-.NTAHLOSI   DIM      5       1576    Length of stay in intensive care unit – other
-NTAHIHIR   DIM      16      1581    Individual Healthcare Identifier
+NTAHPCLK   DIM      50      1621    Palliative care linking key
+NTAHQIDC   DIM      7       1671    Quarter Indicator
+NTAHNU22   DIM      9       1678    NWAU22
+NTAHNU23   DIM      9       1687    NWAU23
+NTAHNU24   DIM      9       1696    NWAU24
+.NTAHLOSI   DIM      5      1705    Length of stay in intensive care unit – other
+NTAHIHIR   DIM      16      1710    Individual Healthcare Identifier
 .                                   METEOR: 743458
-NTAHIHRS   DIM      1       1597    Individual Healthcare Identifier 
+NTAHIHRS   DIM      1       1726    Individual Healthcare Identifier
 .                                   - Record status METEOR: 743464
-NTAHAOUR   DIM      11      1598    Area of usual residence SA1
+NTAHAOUR   DIM      11      1727    Area of usual residence SA1
 .                                   METeOR: 742163
-.  End Record               1609
+.  End Record               1738
+.----     ----   ------    -----    -----------
 .
 .
 SP100      INIT      "                                                  "
@@ -444,7 +452,7 @@ FILETYPE  DIM       4
 DECPNT    INIT      "."
 ENDOFRPT  INIT      "  ***  END OF REPORT  ***"
 ERRORCT   INIT      "Care Type is incorrect. "
-ERRORCT1  INIT      "Review care type (Category CL)"
+ERRORCT1  INIT      "Review care type (Category CC)"
 ERRORDD   INIT      "Separation Mode is incorrect. "
 ERRORDD1  INIT      "Review mode of separation (Category DD)"
 ERRORES   INIT      "Claim Code for visit is set to Contracted Care. "
@@ -468,7 +476,7 @@ ZED30     INIT      "zzzzzzzzzzzzzzzzzzzzzzzzzzzzzz"
 .
 PRGID     INIT      "IBAINP60"
 PRGNAM    INIT      "NT Health Department Transmissions"
-VERSION   INIT      "V11.05.01"
+VERSION   INIT      "V11.05.03"
 +
 .******************************************************************************
 .*                                 MAIN0000                                   *
@@ -769,6 +777,7 @@ CLRF0000  UNPACK    SP70,NTAHADMN,NTAHESID,NTAHHGID,NTAHURNO,NTAHPSEX
           MOVE      ZERO,LOSNDAYS
           MOVE      ZERO,NBRDAYS
           UNPACK    SP70,SAVDATE   
+          UNPACK    SP100,NTAHADNN
 .
 CLRF9999  RETURN
 +
@@ -836,12 +845,17 @@ SETF1000  MOVE      DURNO,KEY8
           MOVE      FORM8,DIM8
           PACK      NTAHADMN,SP2,DIM8
           REP       " 0",NTAHADMN
+.
+.         State Record Identifier for 2025 onwards
+          PACK      NTAHADNN,SP70,NTAHADMN      
+          REP       " 0",NTAHADMN
 .                                                * Person Identifier
           MOVE      AURNO,DIM8
           PACK      NTAHURNO,SP10,SP2,DIM8
           REP       " 0",NTAHURNO
 .                                                * Sex
           IF        DOYR2025 = 1
+            MOVE      "9",NTAHPSEX
             MATCH     SP70,PSEX
             IF        !@EQUAL
               PACK      KEY5,ANSG,SP1,PSEX,SP70         * Use cat G ind 3
@@ -1310,7 +1324,7 @@ SETF7000  UNPACK    IBPOASGC,DIM1,DIM4A,DIM4
           CALL      ECDA0000
 .
           IF        DOYR2025 = 1
-            WRITE     NTAHEXTR,SEQ;NTAHADMN,NTAHESID,NTAHHGID,NTAHURNO,NTAHPSEX:
+            WRITE     NTAHEXTR,SEQ;NTAHADNN,NTAHESID,NTAHHGID,NTAHURNO,NTAHPSEX:
                                  NTAHGNDR,NTAHBDTE,NTAHPCNT,NTAHABRG,NTAHMRTL:
                                  NTAHURES,NTAHPOST,NTAHUACC,NTAHPACC,NTAHLFSA:
                                  NTAHLFSP,NTAHPPPT,NTAHFUND,NTAHPTYP,NTAHACLM:

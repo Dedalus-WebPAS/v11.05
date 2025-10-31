@@ -20,6 +20,8 @@
 .*       correct numeric sequence.                                            *
 .*                                                                            *
 .*----------------------------------------------------------------------------*
+.* V11.05.02 20/10/2025  Thanh T          TSK 0949457                         *
+.*           Fixed issue with user define field 1-9 show as lower case        *
 .* V11.05.01 01/09/2025  Thanh T          TSK 0949457                         *
 .*           Added LXPUSRAD-LXPUSRIL fields                                   *
 .*----------------------------------------------------------------------------*
@@ -350,8 +352,8 @@ GETVAR00  MOVE      ZERO,EXIT
                              PREG,PTYPE,POCCUP,PMEDI,PTMXMCCD:
                              PPENNO,PPNDTE,PMCDCNUM,PSMOK,PMICRO:          *30
                              PCEASE,PAUTOPY,PHIGH1,PHIGH2,PHIGH3:
-                             PLOCDOC,PFUNDH,PFNDTB,PFNDMM,PUSR1:           *40
-                             PUSR2,PUSR3,PUSR4,PUSR5,PUSR6:
+                             PLOCDOC,PFUNDH,PFNDTB,PFNDMM,LXPUSRAD:        *40
+                             LXPUSRBD,LXPUSRCD,LXPUSRDD,LXPUSRED,LXPUSRFD:
                              PUYN1,PUYN2,PUYN3,PYRRES,PNKNAME:             *50
                              PNKADD1,PNKADD2,PNKSUBR,PNKADD4,PNKPOST:      *55
                              PNKTELP,PNKTELB,PNKRELP,PFNDYY,PFNDCG:        *60
@@ -377,8 +379,8 @@ GETVAR00  MOVE      ZERO,EXIT
                              PMPXFAD4,PMPXFPOS,PMPXFPNO,PMPXFBNO,PMPXFMNO: *160
                              PMPXFEML,PMPXFCNT,PMPXFCRP,PMPXFLAB,PMPXFREL: *165
                              PMCDDVAC,PMPXPNSD,PMPXUYN4,PMPXUYN5,PMPXUYN6: *170
-                             PMPXUDC1,PMPXUDC2,PMPXUDC3,PMPXUSR7,PMPXUSR8: *175
-                             PMPXUSR9,PMPXMSNO,PMPXCONP,PMPXFLDR,ALREVISN: *180
+                             PMPXUDC1,PMPXUDC2,PMPXUDC3,LXPUSRGD,LXPUSRHD: *175
+                             LXPUSRID,PMPXMSNO,PMPXCONP,PMPXFLDR,ALREVISN: *180
                              ALREURNO,ALRESTAT,ALREDACT,ALRELINK,ALREDINA: *185
                              ALRERCLO,ALREDCLO,ALRETCLO,ALREUCLO,ALRERCAN: *190 
                              ALREDCAN,ALRETCAN,ALREUCAN,ALRERINA,ALRETINA: *195
@@ -454,8 +456,8 @@ GETVAR00  MOVE      ZERO,EXIT
 GETVAR10  LOAD      CCODE,SRCHNUM,TXT,DAT,TXT,TXT,TXT,TXT,NOY,TXT,TXT,TXT: *10
                           TXT,TXT,XXX,XXX,XXX,TXT,CATM,DAT,XXX,CATC:       *20
                           CATR,CATT,TXT,XXX,XXX,XXX,DAT,XXX,NOY,XXX:       *30
-                          NOY,NOY,CATH1,CATH2,CATH3,TXT,XXX,XXX,XXX,CATP1: *40
-                          CATP2,CATP3,CATP4,CATP5,CATP6:
+                          NOY,NOY,CATH1,CATH2,CATH3,TXT,XXX,XXX,XXX,XXX:   *40
+                          XXX,XXX,XXX,XXX,XXX:
                                       NOY,NOY,NOY,XXX,TXT:                 *50
                           TXT,TXT,TXT,TXT,XXX,XXX,XXX,XXX,XXX,DAT:         *60
                           DAT,CATDC,XXX,TXT,XXX,XXX,NOY,NOY,DAT,XXX:       *70
@@ -469,7 +471,7 @@ GETVAR10  LOAD      CCODE,SRCHNUM,TXT,DAT,TXT,TXT,TXT,TXT,NOY,TXT,TXT,TXT: *10
                           XXX,XXX,XXX,XXX,XXX,CATC,NOY,NOY,XXX,TXT:        *150
                           TXT,TXT,TXT,TXT,TXT,TXT,XXX,XXX,XXX,XXX:         *160
                           XXX,CATC,NOY,NOY,XXX,CATDX,DAT,NOY,NOY,NOY:      *170
-                          XXX,XXX,XXX,CATP7,CATP8,CATP9,XXX,XXX,CATFS,XXX: *180
+                          XXX,XXX,XXX,XXX,XXX,XXX,XXX,XXX,CATFS,XXX:       *180
                           XXX,XXX,DAT,XXX,DAT,CATLL,DAT,XXX,XXX,CATLN:     *190
                           DAT,XXX,XXX,CATLI,XXX,DAT,XXX,DAT,XXX,XXX:       *200
                           XXX,XXX,XXX,CATAC,CATPR,XXX,XXX,XXX,XXX,XXX:     *210
@@ -509,15 +511,132 @@ GETVAR10  LOAD      CCODE,SRCHNUM,TXT,DAT,TXT,TXT,TXT,TXT,NOY,TXT,TXT,TXT: *10
                           ALR,ALR,TXT,TXT,TXT,TXT,TXT,TXT,TXT,TXT:         *480
                           TXT,TXT,TXT,TXT,TXT,TXT,TXT,XXX,TXT,TXT:         *490
                           TXT,TXT,TXT,TXT,TXT,TXT,TXT,TXT,TXT,TXT:         *500 
-                          TXT,TXT,TXT,TXT,TXT,TXT,TXT,TXT,TXT,TXT:         *510
-                          TXT,TXT,TXT,TXT,TXT,TXT,TXT,TXT,TXT,TXT:         *520
-                          TXT,TXT,TXT,TXT,TXT,TXT,TXT                      *530
+                          TXT,TXT,TXT,TXT,TXT,TXT,TXT,TXT,TXT,XXX:         *510
+                          XXX,XXX,XXX,XXX,XXX,XXX,XXX,XXX,XXX,XXX:         *520
+                          XXX,XXX,XXX,XXX,XXX,XXX,XXX                      *530
 .
 .         Format the patients sex description (variable 16)
 .
           IF        SRCHNUM = 16
             MOVE      SP8,VARSTRNG
             MOVE      PSEX,VARSTRNG
+          ENDIF
+.
+          IF        SRCHNUM = 40
+            MOVE      SP70,VARSTRNG
+            MATCH     SP70,PUSR1
+            IF        !@EQUAL
+              PACK      KEY5,ANSP,ONE,PUSR1,SP70
+              CALL      RDCODE1
+              IF        OVRCD = 1
+                MOVE      SP70,TDESC
+              ENDIF
+              MOVE      TDESC,VARSTRNG
+            ENDIF
+          ENDIF
+.
+          IF        SRCHNUM = 41
+            MOVE      SP70,VARSTRNG
+            MATCH     SP70,PUSR1
+            IF        !@EQUAL
+              PACK      KEY5,ANSP,TWO,PUSR2,SP70
+              CALL      RDCODE1
+              IF        OVRCD = 1
+                MOVE      SP70,TDESC
+              ENDIF
+              MOVE      TDESC,VARSTRNG
+            ENDIF
+          ENDIF
+.
+          IF        SRCHNUM = 42
+            MOVE      SP70,VARSTRNG
+            MATCH     SP70,PUSR1
+            IF        !@EQUAL
+              PACK      KEY5,ANSP,THREE,PUSR3,SP70
+              CALL      RDCODE1
+              IF        OVRCD = 1
+                MOVE      SP70,TDESC
+              ENDIF
+              MOVE      TDESC,VARSTRNG
+            ENDIF
+          ENDIF
+.
+          IF        SRCHNUM = 43
+            MOVE      SP70,VARSTRNG
+            MATCH     SP70,PUSR1
+            IF        !@EQUAL
+              PACK      KEY5,ANSP,FOUR,PUSR4,SP70
+              CALL      RDCODE1
+              IF        OVRCD = 1
+                MOVE      SP70,TDESC
+              ENDIF
+              MOVE      TDESC,VARSTRNG
+            ENDIF
+          ENDIF
+.
+          IF        SRCHNUM = 44
+            MOVE      SP70,VARSTRNG
+            MATCH     SP70,PUSR1
+            IF        !@EQUAL
+              PACK      KEY5,ANSP,FIVE,PUSR5,SP70
+              CALL      RDCODE1
+              IF        OVRCD = 1
+                MOVE      SP70,TDESC
+              ENDIF
+              MOVE      TDESC,VARSTRNG
+            ENDIF
+          ENDIF
+.
+          IF        SRCHNUM = 45
+            MOVE      SP70,VARSTRNG
+            MATCH     SP70,PUSR1
+            IF        !@EQUAL
+              PACK      KEY5,ANSP,SIX,PUSR6,SP70
+              CALL      RDCODE1
+              IF        OVRCD = 1
+                MOVE      SP70,TDESC
+              ENDIF
+              MOVE      TDESC,VARSTRNG
+            ENDIF
+          ENDIF
+.
+          IF        SRCHNUM = 174
+            MOVE      SP70,VARSTRNG
+            MATCH     SP70,PMPXUSR7
+            IF        !@EQUAL
+              PACK      KEY5,ANSP,SEVEN,PMPXUSR7,SP70
+              CALL      RDCODE1
+              IF        OVRCD = 1
+                MOVE      SP70,TDESC
+              ENDIF
+              MOVE      TDESC,VARSTRNG
+            ENDIF
+          ENDIF
+.
+          IF        SRCHNUM = 175
+            MOVE      SP70,VARSTRNG
+            MATCH     SP70,PMPXUSR8
+            IF        !@EQUAL
+              PACK      KEY5,ANSP,EIGHT,PMPXUSR8,SP70
+              CALL      RDCODE1
+              IF        OVRCD = 1
+                MOVE      SP70,TDESC
+              ENDIF
+              MOVE      TDESC,VARSTRNG
+            ENDIF
+          ENDIF
+.
+          IF        SRCHNUM = 176
+            MOVE      SP70,VARSTRNG
+            MATCH     SP70,PMPXUSR9
+            IF        !@EQUAL
+              PACK      KEY5,ANSP,NINE,PMPXUSR9,SP70
+              CALL      RDCODE1
+              IF        OVRCD = 1
+                MOVE      SP70,TDESC
+              ENDIF
+              MOVE      TDESC,VARSTRNG
+            ENDIF
           ENDIF
 .
           IF        SRCHNUM = 476
@@ -637,9 +756,7 @@ GETVAR10  LOAD      CCODE,SRCHNUM,TXT,DAT,TXT,TXT,TXT,TXT,NOY,TXT,TXT,TXT: *10
               IF        OVRCD = 1
                 MOVE      SP70,PTCDLDES
               ENDIF
-              IF        SRCHNUM = 511
-                MOVE      PTCDLDES,VARSTRNG
-              ENDIF
+              MOVE      PTCDLDES,VARSTRNG
             ENDIF
           ENDIF
 .
@@ -652,9 +769,7 @@ GETVAR10  LOAD      CCODE,SRCHNUM,TXT,DAT,TXT,TXT,TXT,TXT,NOY,TXT,TXT,TXT: *10
               IF        OVRCD = 1
                 MOVE      SP70,PTCDLDES
               ENDIF
-              IF        SRCHNUM = 513
-                MOVE      PTCDLDES,VARSTRNG
-              ENDIF
+              MOVE      PTCDLDES,VARSTRNG
             ENDIF
           ENDIF
 .          
@@ -667,9 +782,7 @@ GETVAR10  LOAD      CCODE,SRCHNUM,TXT,DAT,TXT,TXT,TXT,TXT,NOY,TXT,TXT,TXT: *10
               IF        OVRCD = 1
                 MOVE      SP70,PTCDLDES
               ENDIF
-              IF        SRCHNUM = 515
-                MOVE      PTCDLDES,VARSTRNG
-              ENDIF
+              MOVE      PTCDLDES,VARSTRNG
             ENDIF
           ENDIF
 .          
@@ -682,9 +795,7 @@ GETVAR10  LOAD      CCODE,SRCHNUM,TXT,DAT,TXT,TXT,TXT,TXT,NOY,TXT,TXT,TXT: *10
               IF        OVRCD = 1
                 MOVE      SP70,PTCDLDES
               ENDIF
-              IF        SRCHNUM = 517
-                MOVE      PTCDLDES,VARSTRNG
-              ENDIF
+              MOVE      PTCDLDES,VARSTRNG
             ENDIF
           ENDIF
 .          
@@ -697,9 +808,7 @@ GETVAR10  LOAD      CCODE,SRCHNUM,TXT,DAT,TXT,TXT,TXT,TXT,NOY,TXT,TXT,TXT: *10
               IF        OVRCD = 1
                 MOVE      SP70,PTCDLDES
               ENDIF
-              IF        SRCHNUM = 519
-                MOVE      PTCDLDES,VARSTRNG
-              ENDIF
+              MOVE      PTCDLDES,VARSTRNG
             ENDIF
           ENDIF
 .
@@ -712,9 +821,7 @@ GETVAR10  LOAD      CCODE,SRCHNUM,TXT,DAT,TXT,TXT,TXT,TXT,NOY,TXT,TXT,TXT: *10
               IF        OVRCD = 1
                 MOVE      SP70,PTCDLDES
               ENDIF
-              IF        SRCHNUM = 521
-                MOVE      PTCDLDES,VARSTRNG
-              ENDIF
+              MOVE      PTCDLDES,VARSTRNG
             ENDIF
           ENDIF
 .          
@@ -727,9 +834,7 @@ GETVAR10  LOAD      CCODE,SRCHNUM,TXT,DAT,TXT,TXT,TXT,TXT,NOY,TXT,TXT,TXT: *10
               IF        OVRCD = 1
                 MOVE      SP70,PTCDLDES
               ENDIF
-              IF        SRCHNUM = 523
-                MOVE      PTCDLDES,VARSTRNG
-              ENDIF
+              MOVE      PTCDLDES,VARSTRNG
             ENDIF
           ENDIF
 .
@@ -742,9 +847,7 @@ GETVAR10  LOAD      CCODE,SRCHNUM,TXT,DAT,TXT,TXT,TXT,TXT,NOY,TXT,TXT,TXT: *10
               IF        OVRCD = 1
                 MOVE      SP70,PTCDLDES
               ENDIF
-              IF        SRCHNUM = 525
-                MOVE      PTCDLDES,VARSTRNG
-              ENDIF
+              MOVE      PTCDLDES,VARSTRNG
             ENDIF
           ENDIF
 .
@@ -757,9 +860,7 @@ GETVAR10  LOAD      CCODE,SRCHNUM,TXT,DAT,TXT,TXT,TXT,TXT,NOY,TXT,TXT,TXT: *10
               IF        OVRCD = 1
                 MOVE      SP70,PTCDLDES
               ENDIF
-              IF        SRCHNUM = 527
-                MOVE      PTCDLDES,VARSTRNG
-              ENDIF
+              MOVE      PTCDLDES,VARSTRNG
             ENDIF
           ENDIF
 .

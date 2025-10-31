@@ -5,6 +5,8 @@
 .
 . Modifications : 
 .-----------------------------------------------------------------------------
+. V11.05.12 27/10/2025  Ebon Clements  TSK 0964542
+.           Recompiled for WEBGROUP - Load Codefinder clinician date and time
 . V11.05.11 02/06/2025  Don Nguyen     TSK 0960938
 .           Recompiled for PATNAMCD
 .V11.05.10  17/04/2025  Ebon Clements TSK 0950532
@@ -595,8 +597,12 @@
           INC       MRTTDTFD/INC
           INC       MRTTHDFD/INC
           INC       NHIMASFD/INC
+          INC       OPRARDFD/INC
+          INC       OPRCLIFD/INC
           INC       OPRDEAFD/INC
+          INC       OPRCONFD/INC
           INC       OPRSESFD/INC
+          INC       OPRSRGFD/INC
           INC       OPRTSMFD/INC
           INC       PATNIDFD/INC
           INC       PATONLFD/INC
@@ -855,7 +861,7 @@ DEC       INIT      "December"
 .
 .------------------------------------------------------------------------
 PRGID     INIT      "IBAMRT53"
-VERSION   INIT      "V11.05.11"
+VERSION   INIT      "V11.05.12"
 PRGNAM    INIT      "Medical Records Coding Extracts"
 .------------------------------------------------------------------------
 MAIN0000  CALL      INIT0000       * Initialise 
@@ -974,9 +980,12 @@ INIT0000  CALL      DISPHEAD
           OPEN      PATMMBS1,"patmmbsf"
           OPEN      WEBSECA1,"websecaf"
           OPEN      WEBSECA3,"websecaf"
+          OPEN      OPRARDA1,"oprardaf"
+          OPEN      OPRCLIA1,"oprcliaf"
           OPEN      OPRDETA2,"oprdetaf"
           OPEN      OPRDETA3,"oprdetaf"
           OPEN      OPRSESA1,"oprsesaf"
+          OPEN      OPRSRGA1,"oprsrgaf"
           OPEN      OPRTSMA1,"oprtsmaf"
 .
 .  For Grouper
@@ -1007,6 +1016,7 @@ INIT0000  CALL      DISPHEAD
           READ      CONTROLF,TEN;*37,CMOPRT,*105,PTCNU50G:             *C-51504
                                  *235,CMDISP,CMDISS,CMDISC,*238,CMDISA
           READ      CONTROLF,TWENTY1;*45,PTCNDRSM,*180,PTCNCDRS,*217,CMDISL
+          READ      CONTROLF,FORTY;*111,OPCNCLSU
           READ      CONTROLF,FIFTY9;*34,CTYPEUR
           READ      CONTROLF,SIXTY;*133,MRCNEPSC
           READ      CONTROLF,SIXTY;*147,MRCNSOMV,*248,MRCN3MCD,*249,MRCN3MCG
@@ -3802,6 +3812,7 @@ GETALI99  CLOSE     PMSAIDA1
           INC       VALDIOPS
           INC       WEBGROUP                 * (was PAT41GRP)
           INC       NHOSPDAY
+          INC       OPRECOVT
           INC       PMIGTNID
           INC       RTIODAYS
           INC       CALCDAYS
@@ -3869,8 +3880,11 @@ GETALI99  CLOSE     PMSAIDA1
           INC       MRTTDTIO/INC
           INC       MRTTHDIO/INC
           INC       NHIMASIO/INC
+          INC       OPRARDIO/INC
+          INC       OPRCLIIO/INC
           INC       OPRDEAIO/INC
           INC       OPRSESIO/INC
+          INC       OPRSRGIO/INC
           INC       OPRTSMIO/INC
           INC       PATCANIO/INC
           INC       PATCHCIO/INC

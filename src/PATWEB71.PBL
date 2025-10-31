@@ -5,6 +5,8 @@
 .  
 . Modifications  :
 .----------------------------------------------------------------------------
+. V11.05.27 24/10/2025  J.Tan          TSK 0946593
+.           Recompiled for PATCATBI-Sort Casepayment Theatre fee items
 . V11.05.26 10/10/2025  J.Tan          TSK 0946593
 .           Recompiled for PATCATBI-Sort Casepayment Theatre fee items
 . V11.05.25 06/10/2025  J.Tan          TSK 0966784
@@ -3057,7 +3059,7 @@ CFPAYCOD  DIM       3        * 3M Codefinder PAY Code
 .------------------------------------------------------------------------------
 PRGID     INIT      "PATWEB71"
 PRGNAM    INIT      "Patient Invoice Print Server"      
-VERSION   INIT      "V11.05.26"
+VERSION   INIT      "V11.05.27"
 .------------------------------------------------------------------------------
 .
           CALL      WEBINT00       * Initialise Fifo Etc.

@@ -5,6 +5,8 @@
 .
 . Modifications1: 
 .------------------------------------------------------------------------------
+. V11.05.15 24/10/2025 J.Tan             TSK 0967777
+.           Mod DMBW6000 to restore U/R and Admission
 . V11.05.14 02/10/2025 J.Tan             TSK 0967777
 .           Mod DMBS6000 to restore U/R and Admission
 . V11.05.13 17/09/2025 Bella Turco       TSK 0966761
@@ -1507,7 +1509,7 @@ XKAMT     DIM     1         1    149
 .
 .---------------------------------------------------------------------------
 PRGID     INIT      "PATWEB78"
-VERSION   INIT      "V11.05.14"
+VERSION   INIT      "V11.05.15"
 PRGNAM    INIT      "Patient Admission Maintenance"
 .---------------------------------------------------------------------------
           CALL      WEBINT00       * Initialise Fifo Etc.
@@ -20334,6 +20336,8 @@ DMBW6000  COMPARE   ZERO,F1
           PACK      KEY17,KEY9,SAVDATE,SP70
           CALL      CDES0000                * Get MBS/ICD Operation Code desc.
 .
+          MOVE      URNUMBER,OPDAURNO
+          MOVE      ADMISSNO,OPDAADMN
           MOVE      SAVMBSCD,GELF0MBS
           CALL      GEWF0000
 .

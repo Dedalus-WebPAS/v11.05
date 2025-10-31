@@ -1,4 +1,4 @@
-<meta name="TemplateVersion" content="V11.05.00">
+<meta name="TemplateVersion" content="V11.05.01">
 <meta name="TemplateHome" content="standard">
 <meta name="HelpFileName"    content="NoContextSet.html">
 <script type="text/javascript" src="../js/TableSort.js"> </script>
@@ -7,6 +7,16 @@
 function selectView(viewTypeValue) {
 document.SelectView.viewtype.value=viewTypeValue
 document.SelectView.submit();
+}
+function delEntry(recordKey) {
+  var outcome=confirm("Warning: Any extract records dated after the selected" +
+                      " date will also be removed and will need to be re-run." +
+                      "\n\nClick OK to proceed or Cancel to return.");
+  if (outcome) {
+    var delForm=document.deleteEntry;
+    delForm.qhdelkey.value = recordKey;
+    delForm.submit();
+  }
 }
 </script>
 
@@ -18,6 +28,7 @@ document.SelectView.submit();
 <input type=hidden name=reportno value="1">
 <input type=hidden name=template value="7">
 <input type=hidden name=updttype value=1>
+<input type=hidden name=superlev value="%PRSWEB01.01.107">
 
 <tr><td align=center class=HeadingCell>
      QHAPDC Extract Summary for 
@@ -30,12 +41,24 @@ document.SelectView.submit();
 </div>
 <div id="TableLocation" >
 </div>
+<div>
+<form name=deleteEntry action=prsweb01.pbl method=post style=margin:0>
+<input type=hidden name=reportno value="1">
+<input type=hidden name=template value="007">
+<input type=hidden name=qhdelkey>
+<input type=hidden name=updttype value="D">
+<input type=hidden name=superlev value="%PRSWEB01.01.107">
+<input type=hidden name=redirect
+                   value="prsweb01.pbl?reportno=1&template=007&superlev=1">
+<input type=hidden name=nextpage value="1">
+</form>
+</div>
 <script type="text/javascript">
 function initTable() {
 document.title="                       ";
 t = new Table(1,0,1,"100%","center",35,35);    // Create New Table Object
 ibcnmhos="%STANDARD.01.025.000.043.1.1"
-
+superlev="%PRSWEB01.01.107"
  template = 1
 //
 // Add Columns in Order Required
@@ -46,7 +69,9 @@ ibcnmhos="%STANDARD.01.025.000.043.1.1"
  }
  t.addColumn("Run Number","Number",1,1,"left","","0",80)
  t.addColumn("End Date","String",2,2,"left","","",80)
-
+ if(superlev==1){
+   t.addColumn("Delete","String",5,5,"left","DeleteIcon.gif","4",50)
+ }
 // Add Rows to Table (Output from Web Server)
 //
    %PRSWEB01.01.106               //data
