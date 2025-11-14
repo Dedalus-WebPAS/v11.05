@@ -1,4 +1,4 @@
-<meta name="TemplateVersion" content="V11.05.00">
+<meta name="TemplateVersion" content="V11.05.01">
 <meta name="TemplateHome" content="standard">
 <meta name="HelpFileName" content="NoContextSet.html">
 <meta name="CrossBrowser" content="true">
@@ -15,6 +15,10 @@ function switchPresIll() {
   } else {
     PresIllCodHdr.innerHTML=presillcodhdr.innerHTML;
     PresIllCod.innerHTML=presillcod.innerHTML;
+  }
+
+  if(isWhitespace(document.UpdateForm.ptmis026.value)) {
+    document.UpdateForm.ptmis026.value=""
   }
 }
 function chkDOS(datefield) {

@@ -5,6 +5,9 @@
 .
 . Modifications  :
 .-------------------------------------------------------------------------------
+. V11.05.06 30/10/2025  Ebon Clements  TSK 0968602
+.           Correctly set up FHRSTAT, DOCSTCOD, DRAFTDES
+.           api call with _id - CORR5800
 . V11.05.05 20/10/2025  Ebon Clements  TSK 0961623
 .           Added open of OUTBOKA3 and OUTBB1A1 to OPNOUT00
 . V11.05.04 09/10/2025  J.Tan          TSK 0966942
@@ -929,7 +932,7 @@ STRETURN  FORM      1
 .
 .------------------------------------------------------------------------------
 PRGID     INIT      "CLIWEB08"
-VERSION   INIT      "V11.05.05"
+VERSION   INIT      "V11.05.06"
 PRGNAM    INIT      "Patient Correspondence Details"
 .------------------------------------------------------------------------------
 .
@@ -3348,6 +3351,30 @@ CORR5700  CALL      CHKSEC00
           GOTO      CORR9999
 .
 CORR5800  IF        FHRDOCIN=1
+.
+            MOVE      SP70,DRAFTDES
+            MOVE      "current",FHRSTAT
+            MOVE      "final",DOCSTCOD
+            MATCH     "3",OBPCMDEL
+            IF        @EQUAL
+              MOVE      " (Current Draft)",DRAFTDES
+              MOVE      "preliminary",DOCSTCOD
+            ENDIF
+            MATCH     "2",OBPCMDEL
+            IF        @EQUAL
+              MOVE      " (Draft)",DRAFTDES
+              MOVE      "superseded",FHRSTAT
+              MOVE      "preliminary",DOCSTCOD
+            ENDIF
+            MATCH     "1",OBPCMDEL
+            IF        @EQUAL
+              MOVE      " (DELETED)",DRAFTDES
+              MOVE      "entered-in-error",FHRSTAT
+              MOVE      "entered-in-error",DOCSTCOD
+            ENDIF
+            STRIP     DRAFTDES
+            STRIP     FHRSTAT
+            STRIP     DOCSTCOD
 .
             MOVE      OBPCURNO,URNUMBER
             MOVE      OBPCCVIS,ADMISSNO

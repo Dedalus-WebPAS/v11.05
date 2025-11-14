@@ -1,9 +1,18 @@
-<meta name="TemplateVersion" content="V11.05.01">
+<meta name="TemplateVersion" content="V11.05.02">
 <meta name="TemplateHome" content="crdhb">
 <meta name="HelpFileName" content="NoContextSet.html">
 <script type="text/javascript" src="../js/emrweb0201101.js"></script>
 <script type="text/javascript" src="../js/ctascustom.js"></script>
 <script type="text/javascript">
+function DisplayPresentComplaintAddInfo() {
+  f = document.UpdateForm;
+  if (f.emcprcmp.value == "1") {
+    document.getElementById('PresentComplaintAddInfo').style.display = "";
+  }
+  else {
+    document.getElementById('PresentComplaintAddInfo').style.display = "none";
+  }
+}
 // 01 : CTAS : constant values section
 var DISCH_IND = 21;				// Cat ED Indicator 21
 var DISCH_IND_SHOW_DEST = "1";	// Cat ED Indicator 21 => (1 == show destination)
@@ -27,6 +36,7 @@ function init() {
        DisableForm(document.UpdateForm) }}
   document.UpdateForm.brcom001.value=document.UpdateForm.dummy1.value + 
                                      document.UpdateForm.dummy2.value
+  document.UpdateForm.prcompad.value=document.UpdateForm.pcompadd.value;
  if(document.HiddenFields.ShowOutstanding.value=="1") {
   var linkurl = "../cgi-bin/emrweb02.pbl?reportno=1&template=051" +
                     "&admissno=" + UpdateForm.admissno.value.replace(/ /g,"+")+
@@ -470,7 +480,7 @@ function updateAlcoholInvolvedStatus() {
 </head>
 %START.OF.PAGE
 <body onload="PageLoad(event);getCookieDepDateTime();CheckDepartureDateNZ();
- showDestination();checkTrans();"
+ showDestination();checkTrans();DisplayPresentComplaintAddInfo();"
  onunload="setCookieDepDateTime();showDestination();">
 <!--<body onload="PageLoad(event);CheckDepartureDateNZ();showDestination();checkTrans();"
  onunload="showDestination();"> -->
@@ -525,6 +535,8 @@ InsertEmergencyHeader();
   value="%EMRWEB02.01.104%EMRWEB02.01.105%EMRWEB02.01.174">
  <input type=hidden name=dummy2
   value="%EMRWEB02.01.175%EMRWEB02.01.176%EMRWEB02.01.177">
+ <input type=hidden name=pcompadd
+  value="%EMRWEB02.01.955.023.0">
  <input type=hidden name=waittime value="%EMRWEB02.01.701">
  <input type=hidden name=loadflag >
  <input type=hidden name=reloadfg value="%EMRWEB02.01.446">
@@ -541,6 +553,8 @@ InsertEmergencyHeader();
  <input type=hidden name=ptcnhdps value="%STANDARD.01.025.080.250.1.1">
  <input type=hidden name=emvis147 value="0">
  <input type=hidden name=emcnevrm value="%STANDARD.01.025.089.226.0.4">
+ <input type=hidden name=emcprcmp id=emcprcmp
+        value="%STANDARD.01.025.122.051.1.1">
  <input type=hidden name=currdate value="%STANDARD.01.013">
  <input type=hidden name=currtime value="">
  <input type=hidden name=dpdtckie value="">
@@ -580,8 +594,17 @@ InsertEmergencyHeader();
 	-->
 	<!-- 13 : TAS : Make triage notes display as ready-only -->
 	<td class=DataLabel width=15%>Triage Notes</td>
-    <td><textarea name=brcom001 class=Readonly readonly cols=50 rows=4></textarea>
+    <td><textarea name=brcom001 class=Readonly readonly cols=50 rows=6
+         title="Triage Notes"></textarea>
 <!-- end of change -->
+    </td></tr>
+
+<tr valign=top id=PresentComplaintAddInfo><td></td>
+    <td></td>
+    <td></td>
+    <td colspan=2><textarea name=prcompad readonly cols=50 rows=6
+     class="Readonly" title="Triage Notes - Additional Information">
+    </textarea>
     </td></tr>
 
 <tr>

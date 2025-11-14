@@ -1,4 +1,4 @@
-<meta name="TemplateVersion" content="V11.05.03">
+<meta name="TemplateVersion" content="V11.05.04">
 <meta name="TemplateHome"    content="nz">
 <meta name="HelpFileName"    content="NoContextSet.html">
 <meta name="CrossBrowser"    content="true"> 
@@ -10,6 +10,22 @@
 <script type="text/javascript" src="../js/UltraGenda.js"> </script>
 <script type="text/javascript" src="../js/TableSort.js"></script>
 <script type="text/javascript">
+function selectActions() {
+  if(document.getElementById('rsch').selected) {
+    if(document.PatientLinks.bokstat.value=="4") {
+      alert("Error: Appointment has been Attended");
+      document.getElementById('viewlink').selectedIndex=0;
+      return;
+    }
+    if(document.PatientLinks.bokstat.value=="5") {
+      alert("Error: Appointment has been Non-Attended");
+      document.getElementById('viewlink').selectedIndex=0;
+      return;
+    }
+  }
+  PMenuLinkTo(document.getElementById('viewlink'));
+}
+
 function AttendScreen() {
   if(!isWhitespace(PatientLinks.alrevisn.value) && 
      PatientLinks.othecenc.value=="1"){
@@ -260,12 +276,13 @@ InsertPatientHeader()
 <table border="0" cellpadding="0" cellspacing="0" width="100%" >
 <tr>
     <td class=HeadingCell width=15%>
-    <select onchange="PMenuLinkTo(this);" class=PMenuSelectList>
+    <select onChange='selectActions();'
+            name=viewlink id=viewlink class=PMenuSelectList>
     <option>---- Actions ----</option>
     <option value="outweb02.pbl|03|009|1|900|900">Update</option>
     <option value="AttendScreen()|||7||">Attendance</option>
     <option value="CheckRefStat()|||7||">Follow Up Appointment</option>
-    <option value="outweb02.pbl|03|005|1|750|475">Reschedule</option>
+    <option id=rsch value="outweb02.pbl|03|005|1|750|475">Reschedule</option>
     <option value="outweb02.pbl|03|006|1|800|650">Discharge</option>
     <option value="outweb02.pbl|03|013|1|700|400">Labels & Forms</option>
     <option value="outweb02.pbl|03|002|1|800|450">Non-Attendance</option>
@@ -444,6 +461,7 @@ InsertPatientHeader()
 <input type=hidden name=showresc value="%OUTWEB02.03.676">
 <input type=hidden name=d_addslotk value="%OUTWEB02.03.674">
 <input type=hidden name=showfoll value="%OUTWEB02.03.673">
+<input type=hidden name=bokstat value="%OUTWEB02.03.608.1">
 </form>
 
 <form name=UpdateStatus action=outweb02.pbl method=post>

@@ -1,21 +1,8 @@
-<meta name="TemplateVersion" content="V11.05.00">
-<meta name="TemplateHome" content="crdhb">
+<meta name="TemplateVersion" content="V11.05.01">
+<meta name="TemplateHome"    content="crdhb">
 <meta name="HelpFileName"    content="NoContextSet.html">
-<script type="text/javascript" src="../js/EmergencyCodingTable.js"> </script>
+<script type="text/javascript" src="../js/EmergencyCodingTable.js"></script>
 <script type="text/javascript">
-function getDiagnosis(SearchField,ReturnSelect) {
-  var serverURL   = "../cgi-bin/emrweb08.pbl?reportno=1" +
-                    "&valdcode=" + SearchField.value.replace(/ /g,"+")
-  var returnValue = RSExecute(serverURL);
-  if (returnValue.status==0) {
-    ReturnSelect.options.length=0
-    ReturnValue=returnValue.return_value.split("|");
-    for (var j=0; j < ReturnValue.length; j++) {
-       if (!isWhitespace(ReturnValue[j])) {
-         SelectValue=ReturnValue[j].split(",");
-         ReturnSelect.options[ReturnSelect.options.length]=
-          new Option(SelectValue[1],SelectValue[0]); } } }
-}
 function newDiagnosis() {
   if (isWhitespace(document.Dummy.diagselt.value)) {
       alert("No Diagnosis selected !");

@@ -8,6 +8,9 @@
 .  *     Modifications:                                                       *
 .  *                                                                          *
 .  ****************************************************************************
+.  *     V11.05.17  05/11/2025  Nikitha Bhaskar  TSK 0958928                  *
+.  *                Added PATCN662/PTCNEDDT - Broadcast Outpatient Expected   *
+.  *                Discharge Date and Time in PV2.9                          *
 .  *     V11.05.16  24/06/2025  Jacob Jackson    TSK 0944962                  *
 .  *                Added PATCN661/PTCNVIMS - Verify Inbound SIU^12 Inpatient *
 .  *                Message                                                   *
@@ -1671,6 +1674,7 @@ CPPT0000  MOVE      Z70,PATCN001
           MOVE      Z70,PATCN659
           MOVE      Z70,PATCN660
           MOVE      Z70,PATCN661
+          MOVE      Z70,PATCN662
 .
           MOVE      Z70,IBACN001
           MOVE      Z70,IBACN002
@@ -2144,7 +2148,7 @@ PTCO0000  BRANCH    FLDITMNO,PTCO0010,PTCO0020,PTCO0030,PTCO0040,PTCO0050:
                              PTCO5460,PTCO5470,PTCO5480,PTCO5490,PTCO5500: * 550
                              PTCO5510,PTCO5520,PTCO5530,PTCO5540,PTCO5550: * 555
                              PTCO5560,PTCO5570,PTCO5580,PTCO5590,PTCO5600: * 560
-                             PTCO5610
+                             PTCO5610,PTCO5620
 .
           WRITE     HTMLFILE;"Invalid IBA tag";
           GOTO      PTCO9999
@@ -4220,6 +4224,9 @@ PTCO5600  WRITE     HTMLFILE;PTCNSDTY;   * Read Discharge Type Cat D/DD
 PTCO5610  WRITE     HTMLFILE;PTCNVIMS;   * Read Verify Inbound SI12 INP Msg
           GOTO      PTCO9999
 .
+PTCO5620  WRITE     HTMLFILE;PTCNEDDT;   * Broadcast Outpatient Expected
+.                                        * Discharge Date and Time in PV2.9
+          GOTO      PTCO9999
 PTCO9999  RETURN
 +
 .------------------------------------------------------------
@@ -4629,7 +4636,7 @@ SPPAT000  MOVE      ZERO,EXIT
                        SPPAT646,SPPAT647,SPPAT648,SPPAT649,SPPAT650:
                        SPPAT651,SPPAT652,SPPAT653,SPPAT654,SPPAT655:
                        SPPAT656,SPPAT657,SPPAT658,SPPAT659,SPPAT660:
-                       SPPAT661
+                       SPPAT661,SPPAT662
 .
           MOVE      ONE,EXIT
           GOTO      SPPAT999
@@ -6804,6 +6811,9 @@ SPPAT660  MOVE      QRYDATA,PATCN660
           GOTO      SPPAT999
 .
 SPPAT661  MOVE      QRYDATA,PATCN661
+          GOTO      SPPAT999
+.
+SPPAT662  MOVE      QRYDATA,PATCN662
           GOTO      SPPAT999
 .
 SPPAT999  RETURN
@@ -10194,6 +10204,12 @@ MVPT0000  MATCH     Z70,PATCN001
           MATCH     Z70,PATCN661
           IF        !@EQUAL
             MOVE      PATCN661,PTCNVIMS  * Verify Inbound SIU^12 Inpatient
+          ENDIF
+.
+          MATCH     Z70,PATCN662
+          IF        !@EQUAL
+            MOVE      PATCN662,PTCNEDDT  * Broadcast Outpatient Expected 
+.                                          Discharge Date and Time in PV2.9
           ENDIF
 .
           MATCH     Z70,IBACN001

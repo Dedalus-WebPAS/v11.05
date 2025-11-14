@@ -1,4 +1,4 @@
-//jsVersion  : V11.05.01
+//jsVersion  : V11.05.02
 //========================================================================
 // Program   : mrtweb02.js
 //
@@ -739,7 +739,6 @@ function AddClinician() {
        typeof document.UpdateForm.dfprdsc1 != "undefined" &&
        typeof document.UpdateForm.dfprdsc2 != "undefined" &&
        typeof document.UpdateForm.dfprdsc3 != "undefined" &&
-       ProcNo == "101" &&
        document.UpdateForm.mrcnclin.value != 0 &&
        document.getElementById("dischdte").value > '20190701') {
      if (document.UpdateForm.mrcndfpr.value == "1") {

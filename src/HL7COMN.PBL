@@ -2,6 +2,9 @@
 .*                              HL7COMN.PBL                                  *
 .*        Contains common HL7 routines used by both HL7CISIN and HL7QUERY    *
 .* Mods:                                                                     *
+.*        V11.05.15 25/10/2025  Nikitha B        TSK 0958929                 *
+.*                  Added to get HCP code from EMCNDCLI when EMCNEDCL is on  *
+.*                  at EPV11000.                                             * 
 .*        V11.05.14 21/10/2025  Bella Turco      TSK 0960178                 *
 .*                  Added ZXP.77: Sending Estimated DOB Flag                 *
 .*                  (WRZXP000/PMPXEDOB)                                      *
@@ -7884,15 +7887,36 @@ EPV11000  MATCH     "1",PTCNEDDD
           CLEAR     DOCFNAME
           MOVE      BLANKSTR,PV1009              * default consultant to blank
           MOVE      BLANKSTR,PV1010              * default hosp service to blank
-          MATCH     SP10,EMRVDOCT                * doctor seen blank ?
+.
+          MOVE      EMRVDOCT,KEY10
+          MATCH     SP10,KEY10
+            IF        @EQUAL
+              PACK      CPARHPID,PMVXMHOS,SP70    * Visit Hospital
+              MOVE      "EMCNEDCL",CPARPARM
+              PACK      CPARPARM,CPARPARM,SP70    * Sending ED Def Clian & Spslt
+              CALL      GTCMPH00
+              COMPARE   "0",CPARERRO              * Parameter active ?
+              IF        @EQUAL
+                MOVE      SP70,CPARPARM
+                MOVE      "EMCNDCLI",CPARPARM
+                PACK      CPARPARM,CPARPARM,SP70  * ED Default Clinician
+                CALL      GTCMPH00
+                COMPARE   "0",CPARERRO            * Parameter active ?
+                IF        @EQUAL
+                  MOVE      CMPAVALU,KEY10        * HCP Code
+                ENDIF
+              ENDIF
+            ENDIF
+.
+          MATCH     SP10,KEY10                   * doctor seen blank ?
           IF        !@EQUAL
-            MOVE      EMRVDOCT,FIELDSTR          * no - load dr code
+            MOVE      KEY10,FIELDSTR             * no - load dr code
             CALL      SPCHR000                   * convert special characters
             MOVE      FIELDSTR,PV1009
             ENDSET    PV1009
             APPEND    CARET,PV1009
 .
-            MOVE      EMRVDOCT,KEY6
+            MOVE      KEY10,KEY6
             CALL      RDDOCT1
             IF        OVRCD = 0
               MATCH     SP3,DRTYPE
@@ -8026,6 +8050,27 @@ EPV11000  MATCH     "1",PTCNEDDD
             CALL      SPCHR000                   * convert special characters
             MOVE      FIELDSTR,PV1014            * set hospital service
           ENDIF
+
+.         Default 'ED Default Clinician' for AUZ sites when
+.         'Sending Default ED Clinician and Specialty' parameter is set to Yes
+          
+          PACK      CPARHPID,PMVXMHOS,SP70    * Visit Hospital
+          MOVE      "EMCNEDCL",CPARPARM
+          PACK      CPARPARM,CPARPARM,SP70    * Sending ED Def Clian & Spslt
+          CALL      GTCMPH00
+          COMPARE   "0",CPARERRO              * Parameter active ?
+          IF        @EQUAL
+            MOVE      SP70,CPARPARM
+            MOVE      "EMCNDCLI",CPARPARM
+            PACK      CPARPARM,CPARPARM,SP70  * ED Default Clinician
+            CALL      GTCMPH00
+            COMPARE   "0",CPARERRO            * Parameter active ?
+            IF        @EQUAL
+              MOVE      BLANKSTR,PV1017
+              MOVE      CMPAVALU,PV1017       * HCP Code
+            ENDIF
+          ENDIF
+
 .
 .         Format Admitting Doctor  (Local GP for NZ only)
 .         Send repeating fields which contain, Doctor code, Provider 1,
@@ -8035,15 +8080,35 @@ EPV11000  MATCH     "1",PTCNEDDD
             MOVE      SP60,DOCFNAME
             CLEAR     DOCFNAME
             MOVE      BLANKSTR,PV1017            * default to blank
-            MATCH     SP10,PMPXRHC1              * doctor seen blank ?
+.
+            MOVE      PMPXRHC1,KEY10
+            MATCH     SP10,KEY10
+            IF        @EQUAL
+              PACK      CPARHPID,PMVXMHOS,SP70    * Visit Hospital
+              MOVE      "EMCNEDCL",CPARPARM
+              PACK      CPARPARM,CPARPARM,SP70    * Sending ED Def Clian & Spslt
+              CALL      GTCMPH00
+              COMPARE   "0",CPARERRO              * Parameter active ?
+              IF        @EQUAL
+                MOVE      SP70,CPARPARM
+                MOVE      "EMCNDCLI",CPARPARM
+                PACK      CPARPARM,CPARPARM,SP70  * ED Default Clinician
+                CALL      GTCMPH00
+                COMPARE   "0",CPARERRO            * Parameter active ?
+                IF        @EQUAL
+                  MOVE      CMPAVALU,KEY10        * HCP Code
+                ENDIF
+              ENDIF
+            ENDIF
+.
+            MATCH     SP10,KEY10              * doctor seen blank ?
             IF        !@EQUAL
-              MOVE      PMPXRHC1,FIELDSTR        * no - load dr code
+              MOVE      KEY10,FIELDSTR        * no - load dr code
               CALL      SPCHR000                 * convert special characters
               MOVE      FIELDSTR,PV1017
               ENDSET    PV1017
               APPEND    CARET,PV1017
 .
-              MOVE      PMPXRHC1,KEY10
               CALL      RDPMHCP1
               IF        OVRCD = 0
                 MOVE      PMHCSNAM,FIELDSTR
@@ -11828,7 +11893,9 @@ WRZXP770  MATCH     SP1,PMPXSN21                 * field populated ?
 .
 .         Estimated DOB Flag (ZXP.77)
 .
-WRZXP775  MOVE      "PTCNEDOB",D8           * hospital parameter
+WRZXP775  OPEN      COMPARA1,"comparaf"
+.
+          MOVE      "PTCNEDOB",D8           * hospital parameter
           COMPARE   ZERO,IBCNMHOS
           GOTO      WRZXP776 IF EQUAL
 .

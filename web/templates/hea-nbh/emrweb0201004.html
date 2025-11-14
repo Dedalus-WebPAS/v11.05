@@ -1,4 +1,4 @@
-<meta name="TemplateVersion" content="V11.05.00">
+<meta name="TemplateVersion" content="V11.05.01">
 <meta name="TemplateHome" content="hea-nbh">
 <meta name="HelpFileName" content="NoContextSet.html">
 <meta name="CrossBrowser" content="true">
@@ -80,10 +80,6 @@ function EnableBedReq() {
 function SetDisableFields() {
   f = document.UpdateForm;
   f.emvis060.disabled = true;
-  f.emvis006.disabled = true;
-  if (f.emvcd005 != undefined) {
-    f.emvcd005.disabled = true;
-  }
   if (f.emvis167 != undefined) {
     f.emvis167.disabled = true;
   }
@@ -253,14 +249,14 @@ if(VariableNameExists('ShowSingleClickPatientMenu')) {
          value="%EMRWEB02.01.106.0">
     <table width=100% align=center border=0 cellspacing=0 cellpadding=0>
     <tr><td>
-    <select readonly class="SelectBig Readonly" name=emvis006 title="Location"> 
+    <select class="SelectBig" name=emvis006 title="Location" 
+      onchange='validateattendingdoctor(refreashTop);'/> 
     <option value=" "></option>
     %EMRWEB02.01.106.2
     </select>
     </td><td>
     <div id=LocationNoteDIV>
-    <input type=text size=30 name=emvis149 readonly class=Readonly
-     title="Location Note"
+    <input type=text size=30 name=emvis149 title="Location Note"
      value="%EMRWEB02.01.136">
     </div>
     </td></tr>
@@ -859,10 +855,16 @@ if(VariableNameExists('ShowSingleClickPatientMenu')) {
     
 <tr><td class="DataLabel">Primary Diagnosis Search</td>
     <td class="DataField" colspan=5>
-    <input type=text  name=diagnosisSearch
-     readonly class="SelectBig Readonly" >
-    <select name=emvcd005 readonly class="SelectXlrg Readonly">
+    <input type=text name=diagnosisSearch title="Enter Key Word to search..."
+     onKeyUp='getDiagnosis(this,UpdateForm.emvcd005,UpdateForm.emvcd033);'
+     onblur='submitPrimaryDiag();' class=SelectBig>
+    <select name=emvcd005 id=emvcd005 class="SelectXlrg" title="Diagnosis"
+     onchange="document.UpdateForm.emvcd033.value=
+               trim(this.value.substring(9,80))+' ';
+               submitPrimaryDiag();">
     </select>
+    <input type=button class="button" value="Multi Diagnosis"
+     onclick='DiagnosisLink();'>
     <input type=hidden name=emvcd001 value="%EMRWEB02.01.081">
     <input type=hidden name=emvcd002 value="005">
     <input type=hidden name=emvcd003 value="%EMRWEB02.01.197">
@@ -874,7 +876,7 @@ if(VariableNameExists('ShowSingleClickPatientMenu')) {
 <tr><td class="DataLabel">Primary Diagnosis Free Format Desc</td>
     <td class="DataField" colspan=5>
     <input type=text name=emvcd033 maxlength=100 size=100
-     readonly class=Readonly>
+     title="Diagnosis Free Format Description" onblur="submitFreeFormat();">
     </td></tr>
 
 <tr><td class="DataLabel">Admitting Doctor</td>

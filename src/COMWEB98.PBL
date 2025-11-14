@@ -5,6 +5,11 @@
 .
 . Modifications : 
 .-----------------------------------------------------------------------------
+. V11.05.23 10/11/2025  Ebon Clements    TSK 0968096
+.           Recompiled for COMPARTM
+.           05/11/2025  Nikitha Bhaskar  TSK 0958928
+.           Added PATCN662/PTCNEDDT - Broadcast Outpatient Expected
+.           Discharge Date and Time in PV2.9
 . V11.05.22 10/09/2025  Bella Turco      TSK 0956710                  
 .           Added OPRCN059/OPCNASOT - Anaesthetic Started must be AFTER Patient
 .           Out of Theatre Previous Patient
@@ -1744,7 +1749,7 @@ ZERO6     INIT      "000000"
 .
 .----------------------------------------------------------------------
 PRGID     INIT      "COMWEB98"
-VERSION   INIT      "V11.05.22"
+VERSION   INIT      "V11.05.23"
 PRGNAM    INIT      "Parameter Maintenance"
 .----------------------------------------------------------------------
 .
@@ -3355,7 +3360,7 @@ RPAT0000  READ      CONTROLF,ZERO;*43,IBCNMHOS,*87,IBCNMESI,*132,IBCNUMCI:
                                     *94,PTCNE120,*102,PTCN120C,*105,PTCNDVBC:
                                     *113,PTCNFNM2,*114,PTCNABTS,*115,PTCNDBVC:
                                     *116,PTCNDBVP,*117,PTCNSAPC,*118,PTCNSDTY:
-                                    *119,PTCNVIMS
+                                    *119,PTCNVIMS,*120,PTCNEDDT
 .
 RPAT9999  RETURN
 .
@@ -3624,7 +3629,7 @@ UPAT0000  WRITAB    CONTROLF,ZERO;*43,IBCNMHOS,*87,IBCNMESI,*132,IBCNUMCI:
                                     *94,PTCNE120,*102,PTCN120C,*105,PTCNDVBC:
                                     *113,PTCNFNM2,*114,PTCNABTS,*115,PTCNDBVC:
                                     *116,PTCNDBVP,*117,PTCNSAPC,*118,PTCNSDTY:
-                                    *119,PTCNVIMS
+                                    *119,PTCNVIMS,*120,PTCNEDDT
 .
 UPAT9999  RETURN
 .

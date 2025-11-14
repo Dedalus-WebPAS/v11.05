@@ -1,7 +1,19 @@
-<meta name="TemplateVersion" content="V11.05.01">
+<meta name="TemplateVersion" content="V11.05.02">
 <meta name="TemplateHome" content="standard">
 <meta name="HelpFileName" content="NoContextSet.html">
 <meta name="CrossBrowser" content="true">
+<script type="text/javascript">
+function AddButton() {
+  if(!validateMandatory(AddForm)) {return;}
+  if(document.AddForm.d_pmhcg027.value != "0"){
+    if(document.AddForm.pmhcl012.checked == true){
+      alert("The Practice is inactive. HCP can only be linked as inactive status.");
+      return;
+    }
+  }  
+  SubmitForm(); 
+}
+</script>
 </head>
 %START.OF.PAGE
 <body onload="PageLoad(event)">
@@ -18,6 +30,7 @@
    <input type=hidden name=pmhcl002 value="%PATWEB99.07.001">
    <input type=hidden name=pmhcp001 value="%PATWEB99.07.001">
    <input type=hidden name=pmhcp002 value="%PATWEB99.07.002">
+   <input type=hidden name=d_pmhcg027 value="%PATWEB99.07.027">
    <input type=hidden name=valdallh value="1">
 
 <table border=0 width=98% align=center cellspacing="0" cellpadding="1">
@@ -56,8 +69,10 @@
          value="2" checked>
 </td></tr>
 <tr><td colspan=2 align=center><br>
-    <input type=button value="Add" class="button" onclick="SubmitForm()">
-    <input type=button value=Close class="button" onclick="DFrameCloseRefresh()">
+    <input type=button value="Add" class="button" 
+     onclick="AddButton();">
+    <input type=button value=Close class="button" 
+     onclick="DFrameCloseRefresh();">
 </table>
 </td></tr>
 </table>

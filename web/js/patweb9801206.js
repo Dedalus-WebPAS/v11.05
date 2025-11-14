@@ -1,4 +1,4 @@
-//jsVersion  : V11.05.00
+//jsVersion  : V11.05.01
 //
 var serviceArray     = new Array();
 var serviceTypeArray = new Array();
@@ -143,6 +143,7 @@ function LoadPage() {
   showOptions(OptionNo);
 }
 function SaveForm() {
+  if (!validateMandatory(UpdateForm)) {return;}
   if (document.UpdateForm.ptcnuvsr.value == "1") {
     if (ServiceTypeExists('services', 'RX')) {  // Radiology services?
       ShowIdValidationFrame();  // User Id validation required
@@ -153,11 +154,8 @@ function SaveForm() {
   DoSave();
 }
 function DoSave() {
-  var bool = validateMandatory(UpdateForm);
-  if (bool) {
-    ShowWaitScreen();
-    setTimeout(function () { submitServiceRequest(); },100)
-  }
+  ShowWaitScreen();
+  setTimeout(function () { submitServiceRequest(); },100) 
 }
 //-----------------------------------------------------------------------------
 // Check for Code mapping

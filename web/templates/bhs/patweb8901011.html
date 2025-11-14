@@ -1,4 +1,4 @@
-<meta name="TemplateVersion" content="V11.05.02">
+<meta name="TemplateVersion" content="V11.05.03">
 <meta name="TemplateHome" content="bhs">
 <meta name="HelpFileName" content="NoContextSet.html">
 <meta name="CrossBrowser" content="true">
@@ -11,6 +11,15 @@ function SubmitAdm() {
   if  (!validateMandatory(UpdateForm)) {
       return;
   }
+
+  if (document.UpdateForm.admitbox.value==1) {
+    dateDiff=parseInt(SetDateYYYYMMDD(document.UpdateForm.ptmis001.value)) -
+             parseInt(DemConDate);
+    if (checkDemographicsUpdated(dateDiff,NoDayDemVl,ConfDemogs)){
+      return;
+    }
+  }
+
   if (!isWhitespace(UpdateForm.ptmis013.value)) {
       if (!validateHFT(20,UpdateForm.ptmis013,UpdateForm.ptmis014,
                           UpdateForm.funddesc,UpdateForm.tabldesc)) {
@@ -93,8 +102,8 @@ function AdmitMandatory() {
      UpdateForm.ptmis024.className="";  //Unit
      UpdateForm.ptmis027.className="";  //Financial Class
      UpdateForm.ptmis010.classname="";  //cmbs class
-     updateform.ptvis043.classname="";  //intended stay
-     updateform.ptvis046.classname="";  //admitting point
+     UpdateForm.ptvis043.classname="";  //intended stay
+     UpdateForm.ptvis046.classname="";  //admitting point
   }
   UpdateForm.OKButton.disabled=false;
  }
@@ -155,6 +164,9 @@ PatientHFT="%PATWEB89.01.086.094";
 PatientCDM="%PATWEB89.01.086.095";
 PatientVDH="%PATWEB89.01.086.099.015";
 PatientSPF="%PATWEB89.01.085.067";
+ConfDemogs="%STANDARD.01.045.PTCNCDOA";
+NoDayDemVl=trim("%STANDARD.01.045.PTCNNDCD");
+DemConDate=SetDateYYYYMMDD("%PATWEB89.01.085.059");
 InsertPatientHeader()
 </script>
 <div id=PatientMenu></div>

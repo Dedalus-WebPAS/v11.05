@@ -95,6 +95,8 @@
 .***************************************************************************
 .*  Mod's     :                                                            *
 .***************************************************************************
+.*        V11.05.24 30/10/2025  PJ Le Febour   TSK 0967751                 *
+.*                  RZXV4801 added code replace double quotes in ZXV04801  *
 .*        V11.05.23 24/10/2025  Davin          TSK 0968679                 *
 .*                  Default to arrival date/time for emrhisaf at WTEMHS15  *
 .*        V11.05.22 16/10/2025  Davin          TSK 0968448                 *
@@ -5708,7 +5710,7 @@ DEC       INIT      "December"
 .-----------------------------------------------------------------------
 PRGID     INIT      "HL7RECVR"
 PRGNAM    INIT      "HL7 General Receiving Server"
-VERSION   INIT      "V11.05.23"
+VERSION   INIT      "V11.05.24"
 .-----------------------------------------------------------------------
 +
 .*************************************************************************
@@ -35060,6 +35062,10 @@ RZXV4706  RESET     ZXV04706                     * name of alt. cod. system (ST)
 RZXV4800  BRANCH    COMPCNT,RZXV4801
 .
 RZXV4801  RESET     ZXV04801
+          MATCH     BLANKSTR,ZXV04801
+          IF        !@EQUAL
+            REP       "#"'",ZXV04801
+          ENDIF
           GOTO      RZXV9999
 .
 .         ZXV.49  Referring Practice (CE)
@@ -72701,7 +72707,7 @@ PA08E075  PACK      NEWVALUE,EMVIMDDT,EMVIMDTM,EMVIMDCD,EMVIUC31,SP70     * new
 PA08E080  MOVE      EMVIDRDT,SAVTRDAT            * save original values
           UNPACK    EMVIDRTM,HOURE,D1,MIN,D1,SEC
           PACK      SAVTRTIM,HOURE,MIN,SEC       * hhmmss
-          REP       " 0",SAVTRTIM 
+          REP       " 0",SAVTRTIM
           MOVE      SP8,TRDOCDAT
 .
           STRIP     ZXV06501

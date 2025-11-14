@@ -1,4 +1,4 @@
-<meta name="TemplateVersion" content="V11.05.00">
+<meta name="TemplateVersion" content="V11.05.01">
 <meta name="TemplateHome"    content="wahealth">
 <meta name="HelpFileName"    content="NoContextSet.html">
 <meta name="CrossBrowser"    content="true">
@@ -8,6 +8,14 @@ function SubmitAdm() {
   MandatoryOk=true;
   if (!validateMandatory(document.UpdateForm)) {
      return;
+  }
+
+  if (document.UpdateForm.admitbox.value==1) {
+    dateDiff=parseInt(SetDateYYYYMMDD(document.UpdateForm.ptmis001.value)) -
+             parseInt(DemConDate);
+    if (checkDemographicsUpdated(dateDiff,NoDayDemVl,ConfDemogs)){
+      return;
+    }
   }
 
   if (!isWhitespace(document.UpdateForm.dispt001.value)) {
@@ -126,6 +134,9 @@ PatientCLH="%STANDARD.01.017.CL";
 PatientHFT="%PATWEB89.03.086.094";
 PatientCDM="%PATWEB89.03.086.095";
 PatientVDH="%PATWEB89.03.086.099.015";
+ConfDemogs="%STANDARD.01.045.PTCNCDOA";
+NoDayDemVl=trim("%STANDARD.01.045.PTCNNDCD");
+DemConDate=SetDateYYYYMMDD("%PATWEB89.03.085.059");
 InsertPatientHeader()
 </script>
 <div id=PatientMenu></div>

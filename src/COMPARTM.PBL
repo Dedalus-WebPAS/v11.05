@@ -3,6 +3,8 @@
 . *
 . * Function      :   CGI variables functions for COMPARFD - comparaf.dat
 . *
+. * V11.05.01 07/11/2025  Ebon Clements  TSK 0968096
+. *                       Added Type 8 - Selection list
 . * V11.01.01 09/03/2021  Peter Vela     TSK 0900574
 . *                       Added Type 7 - Days Of Week
 . * V11.00.00 17/11/2020  Ebon Clements  TSK 0876663
@@ -117,6 +119,12 @@ CMPA0400  UNPACK    DIM127,D1,KEY1,DIM127
           ENDIF
 .
           MATCH     "  7",CMPATYPE                * Days Of Week
+          IF        @EQUAL
+            WRITE     HTMLFILE;CMPAVALU;
+            GOTO      CMPA9999
+          ENDIF
+.
+          MATCH     "  8",CMPATYPE                * Selection list value
           IF        @EQUAL
             WRITE     HTMLFILE;CMPAVALU;
             GOTO      CMPA9999

@@ -1,16 +1,20 @@
-<meta name="TemplateVersion" content="V11.05.00">
+<meta name="TemplateVersion" content="V11.05.01">
 <meta name="TemplateHome" content="standard">
 <meta name="HelpFileName" content="NoContextSet.html">
 <meta name="CrossBrowser" content="true">
+%START.OF.PAGE
 <script type="text/javascript">
 function submitPrgplb() {
-  if(!validateMandatory(PrintLabels)) {
-    return ;
-  } 
   if(!validateSelections()) {
     return;
   }
-  linkurl="patweb98.pbl?reportno=01&template=452&nourselc=1";
+  var template="452";
+  var PTCNA4TM=trim("%STANDARD.01.045.PTCNA4TM");
+  if(!isWhitespace(PTCNA4TM)) {
+     template=PTCNA4TM;
+
+  }
+  linkurl="patweb98.pbl?reportno=01&template=" + template + "&nourselc=1";
   Left=(document.body.clientWidth-390)/2;
   DFrameLink(linkurl,100,Left,390,140);
 }
@@ -86,7 +90,6 @@ function ModBeds() {
   location.href="patweb95.pbl?reportno=5&template=001&wardcode=" + ward;
 }
 </script>
-%START.OF.PAGE
 <body onload="PageLoad(event);SetCount();">
 
 <form name=SelectWard action=patweb93.pbl method=get style="margin:0">

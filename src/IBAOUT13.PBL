@@ -9,6 +9,9 @@
 .*               to auto open.                                             *
 .* Modifications  :                                                        *
 .***************************************************************************
+.*        V11.05.01 11/11/2025  Ebon Clements    TSK 0965169               *
+.*                  Changed to use the slot template header last session   *
+.*                  open date if populated. SDAT0000 PRIN0000              *
 .*        V11.02.01 09/02/2022  Thanh T          TSK 0905641               *
 .*                  Recompiled as OUTHEDFD/OUTMA1FD changes                *
 .*        V11.01.04 12/01/2022  Ebon Clements TSK 0915646                  *
@@ -113,7 +116,7 @@ SUN       INIT      "Sun"
 .
 PRGID     INIT      "IBAOUT13"
 PRGNAM    INIT      "Auto Open Outpatient Clinics"
-VERSION   INIT      "V11.05.00"
+VERSION   INIT      "V11.05.01"
 +
 .**************************************************************************
 .*                              ML0000                                    *
@@ -467,12 +470,18 @@ HEAD9999  RETURN
 .*********************************************************************
 SDAT0000  CALL      CLRD0000                * Clear open date array
 .
+          MATCH     SP70,OTHEDATE           * Blank last opened date
+          IF        !@EQUAL
+            MOVE      OTHEDATE,LASTOPEN     * Use last session open date
+            GOTO      SDAT0250              * from the slot template header
+          ENDIF
+.
           MATCH     SP70,OMADATE            * Blank last opened date
           GOTO      SDAT0500 IF EQUAL
 .
           MOVE      OMADATE,LASTOPEN        * Last sesson open date        
 .
-          UNPACK    LASTOPEN,CCENT,CYEAR,CMON,CDAY
+SDAT0250  UNPACK    LASTOPEN,CCENT,CYEAR,CMON,CDAY
           CALL      DAYOFWEK
 .
           COMPARE   WEEKDAY,OMADAY          * Error incorrect day of week      
@@ -821,7 +830,12 @@ PRIN0000  MOVE      ZERO,F1
             MOVE      CPCDATE,DISPSDAT
           ENDIF
 .
-          UNPACK    OMADATE,CCENT,CYEAR,CMON,CDAY
+          MATCH     SP70,OTHEDATE
+          IF        !@EQUAL
+            UNPACK    OTHEDATE,CCENT,CYEAR,CMON,CDAY
+          ELSE
+            UNPACK    OMADATE,CCENT,CYEAR,CMON,CDAY
+          ENDIF
           CALL      PACDATE
           MOVE      CPCDATE,PRNTLOPN
 .

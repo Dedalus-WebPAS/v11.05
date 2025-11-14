@@ -1,10 +1,18 @@
-.------------------------------------------------------------------------------
+.-----------------------------------------------------------------------------
 . Program       : OUTWEB02
 .
 . Function      : Outpatients Server
 .
 . Modifications  :
 .------------------------------------------------------------------------------
+. V11.05.19 12/11/2025  Zumin Yu       TSK 0969239
+.           Modified FMTTIM00 & SCSTAB20 to resolve the 12PM time display issue
+. V11.05.18 11/11/2025  Zumin Yu       TSK 0969239
+.           Modified CASTIT00 to resolve the 12PM time display issue 
+. V11.05.17 10/11/2025  Zumin Yu       TSK 0969235
+.           Corrected “over bookings” to “overbookings” in warning message
+. V11.05.16 05/11/2025  Ebon Clements  TSK 0969196 
+.           Only read pmsextaf if key is not blank (Not a new booking) OEXB1200
 . V11.05.15 16/10/2025  Zumin Yu       TSK 0964943a
 .           Formatting DNA patient warning message in CHKDNA10
 . V11.05.14 17/09/2025  Ebon Clements  TSK 0965123
@@ -3494,7 +3502,7 @@ ATTEXT    INIT      "at"
 .
 .*******************************************************************************
 PRGID     INIT      "OUTWEB02"
-VERSION   INIT      "V11.05.15"
+VERSION   INIT      "V11.05.19"
 PRGNAM    INIT      "Outpatient Processing"
 .*******************************************************************************
 .
@@ -8354,15 +8362,21 @@ OEXB1100  MOVE      "NC",CATEGORY                    *tier2 code outma1af
           CALL      CODITM00
           GOTO      OEXT9999
 .
-OEXB1200  PACK      KEY11,DOBAOUTN,OBACOMP
+OEXB1200  PACK      KEY11,DOBAOUTN,OBACOMP,SP70
           MOVE      OBACOMP,SAVBCOMP                 *0950014
-
+.
+          MATCH     SP70,KEY11                       * New booking with no key
+          IF        @EQUAL
+            CALL      CLPMSEXT
+            GOTO      OEXB1210
+          ENDIF
+.
           CALL      RDPMEXT1
           IF        OVRCD=1
             CALL      CLPMSEXT
           ENDIF
 .
-          UNPACK    DIM127,D1,KEY3,DIM127
+OEXB1210  UNPACK    DIM127,D1,KEY3,DIM127
           MOVE      ZERO,FLDITMNO
           MOVE      KEY3,FLDITMNO
           CALL      PMEX0000               *Claim Extension Details
@@ -10192,18 +10206,22 @@ FMTTIM00  MOVE      "am",STRAMPM
           MOVE      "am",ENDAMPM
           UNPACK    STRTIM,DIMHRS,KEY1,DIMMIN
           MOVE      DIMHRS,F2
-          IF        F2>12
+          IF        F2>=12
             MOVE      "pm",STRAMPM
-            SUB       "12",F2
+            IF        F2>12
+              SUB       "12",F2                  * when 13:00 is 1:00pm
+            ENDIF
             PACK      STRTIM,F2,KEY1,DIMMIN
             REP       " 0",STRTIM
           ENDIF
 .
           UNPACK    ENDTIM,DIMHRS,KEY1,DIMMIN
           MOVE      DIMHRS,F2
-          IF        F2>12
+          IF        F2>=12
             MOVE      "pm",ENDAMPM
-            SUB       "12",F2
+            IF        F2>12
+              SUB       "12",F2                  * when 13:00 is 1:00pm
+            ENDIF
             PACK      ENDTIM,F2,KEY1,DIMMIN
             REP       " 0",ENDTIM
           ENDIF
@@ -11386,8 +11404,10 @@ CASTIT00  UNPACK    OSEDATE,CCENT,CYEAR,CMON,CDAY
           APPEND    "Clinic List for ",WEBTITLE
           UNPACK    OMASTART,DIMHRS,KEY1,DIMMIN
           MOVE      DIMHRS,F2
-          IF        F2>12
-            SUB       "12",F2
+          IF        F2>=12
+            IF        F2>12                            
+              SUB       "12",F2                  * when 13:00 is 1:00pm
+            ENDIF
             APPEND    F2,WEBTITLE
             APPEND    KEY1,WEBTITLE
             APPEND    DIMMIN,WEBTITLE
@@ -15545,7 +15565,7 @@ USLT9100  MOVE      "Booking must be made Available",WEBTITLE
           MOVE      ONE,EXIT
           GOTO      USLT9999
 .
-USLT9200  MOVE      "Over Bookings can not be made Unavailable",WEBTITLE
+USLT9200  MOVE      "Overbookings cannot be made Unavailable",WEBTITLE
           CALL      WEBERR00
           MOVE      ONE,EXIT
           GOTO      USLT9999
@@ -15698,12 +15718,12 @@ VALUPD92  MOVE      "This Visit is Currently Reserved.",WEBTITLE
           MOVE      ONE,EXIT
           GOTO      VALUPD99
 .
-VALUPD93  MOVE      "Over Bookings can not be modified.",WEBTITLE
+VALUPD93  MOVE      "Overbookings cannot be modified.",WEBTITLE
           CALL      WEBERR00
           MOVE      ONE,EXIT
           GOTO      VALUPD99
 .
-VALUPD94  MOVE      "No space available due to over bookings.",WEBTITLE
+VALUPD94  MOVE      "No space available due to overbookings.",WEBTITLE
           CALL      WEBERR00
           MOVE      ONE,EXIT
           GOTO      VALUPD99
@@ -17159,8 +17179,10 @@ SCSTAB20  IF        FULLONLY=1
           WRITE     HTMLFILE;"<tr><td align=center width=60 nowrap>";
           UNPACK    OBATIME,DIMHRS,KEY1,DIMMIN
           MOVE      DIMHRS,F2
-          IF        F2>12
-            SUB       "12",F2
+          IF        F2>=12
+            IF        F2>12
+             SUB       "12",F2
+            ENDIF
             WRITE     HTMLFILE;F2,KEY1,DIMMIN," pm</td>";
           ELSE
             WRITE     HTMLFILE;F2,KEY1,DIMMIN," am</td>";

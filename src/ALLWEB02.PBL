@@ -5,6 +5,8 @@
 .
 . Modifications  :
 .------------------------------------------------------------------------------
+. V11.05.05  11/11/2025  Bella Turco   TSK 0968146  
+.            Recompiled for ALLREFTM                                           
 . V11.05.04  13/08/2025  Nikitha B     TSK 0961969  
 .            Added a new tag at ADDR0320 to check the visit if ever been active
 .            Added Medi-Hotel check at SACER900 & SACR9000 to skip if no contact
@@ -2415,7 +2417,7 @@ SHOWACTV  DIM       1             * Flag for showing active clinics only
 
 .******************************************************************************
 PRGID     INIT      "ALLWEB02"
-VERSION   INIT      "V11.05.04"
+VERSION   INIT      "V11.05.05"
 PRGNAM    INIT      "Allied Health Referral Information Server"
 .******************************************************************************
           CALL      WEBINT00                * Initialise FIFO Etc.

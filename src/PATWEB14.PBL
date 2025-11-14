@@ -5,6 +5,8 @@
 .
 . Modifications :
 .----------------------------------------------------------------------
+. V11.05.03 12/11/2025  Ebon Clements  TSK 0960938
+.           Delete correspondence audit when unlinking UR/Visit - UNDC3000
 . V11.05.02 02/06/2025  Don Nguyen     TSK 0960938
 .           Recompiled for PATNAMCD
 . V11.05.01 19/05/2025  Ebon Clements    TSK 0960463
@@ -182,6 +184,7 @@
           INC       PMSVX1FD/INC   * Visit Extension File
           INC       PATCONFD/INC
           INC       PATALRFD/INC
+          INC       OBSAUDFD/INC
           INC       OUTSITFD/INC
           INC       PMSUCHFD/INC
           INC       PMSUCDFD/INC
@@ -399,7 +402,7 @@ TOLOCASE  INIT      "AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz"
 .
 .----------------------------------------------------------------------
 PRGID     INIT      "PATWEB14"
-VERSION   INIT      "V11.05.02"
+VERSION   INIT      "V11.05.03"
 PRGNAM    INIT      "eAdmission Web Server"
 .----------------------------------------------------------------------
 .
@@ -902,7 +905,29 @@ UNDC2000  CALL      RKOBPC1
           PACK      KEY20,OBPCURNO,OBPCCVIS,OBPCCPID
           CALL      DEOBPC1
 .
-          PACK      KEY24,PMHBEAID,OBECCPID,SP70
+. Delete audit records
+.
+UNDC3000  PACK      KEY47,OBPCURNO,OBPCCVIS,OBPCCPID,SP70
+          CALL      RSOBAUD1
+          CALL      RKOBAUD1
+          BRANCH    OVRCD,UNDC4000
+.
+          MATCH     OBPCURNO,OBAUURNO            * U/R
+          GOTO      UNDC4000 IF NOT EQUAL
+.
+          MATCH     OBPCCVIS,OBAUVISN            * Visit
+          GOTO      UNDC4000 IF NOT EQUAL
+.
+          MATCH     OBPCCPID,OBAUCORR            * Correspondence id
+          GOTO      UNDC4000 IF NOT EQUAL
+.
+          PACK      KEY47,OBAUURNO,OBAUVISN,OBAUCORR,OBAUDATE,OBAUTIME:
+                          OBAUWEBU,OBAUTYPE,SP70
+          CALL      DEOBAUD1
+.
+          GOTO      UNDC3000
+.
+UNDC4000  PACK      KEY24,PMHBEAID,OBECCPID,SP70
           MOVE      SP70,OBECURNO
           CALL      UPOBECO1
 .
@@ -1066,6 +1091,7 @@ INIT0000  CALL      INTMAS00     * Open routine for PATMASTM
           OPEN      PATMI1A8,"patmi1af"
           OPEN      BOKRC1A1,"bokrc1af"
           OPEN      BOKRC1A6,"bokrc1af"
+          OPEN      OBSAUDA1,"obsaudaf"
           OPEN      OBSECOA1,"obsecoaf"
           OPEN      OBSPCOA1,"obspcoaf"
           OPEN      OBSPCTA1,"obspctaf"
@@ -2992,6 +3018,7 @@ CURA9999  RETURN
           INC       MRTMASIO/INC
           INC       NHIETHIO/INC
           INC       NHIMASIO/INC
+          INC       OBSAUDIO/INC
           INC       OBSECOIO/INC   * eAdmission Patient Documents
           INC       OBSPCOIO/INC
           INC       OBSPCTIO/INC

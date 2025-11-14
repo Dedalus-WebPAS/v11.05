@@ -5,6 +5,8 @@
 .
 . Modifications  :
 .------------------------------------------------------------------------------
+. V11.05.07 11/11/2025  Bella Turco   TSK 0968146
+.           Recompiled for ALLREFTM
 . V11.05.06 11/08/2025  Zumin Y        TSK 0965397
 .           Recompiled for ACONTACT - Contact date/time error message
 . V11.05.05 04/08/2025  Zumin Y        TSK 0964781
@@ -1402,7 +1404,7 @@ SRTNUMBL  FORM      5
 
 .******************************************************************************
 PRGID     INIT      "ALLWEB03"                                                
-VERSION   INIT      "V11.05.06"
+VERSION   INIT      "V11.05.07"
 PRGNAM    INIT      "Allied Health Encounter Information Server"              
 .******************************************************************************
           CALL      WEBINT00                * Initialise FIFO Etc.

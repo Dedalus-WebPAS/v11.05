@@ -1,4 +1,4 @@
-<meta name="TemplateVersion" content="V11.05.02">
+<meta name="TemplateVersion" content="V11.05.0333
 <meta name="TemplateHome" content="bhs">
 <meta name="HelpFileName" content="NoContextSet.html">
 <meta name="CrossBrowser" content="true">
@@ -6,20 +6,28 @@
 <script type="text/javascript" src="../js/ndis.js"></script>
 <script type="text/javascript">
 function SubmitAdm() {
-    MandatoryOk=true;
+  MandatoryOk=true;
+  if (!validateMandatory(document.UpdateForm)) {
+     return;
+  }
 
-    if (!validateMandatory(document.UpdateForm)) {
-       return;
+  if (document.UpdateForm.admitbox.value==1) {
+    dateDiff=parseInt(SetDateYYYYMMDD(document.UpdateForm.ptmis001.value)) -
+             parseInt(DemConDate);
+    if (checkDemographicsUpdated(dateDiff,NoDayDemVl,ConfDemogs)){
+      return;
     }
-    if (!isWhitespace(UpdateForm.ptmis013.value)) {
-        if (!validateHFT(20,UpdateForm.ptmis013,UpdateForm.ptmis014,
-                       UpdateForm.funddesc,UpdateForm.tabldesc)) {
-           ans=confirm("Select another active health fund table? ");
-           if (ans==true) {
-              return;
-           } 
-        } 
-    }
+  }  
+
+  if (!isWhitespace(UpdateForm.ptmis013.value)) {
+    if (!validateHFT(20,UpdateForm.ptmis013,UpdateForm.ptmis014,
+                   UpdateForm.funddesc,UpdateForm.tabldesc)) {
+       ans=confirm("Select another active health fund table? ");
+       if (ans==true) {
+          return;
+       } 
+    } 
+  }
 
   if(document.UpdateForm.patmis71.checked == true) {
      document.UpdateForm.ptmis071.value="1";
@@ -147,6 +155,9 @@ PatientHFT="%PATWEB89.03.086.094";
 PatientCDM="%PATWEB89.03.086.095";
 PatientVDH="%PATWEB89.03.086.099.015";
 PatientSPF="%PATWEB89.03.085.067";
+ConfDemogs="%STANDARD.01.045.PTCNCDOA";
+NoDayDemVl=trim("%STANDARD.01.045.PTCNNDCD");
+DemConDate=SetDateYYYYMMDD("%PATWEB89.03.085.059");
 InsertPatientHeader()
 </script>
 <div id=PatientMenu></div>

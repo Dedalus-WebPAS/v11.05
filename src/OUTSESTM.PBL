@@ -1,8 +1,9 @@
 .------------------------------------------------------------
 . Outpatient Booking Field
+.V11.05.01 11/11/2025 Zumin Yu      TSK 0969239
+.          Modified OOSE0500 & OOSE0600 to resolve the 12PM time display issue
 . V9.03.02 19/09/2003 Ebon Clements CAR 22361  
 .          Added new fileds OSESSHNO and OSESSDAT
-
 . V9.03.01 26/08/2003 Ebon Clements CAR 41801
 .          Added new filed OSESCTYP
 .------------------------------------------------------------
@@ -36,8 +37,10 @@ OOSE0400  UNPACK    OSEDATE,CCENT,CYEAR,CMON,CDAY
 .
 OOSE0500  UNPACK    OMASTART,DIMHRS,KEY1,DIMMIN
           MOVE      DIMHRS,F2
-          IF        F2>12
-            SUB       "12",F2
+          IF        F2>=12
+            IF        F2>12
+              SUB       "12",F2
+            ENDIF
             WRITE     HTMLFILE;F2,KEY1,DIMMIN," pm";
           ELSE
             WRITE     HTMLFILE;F2,KEY1,DIMMIN," am";
@@ -46,8 +49,10 @@ OOSE0500  UNPACK    OMASTART,DIMHRS,KEY1,DIMMIN
 .
 OOSE0600  UNPACK    OMAEND,DIMHRS,KEY1,DIMMIN
           MOVE      DIMHRS,F2
-          IF        F2>12
-            SUB       "12",F2
+          IF        F2>=12
+            IF        F2>12
+              SUB       "12",F2
+            ENDIF
             WRITE     HTMLFILE;F2,KEY1,DIMMIN," pm";
           ELSE
             WRITE     HTMLFILE;F2,KEY1,DIMMIN," am";

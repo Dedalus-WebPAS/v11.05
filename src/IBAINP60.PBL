@@ -9,6 +9,17 @@
 .*                   the selected date range                                  *
 .* Modifications  :                                                           *
 .******************************************************************************
+.* V11.05.06 11/11/2025  Alina Bhari    TSK 0954635                           *
+.*           Reported blank for NTAHCHCE if not contracted care(CAT CC HDP=08)*
+.*           Reported correctly Inter-hospital contracted patient status      *
+.*           Reported length of stay for Public hospital                      *
+.*           Reported 7 for Standardised Mini-Mental State                    *
+.* V11.05.05 06/11/2025  Alina Bhari    TSK 0954635                           *
+.*           Correctly displayed the ATIME,NTAHQDNB -SETF2500,SETF7000        *
+.* V11.05.04 31/11/2025  Alina Bhari    TSK 0954635                           *
+.*           Changed the length Area of usual residence from 5 to 9           *
+.*           - NTAHURES/NTAHARES                                              *
+.*           Changed the length of care type from 4 to 2 - NTAHACRE/NTAHACRT  *
 .* V11.05.03 29/10/2025  Alina Bhari    TSK 0954635                           *
 .*           corrected the error message with correct category name-ERRORCT1  *
 .*           Default NTAHPSEX as "9" when fat G Ind 3 is blank - SETF1000     *
@@ -23,7 +34,7 @@
 .*           - NTAHDCIV,NTAHMHEI,NTAHFIMS,NTAHRUGS,NTAHHNOS,NTAHSMSE,         *
 .*           - NTAHPCLK,NTAHQIDC,NTAHNU22,NTAHNU23,NTAHNU24                   *
 .*           - NTAHIHIR,NTAHIHRS,NTAHAOUR                                     *
-.*           - SP100,HOUR,MINUTE,NTAHMOFS,DOYR0000,CQNB0000,FORM8             *
+.*           - SP100,HOUR,MINUTE,NTAHMOFS,DYRC000,CQNB0000,FORM8             *
 .*           Added Calculation for Number of qualified days for newborns      *
 .*           - QDNB0000,NHOSPDAY,NBRDAYS,LOSNDAYS                             *
 .* V10.11.01 08/09/2017  Ebon Clements  TSK 0818097                           *
@@ -83,7 +94,7 @@ NTAHADMN   DIM     10         1     State Record Identifier
 .NTAHPCNT   DIM      4        50     Country of Birth
 .NTAHABRG   DIM      1        54     Indigenous status
 .NTAHMRTL   DIM      1        55     Marital status
-.NTAHURES   DIM      5        56     Area of usual residence
+NTAHURES   DIM      5        56     Area of usual residence
 .NTAHPOST   DIM      4        61     Australian postcode
 .NTAHUACC   DIM      2        65     Type of usual accommodation
 .NTAHPACC   DIM      1        67     Type of accommodation prior to admission
@@ -95,7 +106,7 @@ NTAHADMN   DIM     10         1     State Record Identifier
 .NTAHFUND   DIM      1        71     Hospital insurance status
 .NTAHPTYP   DIM      1        72     Medicare eligibility status
 .NTAHACLM   DIM      2        73     Funding source for hospital patient
-.NTAHACRE   DIM      4        75     Care type
+NTAHACRE   DIM      4        75     Care type
 .NTAHQDNB   DIM      5        79     Number of qualified days for newborns
 .NTAHTPCD   DIM      5        84     Total psychiatric care days
 .NTAHXMHL   DIM      1        89     Mental health legal status
@@ -145,228 +156,228 @@ NTAHBDTE   DIM      8       113     Date of Birth
 NTAHPCNT   DIM      4       121     Country of Birth
 NTAHABRG   DIM      1       125     Indigenous status
 NTAHMRTL   DIM      1       126     Marital status
-NTAHURES   DIM      5       127     Area of usual residence
-NTAHPOST   DIM      4       132     Australian postcode
-NTAHUACC   DIM      2       136     Type of usual accommodation
-NTAHPACC   DIM      1       138     Type of accommodation prior to admission
-NTAHLFSA   DIM      1       139     Labour force status - acute hospital and
+NTAHARES   DIM      9       127     Area of usual residence
+NTAHPOST   DIM      4       136     Australian postcode
+NTAHUACC   DIM      2       140     Type of usual accommodation
+NTAHPACC   DIM      1       142     Type of accommodation prior to admission
+NTAHLFSA   DIM      1       143     Labour force status - acute hospital and
 .                                     private psychiatric hospital admissions
-NTAHLFSP   DIM      1       140     Labour force status - public psychiatric
+NTAHLFSP   DIM      1       144     Labour force status - public psychiatric
 .                                     hospital admissions
-NTAHPPPT   DIM      1       141     Admitted patient election status
-NTAHFUND   DIM      1       142     Hospital insurance status
-NTAHPTYP   DIM      1       143     Medicare eligibility status
-NTAHACLM   DIM      2       144     Funding source for hospital patient
-NTAHACRE   DIM      4       146     Care type
-NTAHQDNB   DIM      5       150     Number of qualified days for newborns
-NTAHTPCD   DIM      5       155     Total psychiatric care days
-NTAHXMHL   DIM      1       160     Mental health legal status
-NTAHPSTR   DIM      1       161     Previous specialised treatment
-NTAHDATE   DIM      8       162     Admission date
-NTAHADTM   DIM      4       170     Admission Time
-NTAHDDTE   DIM      8       174     Separation date
-NTAHSPTM   DIM      4       182     Seperation Time
-NTAHTNLD   DIM      5       186     Total number of leave days
-NTAHSRPP   DIM      2       191     Source of referral to public psychiatric
+NTAHPPPT   DIM      1       145     Admitted patient election status
+NTAHFUND   DIM      1       146     Hospital insurance status
+NTAHPTYP   DIM      1       147     Medicare eligibility status
+NTAHACLM   DIM      2       148     Funding source for hospital patient
+NTAHACRT   DIM      2       150     Care type
+NTAHQDNB   DIM      5       152     Number of qualified days for newborns
+NTAHTPCD   DIM      5       157     Total psychiatric care days
+NTAHXMHL   DIM      1       162     Mental health legal status
+NTAHPSTR   DIM      1       163     Previous specialised treatment
+NTAHDATE   DIM      8       164     Admission date
+NTAHADTM   DIM      4       172     Admission Time
+NTAHDDTE   DIM      8       176     Separation date
+NTAHSPTM   DIM      4       184     Seperation Time
+NTAHTNLD   DIM      5       188     Total number of leave days
+NTAHSRPP   DIM      2       193     Source of referral to public psychiatric
 .                                     hospitals
-NTAHCLSS   DIM      1       193     Urgency of admission
-NTAHASRC   DIM      1       194     Mode of admission
-NTAHMOFS   DIM      2       195     Mode of separation
-NTAHRTFC   DIM      1       197     Referral to further care (mental health care)
-NTAHBWHT   DIM      4       198     Weight
-NTAHIDUS   DIM      1       202     Intended length of hospital stay
-NTAHNDHH   DIM      5       203     Number of days of hospital-in-the-home care
-NTAHCHCE   DIM      9       208     Contracted hospital care establishment
+NTAHCLSS   DIM      1       195     Urgency of admission
+NTAHASRC   DIM      1       196     Mode of admission
+NTAHMOFS   DIM      2       197     Mode of separation
+NTAHRTFC   DIM      1       199     Referral to further care (mental health care)
+NTAHBWHT   DIM      4       200     Weight
+NTAHIDUS   DIM      1       204     Intended length of hospital stay
+NTAHNDHH   DIM      5       205     Number of days of hospital-in-the-home care
+NTAHCHCE   DIM      9       210     Contracted hospital care establishment
 .                                     identifier
-NTAHICPS   DIM      1       217     Inter-hospital contracted patient status
-NTAHLOSI   DIM      5       218     Length of Stay in Intensive Care Unit
-NTAHDCIV   DIM      5       223     Duration of Continuous Invasive Ventilatory
+NTAHICPS   DIM      1       219     Inter-hospital contracted patient status
+NTAHLOSI   DIM      5       220     Length of Stay in Intensive Care Unit
+NTAHDCIV   DIM      5       225     Duration of Continuous Invasive Ventilatory
 .                                   Support
-NTAHEIMW   DIM      9       228     Establishment Identifier for hospital
-.                                   NTAHESA1-NTAHESA5 
-NTAHESA1   DIM     20       237
-NTAHESA2   DIM     20       257
-NTAHESA3   DIM     20       277
-NTAHESA4   DIM     20       297
-NTAHESA5   DIM     20       317
+NTAHEIMW   DIM      9       230     Establishment Identifier for hospital
+.                                   NTAHESA1-NTAHESA5
+NTAHESA1   DIM     20       239
+NTAHESA2   DIM     20       259
+NTAHESA3   DIM     20       279
+NTAHESA4   DIM     20       299
+NTAHESA5   DIM     20       319
 .                                   NTAHPC01-NTAHPC50
-NTAHPC01   DIM      8       337
-NTAHPC02   DIM      8       345
-NTAHPC03   DIM      8       353
-NTAHPC04   DIM      8       361
-NTAHPC05   DIM      8       369
-NTAHPC06   DIM      8       377
-NTAHPC07   DIM      8       385
-NTAHPC08   DIM      8       393
-NTAHPC09   DIM      8       401
-NTAHPC10   DIM      8       409
-NTAHPC11   DIM      8       417
-NTAHPC12   DIM      8       425
-NTAHPC13   DIM      8       433
-NTAHPC14   DIM      8       441
-NTAHPC15   DIM      8       449
-NTAHPC16   DIM      8       457
-NTAHPC17   DIM      8       465
-NTAHPC18   DIM      8       473
-NTAHPC19   DIM      8       481
-NTAHPC20   DIM      8       489
-NTAHPC21   DIM      8       497
-NTAHPC22   DIM      8       505     
-NTAHPC23   DIM      8       513
-NTAHPC24   DIM      8       521
-NTAHPC25   DIM      8       529
-NTAHPC26   DIM      8       537
-NTAHPC27   DIM      8       545
-NTAHPC28   DIM      8       553
-NTAHPC29   DIM      8       561
-NTAHPC30   DIM      8       569
-NTAHPC31   DIM      8       577
-NTAHPC32   DIM      8       585     
-NTAHPC33   DIM      8       593
-NTAHPC34   DIM      8       601
-NTAHPC35   DIM      8       609
-NTAHPC36   DIM      8       617
-NTAHPC37   DIM      8       625
-NTAHPC38   DIM      8       633
-NTAHPC39   DIM      8       641
-NTAHPC40   DIM      8       649
-NTAHPC41   DIM      8       657
-NTAHPC42   DIM      8       665
-NTAHPC43   DIM      8       673
-NTAHPC44   DIM      8       681
-NTAHPC45   DIM      8       689
-NTAHPC46   DIM      8       685
-NTAHPC47   DIM      8       697
-NTAHPC48   DIM      8       705
-NTAHPC49   DIM      8       713
-NTAHPC50   DIM      8       721
-.                                NTAHPD001-100 
-NTAHD001   DIM      8       729
-NTAHD002   DIM      8       737
-NTAHD003   DIM      8       745
-NTAHD004   DIM      8       753
-NTAHD005   DIM      8       761
-NTAHD006   DIM      8       769
-NTAHD007   DIM      8       777
-NTAHD008   DIM      8       785
-NTAHD009   DIM      8       793
-NTAHD010   DIM      8       801
-NTAHD011   DIM      8       809
-NTAHD012   DIM      8       817
-NTAHD013   DIM      8       825
-NTAHD014   DIM      8       833
-NTAHD015   DIM      8       841
-NTAHD016   DIM      8       849
-NTAHD017   DIM      8       857
-NTAHD018   DIM      8       865
-NTAHD019   DIM      8       873
-NTAHD020   DIM      8       881
-NTAHD021   DIM      8       889
-NTAHD022   DIM      8       897
-NTAHD023   DIM      8       905
-NTAHD024   DIM      8       913
-NTAHD025   DIM      8       921
-NTAHD026   DIM      8       929
-NTAHD027   DIM      8       937
-NTAHD028   DIM      8       945
-NTAHD029   DIM      8       953
-NTAHD030   DIM      8       961
-NTAHD031   DIM      8       969
-NTAHD032   DIM      8       977
-NTAHD033   DIM      8       985
-NTAHD034   DIM      8       993
-NTAHD035   DIM      8      1001
-NTAHD036   DIM      8      1009
-NTAHD037   DIM      8      1017 
-NTAHD038   DIM      8      1025
-NTAHD039   DIM      8      1033
-NTAHD040   DIM      8      1041
-NTAHD041   DIM      8      1049
-NTAHD042   DIM      8      1057
-NTAHD043   DIM      8      1065
-NTAHD044   DIM      8      1073
-NTAHD045   DIM      8      1081
-NTAHD046   DIM      8      1089
-NTAHD047   DIM      8      1097
-NTAHD048   DIM      8      1105
-NTAHD049   DIM      8      1113
-NTAHD050   DIM      8      1121
-NTAHD051   DIM      8      1129
-NTAHD052   DIM      8      1137
-NTAHD053   DIM      8      1145
-NTAHD054   DIM      8      1153
-NTAHD055   DIM      8      1161
-NTAHD056   DIM      8      1169
-NTAHD057   DIM      8      1177
-NTAHD058   DIM      8      1185
-NTAHD059   DIM      8      1193
-NTAHD060   DIM      8      1201
-NTAHD061   DIM      8      1209
-NTAHD062   DIM      8      1217
-NTAHD063   DIM      8      1225
-NTAHD064   DIM      8      1233
-NTAHD065   DIM      8      1241
-NTAHD066   DIM      8      1249
-NTAHD067   DIM      8      1257
-NTAHD068   DIM      8      1265
-NTAHD069   DIM      8      1273
-NTAHD070   DIM      8      1281
-NTAHD071   DIM      8      1289
-NTAHD072   DIM      8      1297
-NTAHD073   DIM      8      1305
-NTAHD074   DIM      8      1313
-NTAHD075   DIM      8      1321
-NTAHD076   DIM      8      1329
-NTAHD077   DIM      8      1337
-NTAHD078   DIM      8      1345
-NTAHD079   DIM      8      1353
-NTAHD080   DIM      8      1361
-NTAHD081   DIM      8      1369
-NTAHD082   DIM      8      1377
-NTAHD083   DIM      8      1385
-NTAHD084   DIM      8      1393
-NTAHD085   DIM      8      1401
-NTAHD086   DIM      8      1409
-NTAHD087   DIM      8      1417
-NTAHD088   DIM      8      1425
-NTAHD089   DIM      8      1433
-NTAHD090   DIM      8      1441
-NTAHD091   DIM      8      1449
-NTAHD092   DIM      8      1457
-NTAHD093   DIM      8      1465
-NTAHD094   DIM      8      1473
-NTAHD095   DIM      8      1481
-NTAHD096   DIM      8      1489
-NTAHD097   DIM      8      1497
-NTAHD098   DIM      8      1505
-NTAHD099   DIM      8      1513
-NTAHD100   DIM      8      1521
+NTAHPC01   DIM      8       339
+NTAHPC02   DIM      8       347
+NTAHPC03   DIM      8       355
+NTAHPC04   DIM      8       363
+NTAHPC05   DIM      8       371
+NTAHPC06   DIM      8       379
+NTAHPC07   DIM      8       387
+NTAHPC08   DIM      8       395
+NTAHPC09   DIM      8       403
+NTAHPC10   DIM      8       411
+NTAHPC11   DIM      8       419
+NTAHPC12   DIM      8       427
+NTAHPC13   DIM      8       435
+NTAHPC14   DIM      8       443
+NTAHPC15   DIM      8       451
+NTAHPC16   DIM      8       459
+NTAHPC17   DIM      8       467
+NTAHPC18   DIM      8       475
+NTAHPC19   DIM      8       483
+NTAHPC20   DIM      8       491
+NTAHPC21   DIM      8       499
+NTAHPC22   DIM      8       507
+NTAHPC23   DIM      8       515
+NTAHPC24   DIM      8       523
+NTAHPC25   DIM      8       531
+NTAHPC26   DIM      8       539
+NTAHPC27   DIM      8       547
+NTAHPC28   DIM      8       555
+NTAHPC29   DIM      8       563
+NTAHPC30   DIM      8       571
+NTAHPC31   DIM      8       579
+NTAHPC32   DIM      8       587
+NTAHPC33   DIM      8       595
+NTAHPC34   DIM      8       603
+NTAHPC35   DIM      8       611
+NTAHPC36   DIM      8       619
+NTAHPC37   DIM      8       627
+NTAHPC38   DIM      8       635
+NTAHPC39   DIM      8       643
+NTAHPC40   DIM      8       651
+NTAHPC41   DIM      8       659
+NTAHPC42   DIM      8       667
+NTAHPC43   DIM      8       675
+NTAHPC44   DIM      8       683
+NTAHPC45   DIM      8       691
+NTAHPC46   DIM      8       699
+NTAHPC47   DIM      8       707
+NTAHPC48   DIM      8       715
+NTAHPC49   DIM      8       723
+NTAHPC50   DIM      8       731
+.                                NTAHPD001-100
+NTAHD001   DIM      8       739
+NTAHD002   DIM      8       747
+NTAHD003   DIM      8       755
+NTAHD004   DIM      8       763
+NTAHD005   DIM      8       771
+NTAHD006   DIM      8       779
+NTAHD007   DIM      8       787
+NTAHD008   DIM      8       795
+NTAHD009   DIM      8       803
+NTAHD010   DIM      8       811
+NTAHD011   DIM      8       819
+NTAHD012   DIM      8       827
+NTAHD013   DIM      8       835
+NTAHD014   DIM      8       843
+NTAHD015   DIM      8       851
+NTAHD016   DIM      8       859
+NTAHD017   DIM      8       867
+NTAHD018   DIM      8       875
+NTAHD019   DIM      8       883
+NTAHD020   DIM      8       891
+NTAHD021   DIM      8       899
+NTAHD022   DIM      8       907
+NTAHD023   DIM      8       915
+NTAHD024   DIM      8       923
+NTAHD025   DIM      8       931
+NTAHD026   DIM      8       939
+NTAHD027   DIM      8       947
+NTAHD028   DIM      8       955
+NTAHD029   DIM      8       963
+NTAHD030   DIM      8       971
+NTAHD031   DIM      8       979
+NTAHD032   DIM      8       987
+NTAHD033   DIM      8       995
+NTAHD034   DIM      8      1003
+NTAHD035   DIM      8      1011
+NTAHD036   DIM      8      1019
+NTAHD037   DIM      8      1027
+NTAHD038   DIM      8      1035
+NTAHD039   DIM      8      1043
+NTAHD040   DIM      8      1051
+NTAHD041   DIM      8      1059
+NTAHD042   DIM      8      1067
+NTAHD043   DIM      8      1075
+NTAHD044   DIM      8      1083
+NTAHD045   DIM      8      1091
+NTAHD046   DIM      8      1099
+NTAHD047   DIM      8      1107
+NTAHD048   DIM      8      1115
+NTAHD049   DIM      8      1123
+NTAHD050   DIM      8      1131
+NTAHD051   DIM      8      1139
+NTAHD052   DIM      8      1147
+NTAHD053   DIM      8      1155
+NTAHD054   DIM      8      1163
+NTAHD055   DIM      8      1171
+NTAHD056   DIM      8      1179
+NTAHD057   DIM      8      1187
+NTAHD058   DIM      8      1195
+NTAHD059   DIM      8      1203
+NTAHD060   DIM      8      1211
+NTAHD061   DIM      8      1219
+NTAHD062   DIM      8      1227
+NTAHD063   DIM      8      1235
+NTAHD064   DIM      8      1243
+NTAHD065   DIM      8      1251
+NTAHD066   DIM      8      1259
+NTAHD067   DIM      8      1267
+NTAHD068   DIM      8      1275
+NTAHD069   DIM      8      1283
+NTAHD070   DIM      8      1291
+NTAHD071   DIM      8      1299
+NTAHD072   DIM      8      1307
+NTAHD073   DIM      8      1315
+NTAHD074   DIM      8      1323
+NTAHD075   DIM      8      1331
+NTAHD076   DIM      8      1339
+NTAHD077   DIM      8      1347
+NTAHD078   DIM      8      1355
+NTAHD079   DIM      8      1363
+NTAHD080   DIM      8      1371
+NTAHD081   DIM      8      1379
+NTAHD082   DIM      8      1387
+NTAHD083   DIM      8      1395
+NTAHD084   DIM      8      1403
+NTAHD085   DIM      8      1411
+NTAHD086   DIM      8      1419
+NTAHD087   DIM      8      1427
+NTAHD088   DIM      8      1435
+NTAHD089   DIM      8      1443
+NTAHD090   DIM      8      1451
+NTAHD091   DIM      8      1459
+NTAHD092   DIM      8      1467
+NTAHD093   DIM      8      1475
+NTAHD094   DIM      8      1483
+NTAHD095   DIM      8      1491
+NTAHD096   DIM      8      1499
+NTAHD097   DIM      8      1507
+NTAHD098   DIM      8      1515
+NTAHD099   DIM      8      1523
+NTAHD100   DIM      8      1531
 .
-NTAHMHEI   DIM     80       1529    Mental health episode identifier
+NTAHMHEI   DIM     80       1539    Mental health episode identifier
 .                                   METEOR: 751899
-NTAHPITP   DIM      7       1609    Primary impairment type METEOR: 681412
-NTAHFIMS   DIM      1       1616    Functional Independence Measure (FIM) score
+NTAHPITP   DIM      7       1619    Primary impairment type METEOR: 681412
+NTAHFIMS   DIM      1       1626    Functional Independence Measure (FIM) score
 .                                   array METEOR: 717982
-NTAHRUGS   DIM      2       1617    Resource Utilisation Groups- Activities of
+NTAHRUGS   DIM      2       1627    Resource Utilisation Groups- Activities of
 .                                   Daily Living (RUG-ADL) total score
 .                                   METEOR: 764211
-NTAHHNOS   DIM      1       1619    Health of the Nation Outcome Scale 65+
+NTAHHNOS   DIM      1       1629    Health of the Nation Outcome Scale 65+
 .                                   (HoNOS 65+) score array METEOR: 748292
-NTAHSMSE   DIM      1       1620    Standardised Mini-Mental State Examination
+NTAHSMSE   DIM      1       1630    Standardised Mini-Mental State Examination
 .                                   (SMMSE) score array
-NTAHPCLK   DIM      50      1621    Palliative care linking key
-NTAHQIDC   DIM      7       1671    Quarter Indicator
-NTAHNU22   DIM      9       1678    NWAU22
-NTAHNU23   DIM      9       1687    NWAU23
-NTAHNU24   DIM      9       1696    NWAU24
-.NTAHLOSI   DIM      5      1705    Length of stay in intensive care unit – other
-NTAHIHIR   DIM      16      1710    Individual Healthcare Identifier
+NTAHPCLK   DIM      50      1631    Palliative care linking key
+NTAHQIDC   DIM      7       1681    Quarter Indicator
+NTAHNU22   DIM      9       1688    NWAU22
+NTAHNU23   DIM      9       1697    NWAU23
+NTAHNU24   DIM      9       1706    NWAU24
+.NTAHLOSI   DIM      5      1715    Length of stay in intensive care unit – other
+NTAHIHIR   DIM      16      1720    Individual Healthcare Identifier
 .                                   METEOR: 743458
-NTAHIHRS   DIM      1       1726    Individual Healthcare Identifier
+NTAHIHRS   DIM      1       1736    Individual Healthcare Identifier
 .                                   - Record status METEOR: 743464
-NTAHAOUR   DIM      11      1727    Area of usual residence SA1
+NTAHAOUR   DIM      11      1737    Area of usual residence SA1
 .                                   METeOR: 742163
-.  End Record               1738
+.  End Record               1748
 .----     ----   ------    -----    -----------
 .
 .
@@ -476,7 +487,7 @@ ZED30     INIT      "zzzzzzzzzzzzzzzzzzzzzzzzzzzzzz"
 .
 PRGID     INIT      "IBAINP60"
 PRGNAM    INIT      "NT Health Department Transmissions"
-VERSION   INIT      "V11.05.03"
+VERSION   INIT      "V11.05.06"
 +
 .******************************************************************************
 .*                                 MAIN0000                                   *
@@ -776,7 +787,7 @@ CLRF0000  UNPACK    SP70,NTAHADMN,NTAHESID,NTAHHGID,NTAHURNO,NTAHPSEX
 .          MOVE      ZERO,DOYR2025
           MOVE      ZERO,LOSNDAYS
           MOVE      ZERO,NBRDAYS
-          UNPACK    SP70,SAVDATE   
+          UNPACK    SP70,SAVDATE,NTAHARES,NTAHACRT   
           UNPACK    SP100,NTAHADNN
 .
 CLRF9999  RETURN
@@ -871,7 +882,7 @@ SETF1000  MOVE      DURNO,KEY8
             MATCH     SP70,DTIME
             IF        !@EQUAL
               UNPACK    DTIME,HOUR,DIM1,MINUTE,DIM1,DIM2
-              MOVE      NTAHSPTM,HOUR,MINUTE
+              PACK      NTAHSPTM,HOUR,MINUTE,SP70
             ENDIF
           ELSE
             MATCH     ANSM,PSEX                      * Male
@@ -988,25 +999,32 @@ SETF2500  PACK      KEY8,DDADMNO
             MATCH     SP70,ATIME                 * Admission Time
             IF        !@EQUAL
               UNPACK    ATIME,HOUR,DIM1,MINUTE,DIM1,DIM2
-              MOVE      NTAHADTM,HOUR,MINUTE
+              PACK      NTAHADTM,HOUR,MINUTE,SP70
             ENDIF    
 .                                                * Weight
             UNPACK    ABWGHT,DIM2,DIM4          
-            MOVE      "9999",NTAHBWHT
+.           Calculate Patient age
+            UNPACK    PBDATE,CCENT,CYEAR,CMON,CDAY
+            PACK      CDYSFDTE,CCENT,CYEAR,CMON,CDAY
+            REP       " 0",CDYSFDTE
+            PACK      CDYSTDTE,CCC,CYY,CMM,CDD
+            REP       " 0",CDYSTDTE
+            CALL      CALCDAYS                * number of days
+            SUB       ONE,CDYSDAYS            * get difference
 .
+.          Report 9999 if weight is unknown and is under 365 days old
+.          Report weight if weight < than 9001g and is less than 365 old days
             MATCH     SP70,DIM4
-            IF        !@EQUAL
-              UNPACK    PBDATE,CCENT,CYEAR,CMON,CDAY
-              PACK      CDYSFDTE,CCENT,CYEAR,CMON,CDAY
-              REP       " 0",CDYSFDTE
-              PACK      CDYSTDTE,CCC,CYY,CMM,CDD
-              REP       " 0",CDYSTDTE
-
-              CALL      CALCDAYS                * number of days
-              SUB       ONE,CDYSDAYS            * get difference
-.             Report weight as blank if patient age >365 days at admission
-              IF        CDYSDAYS > 365
-                MOVE    SP70,NTAHBWHT
+            IF        @EQUAL
+              IF      CDYSDAYS < 365
+                MOVE    "9999",CDYSDAYS
+              ENDIF
+            ELSE
+              MATCH     "9001",DIM4
+              IF        @LESS
+                IF      CDYSDAYS < 365
+                  MOVE    DIM4,NTAHBWHT
+                ENDIF
               ENDIF
             ENDIF 
           ELSE 
@@ -1060,25 +1078,29 @@ SETF3000  PACK      KEY5,ANSC,ANSL,ACLAIM,SP70
           ENDIF
 .
           UNPACK    THCSCOD,DIM3
-          PACK      LJUSCODE,DIM3,SP70
-          MOVE      "3",JUSTNO
-          CALL      RJUS0000
-          MOVE      RJUSCODE,DIM3
-          UNPACK    DIM3,FLD1,FLD2,FLD3
-          MATCH     SP1,FLD2
-          IF        @EQUAL
-            PACK      ERRMSG,ERRORCT,ERRORCT1
-            CALL      PRID0000
-            GOTO      SETF3040
-          ENDIF
+          IF        DOYR2025 = 1
+            PACK      NTAHACRT,DIM3,SP70
+          ELSE
+            PACK      LJUSCODE,DIM3,SP70
+            MOVE      "3",JUSTNO
+            CALL      RJUS0000
+            MOVE      RJUSCODE,DIM3
+            UNPACK    DIM3,FLD1,FLD2,FLD3
+            MATCH     SP1,FLD2
+            IF        @EQUAL
+              PACK      ERRMSG,ERRORCT,ERRORCT1
+              CALL      PRID0000
+              GOTO      SETF3040
+            ENDIF
 .
-          PACK      NTAHACRE,FLD1,FLD2,DECPNT,FLD3
+            PACK      NTAHACRE,FLD1,FLD2,DECPNT,FLD3
+          ENDIF
 .
 SETF3040  IF        DOYR2025 = 1
             MOVE      "9",NTAHICPS
             MATCH     "08",NTAHACLM
             IF        @EQUAL
-              MOVE      "4",NTAHACLM  *If HDP Default =8 then NTAHACLM =4 else 9
+              MOVE      "4",NTAHICPS  *If HDP Default =8 then NTAHACLM =4 else 9
             ENDIF
           ELSE
             MOVE      "5",NTAHICPS
@@ -1308,9 +1330,14 @@ SETF7000  UNPACK    IBPOASGC,DIM1,DIM4A,DIM4
 .                                                * No qualified days for newborn
           IF        DOYR2025 = 1
             CALL      QDNB0000
-            MOVE      LOSNDAYS,NTAHQDNB
-            RJUSTIFY  NTAHQDNB
-            REPLACE   " 0",NTAHQDNB
+            MOVE      ZERO,F5             
+            IF        LOSNDAYS > 99999    
+              MOVE      "99999",F5
+            ELSE
+              MOVE    LOSNDAYS,F5          
+            ENDIF
+            MOVE      F5,NTAHQDNB
+.            REPLACE   " 0",NTAHQDNB
           ELSE
             MOVE      WORKQUAL,NTAHQDNB
             REPLACE   " 0",NTAHQDNB
@@ -1326,9 +1353,9 @@ SETF7000  UNPACK    IBPOASGC,DIM1,DIM4A,DIM4
           IF        DOYR2025 = 1
             WRITE     NTAHEXTR,SEQ;NTAHADNN,NTAHESID,NTAHHGID,NTAHURNO,NTAHPSEX:
                                  NTAHGNDR,NTAHBDTE,NTAHPCNT,NTAHABRG,NTAHMRTL:
-                                 NTAHURES,NTAHPOST,NTAHUACC,NTAHPACC,NTAHLFSA:
+                                 NTAHARES,NTAHPOST,NTAHUACC,NTAHPACC,NTAHLFSA:
                                  NTAHLFSP,NTAHPPPT,NTAHFUND,NTAHPTYP,NTAHACLM:
-                                 NTAHACRE,NTAHQDNB,NTAHTPCD,NTAHXMHL,NTAHPSTR:
+                                 NTAHACRT,NTAHQDNB,NTAHTPCD,NTAHXMHL,NTAHPSTR:
                                  NTAHDATE,NTAHADTM,NTAHDDTE,NTAHSPTM,NTAHTNLD:
                                  NTAHSRPP,NTAHCLSS,NTAHASRC,NTAHMOFS,NTAHRTFC:
                                  NTAHBWHT,NTAHIDUS,NTAHNDHH,NTAHCHCE,NTAHICPS:
@@ -1489,7 +1516,7 @@ GDRG9999  RETURN
 .******************************************************************************
 .*                                  DYRC0000              Called by: SETF0000 *
 .*                              Changes Added on DOYR2025                     *
-.* 1. Area of usual Residence -NTAHURES                                       *
+.* 1. Area of usual Residence -NTAHARES                                       *
 .*    Report IBPOASGC else if blank default tO 0999999999                     *
 .* 2. Duration of Continuous Invasive Ventilatory Support - NTAHDCIV          *
 .*    Report completed hour - PTICUMEC                                        *
@@ -1502,7 +1529,7 @@ GDRG9999  RETURN
 .* 6. Health of the Nation Outcome Scale 65+ score array METEOR: 748292       *
 .*    Report 9 - NTAHHNOS                                                     *
 .* 7. Standardised Mini-Mental State Examination (SMMSE) score array          *
-.*    Report 9 - NTAHSMSE                                                     *
+.*    Report 7 - NTAHSMSE                                                     *
 .* 8. Individual Healthcare Identifier - Record status METEOR: 743464         *
 .*    Report 9 - NTAHIHRS                                                     *
 .* 9. Area of usual residence SA1 METeOR: 742163                              *
@@ -1511,31 +1538,56 @@ GDRG9999  RETURN
 .*    For discharge from 01 Jul 2024 to 30 Jun 2025 then Report JUN2025       *
 .*    For Discharges from 01 Jul 2025 to 30 Jun 2026 then Report JUN2026      *
 .*11. Length of Stay - NTAHLOSI                                               *
-.*    Private - Report lenght of stay                                         *
-.*    Public  - Report blank                                                  *
+.*    Public  - Report lenght of stay                                         *
+.*    Private - Report blank                                                  *
 .*                                                                            *
 .*                                                                            *
 .******************************************************************************
 DYRC0000  MATCH     SP70,IBPOASGC
           IF        @EQUAL
-            MOVE      "099999999",NTAHURES      * Area of usual residence
+            MOVE      "099999999",NTAHARES      * Area of usual residence
           ELSE
-            PACK      NTAHURES,IBPOASGC,SP70
+            PACK      NTAHARES,IBPOASGC,SP70
           ENDIF
 .
 .         Duration of Continuous Invasive Ventilatory Support
           PACK      KEY8,AADMNO,SP70
           CALL      RDPTICU1
           IF        OVRCD = 0
-            MOVE      PTICUMEC,NTAHDCIV        * in hours
-            REP       " 0",NTAHDCIV
+            PACK      NTAHDCIV,PTICUMEC,SP70        * in hours
+.
+            PACK      NTAHLOSI,PTICUINT,SP70
+.           Private and Public Hospital check for Lenght of Stay
+            IF        IBCNMHOS=1
+              MOVE      AADMNO,KEY8
+              CALL      RDPMVX11
+              IF        OVRCD=0
+                MATCH     SP70,PMVXMHOS           * Hospital id
+                IF        !@EQUAL
+                  OPEN      PATHSPA1,"pathspaf"   * limited no of open files
+                  PACK      KEY3,PMVXMHOS,SP70
+                  CALL      RDPTHSP1
+                  IF        OVRCD=0
+                    MATCH     "0",PTHSHOST        * Private Hopital
+                    IF        @EQUAL
+                      MOVE      SP70,NTAHLOSI
+                    ELSE
+                      MATCH     "2",PTHSHOST      * Private Day
+                      IF        @EQUAL
+                        MOVE      SP70,NTAHLOSI
+                      ENDIF
+                    ENDIF
+                  ENDIF
+                ENDIF
+              ENDIF
+            ENDIF
           ENDIF
 .
           MOVE      "99.9999",NTAHPITP
           MOVE      "9",NTAHFIMS
           MOVE      "9",NTAHRUGS
           MOVE      "9",NTAHHNOS
-          MOVE      "9",NTAHSMSE
+          MOVE      "7",NTAHSMSE
           MOVE      "9",NTAHIHRS
           MOVE      "09999999999",NTAHAOUR
 .
@@ -1561,34 +1613,6 @@ DYRC0000  MATCH     SP70,IBPOASGC
           IF       !@EQUAL
             MOVE     SP70,NTAHCHCE
           ENDIF
-.
-.         Private and Public Hospital check for Lenght of Stay
-.          MOVE      SP70,NTAHLOSI
-.          IF        IBCNMHOS=1
-.            MOVE      AADMNO,KEY8
-.            CALL      RDPMVX11
-.            IF        OVRCD=0
-.              MATCH     SP70,PMVXMHOS           * Hospital id
-.              IF        !@EQUAL
-.                OPEN      PATHSPA1,"pathspaf"   * limited no of open files
-.                PACK      KEY3,PMVXMHOS,SP70
-.                CALL      RDPTHSP1
-.                IF        OVRCD=0
-.                  MATCH     "0",PTHSHOST        * Private Hopital
-.                  IF        @EQUAL    
-.                    MOVE      PTICUINT,NTAHLOSI
-.                    REP       " 0",NTAHLOSI
-.                  ELSE
-.                    MATCH     "2",PTHSHOST      * Private Day
-.                    IF        @EQUAL
-.                      MOVE      PTICUINT,NTAHLOSI
-.                    REP       " 0",NTAHLOSI
-.                    ENDIF
-.                  ENDIF
-.                ENDIF
-.              ENDIF
-.            ENDIF
-.          ENDIF
 .
 DYRC9999  RETURN
 +
@@ -1633,6 +1657,10 @@ QDNB2000  CALL      RDKCHCO1
 QDNB3000  MATCH     "7",D1
           GOTO      QDNB3200 IF NOT EQUAL  * unqualified
 .
+          UNPACK    TCINDC22,DIM1
+          MATCH     "N",DIM1
+          GOTO      QDNB3200 IF NOT EQUAL  * unqualified
+.
           MOVE      CHDATE,TODATE      * end of Qualified day
           MATCH     FROMDATE,TODATE
           IF        !@EQUAL
@@ -1665,12 +1693,18 @@ QDNB6000  PACK      TODATE,CCC,CYY,CMM,CDD
 QDNB6200  MATCH     "7",THCSCOD          * check for qualified care
           GOTO      QDNB9200 IF NOT EQUAL    * total Unqualified
 .
+          MATCH     "N",TCINDC22
+          GOTO      QDNB9200 IF NOT EQUAL  * unqualified
+.
           GOTO      QDNB8800
 .
 .         the number of Qualified days from Change record file is not zero
 .
 QDNB8000  MATCH     "7",THCSCOD          * check for qualified care
           GOTO      QDNB9000 IF NOT EQUAL    * currently unqualified
+.
+          MATCH     "N",TCINDC22
+          GOTO      QDNB9000 IF NOT EQUAL  * unqualified
 .
 QDNB8800  MATCH     FROMDATE,TODATE
           IF        !@EQUAL

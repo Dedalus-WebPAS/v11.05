@@ -1,4 +1,4 @@
-<meta name="TemplateVersion" content="V11.05.01">
+<meta name="TemplateVersion" content="V11.05.02">
 <meta name="TemplateHome" content="crdhb">
 <meta name="HelpFileName" content="NoContextSet.html">
 <script type="text/javascript" src="../js/emrweb0201101.js"></script>
@@ -6,6 +6,15 @@
 <script type="text/javascript" src="../js/ctascustom.js"></script>
 <!-- end of change -->
 <script type="text/javascript">
+function DisplayPresentComplaintAddInfo() {
+  f = document.UpdateForm;
+  if (f.emcprcmp.value == "1") {
+    document.getElementById('PresentComplaintAddInfo').style.display = "";
+  }
+  else {
+    document.getElementById('PresentComplaintAddInfo').style.display = "none";
+  }
+}
 // 01 : CTAS : constant values section
 var DISCH_IND = 21;				// Cat ED Indicator 21
 var DISCH_IND_SHOW_DEST = "1";	// Cat ED Indicator 21 => (1 == show destination)
@@ -23,6 +32,7 @@ function init() {
 
  document.UpdateForm.brcom001.value=document.UpdateForm.dummy1.value + 
                                     document.UpdateForm.dummy2.value
+ document.UpdateForm.prcompad.value=document.UpdateForm.pcompadd.value;
 //
 //if (UpdateForm.ongoingc.value==0) {
 //      document.UpdateForm.emvis100.selectedIndex=2;
@@ -352,7 +362,7 @@ function ChkDisStat() {
 <body onload="PageLoad(event);"checkDepartureDateNZ();>
 -->
 <body onload="PageLoad(event);showDestination();
-	CheckDepartureDateNZ();checkTrans();">
+	CheckDepartureDateNZ();checkTrans();DisplayPresentComplaintAddInfo();">
 <!-- end of change -->
 <div id=PatientHeading></div>
 <script type="text/javascript">
@@ -408,6 +418,8 @@ InsertEmergencyHeader();
   value="%EMRWEB02.01.104%EMRWEB02.01.105%EMRWEB02.01.174">
  <input type=hidden name=dummy2
   value="%EMRWEB02.01.175%EMRWEB02.01.176%EMRWEB02.01.177">
+ <input type=hidden name=pcompadd
+  value="%EMRWEB02.01.955.023.0">
  <input type=hidden name=waittime value="%EMRWEB02.01.701">
  <input type=hidden name=loadflag >
  <input type=hidden name=reloadfg value="%EMRWEB02.01.446">
@@ -432,6 +444,8 @@ InsertEmergencyHeader();
 <!-- 06 : Add values to use in triage vs discharge check -->
  <input type=hidden name=emvis128 value="%EMRWEB02.01.162.0">
  <input type=hidden name=emvis129 value="%EMRWEB02.01.163">		   
+ <input type=hidden name=emcprcmp id=emcprcmp
+        value="%STANDARD.01.025.122.051.1.1">
 
  <!-- 01 : CTAS : Move table tag inside form -->
 <table width=95% align=center border=0 cellspacing=0 cellpadding=1>
@@ -448,8 +462,16 @@ InsertEmergencyHeader();
 	-->
 	<!-- 07 : TAS : Make triage notes display as ready-only -->
 	<td class=DataLabel>Triage Notes</td>
-    <td><textarea name=brcom001 class=Readonly readonly cols=50 rows=4></textarea>
+    <td><textarea name=brcom001 class=Readonly readonly cols=50 rows=6
+         title="Triage Notes"></textarea>
 	<!-- end of change -->
+    </td></tr>
+<tr valign=top id=PresentComplaintAddInfo><td></td>
+    <td></td>
+    <td></td>
+    <td colspan=2><textarea name=prcompad readonly cols=50 rows=6
+     class="Readonly" title="Triage Notes - Additional Information">
+    </textarea>
     </td></tr>
 <!-- 01 : CTAS : Move Primary Diagnosis, rename -->
 <tr>

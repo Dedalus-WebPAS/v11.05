@@ -5,6 +5,8 @@
 .
 . Modifications  :
 .------------------------------------------------------------------------------
+. V11.05.07 10/11/2025  Zumin Yu       TSK 0969239
+.           Recompiled for OUTSESTM - Modified OOSE0500 and OOSE0600
 . V11.05.06 30/06/2025  Alina Bhari    TSK 0946439
 .           Set Flag to cancel appointment and close referral-CREFFLAG,MAIN1600
 .           -CLSPFM00 
@@ -1656,7 +1658,7 @@ CMBSTEMP  DIM       4      * Template ID
 .
 .------------------------------------------------------------------------------
 PRGID     INIT      "OUTWEB08"
-VERSION   INIT      "V11.05.06"
+VERSION   INIT      "V11.05.07"
 PRGNAM    INIT      "Outpatient Processing"
 .------------------------------------------------------------------------------
 .

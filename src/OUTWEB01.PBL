@@ -5,6 +5,10 @@
 .
 . Modifications  :
 .-------------------------------------------------------------------------------
+. V11.05.05 12/11/2025  Zumin Yu       TSK 0969239
+.           Modified FMTTIM00 to resolve the 12PM time display issue
+. V11.05.04 11/11/2025  Zumin Yu       TSK 0969239
+.           Modified CASTIT00 to resolve the 12PM time display issue
 . V11.05.03 02/06/2025  Don Nguyen     TSK 0960938
 .           Recompiled for PATNAMCD
 . V11.05.02 20.12.2024 DA Sarkies      TSK 0954547
@@ -643,7 +647,7 @@ TRGSDESC  DIM       20
 .
 .-------------------------------------------------------------------------------
 PRGID     INIT      "OUTWEB01"
-VERSION   INIT      "V11.05.03"
+VERSION   INIT      "V11.05.05"
 PRGNAM    INIT      "Outpatient Diary, Search, Referral Update"
 .-------------------------------------------------------------------------------
 .
@@ -2275,8 +2279,10 @@ CASTIT00  UNPACK    OSEDATE,CCENT,CYEAR,CMON,CDAY
           APPEND    "Clinic List for ",WEBTITLE
           UNPACK    OMASTART,DIMHRS,KEY1,DIMMIN
           MOVE      DIMHRS,F2
-          IF        F2>12
-            SUB       "12",F2
+          IF        F2>=12
+            IF        F2>12
+              SUB       "12",F2                  * when 13:00 is 1:00pm
+            ENDIF
             APPEND    F2,WEBTITLE
             APPEND    KEY1,WEBTITLE
             APPEND    DIMMIN,WEBTITLE
@@ -2969,18 +2975,22 @@ FMTTIM00  MOVE      "am",STRAMPM
           MOVE      "am",ENDAMPM
           UNPACK    STRTIM,DIMHRS,KEY1,DIMMIN
           MOVE      DIMHRS,F2
-          IF        F2>12
+          IF        F2>=12
             MOVE      "pm",STRAMPM
-            SUB       "12",F2
+            IF        F2>12
+              SUB       "12",F2
+            ENDIF
             PACK      STRTIM,F2,KEY1,DIMMIN
             REP       " 0",STRTIM
           ENDIF
 .
           UNPACK    ENDTIM,DIMHRS,KEY1,DIMMIN
           MOVE      DIMHRS,F2
-          IF        F2>12
-            MOVE      "pm",ENDAMPM
-            SUB       "12",F2
+	  IF        F2>=12
+	    MOVE      "pm",ENDAMPM
+            IF        F2>12
+              SUB       "12",F2                  * when 13:00 is 1:00pm
+            ENDIF
             PACK      ENDTIM,F2,KEY1,DIMMIN
             REP       " 0",ENDTIM
           ENDIF

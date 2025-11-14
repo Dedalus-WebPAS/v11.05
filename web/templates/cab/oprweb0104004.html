@@ -1,4 +1,4 @@
-<meta name="TemplateVersion" content="V11.05.00">
+<meta name="TemplateVersion" content="V11.05.01">
 <meta name="TemplateHome" content="cab">
 <meta name="HelpFileName" content="NoContextSet.html">
 <meta name="CrossBrowser" content="true">
@@ -152,6 +152,17 @@ Theatre Case Anaesthetic Details
        onclick="SetCurrentDateTime(null,UpdateForm.opdea022);">
       <img src="../images/TimeLookup.gif" class=Icon
        onclick="TimeLookupFrame(UpdateForm.opdea022);"></td></tr>
+
+<tr>
+    <td class=DataLabel nowrap>Anaesthetic Time Out</td>
+    <td class=DataField><input type=text name=opard061 size=8 maxlength=8
+       title="Anaesthetic Time Out" value="%OPRWEB01.04.461"
+       onblur="checkTime(this,this.title);">
+      <img src="../images/DateTimeStamp.gif" class=Icon align=absmiddle
+       onclick="SetCurrentDateTime(null,UpdateForm.opard061);">
+      <img src=../images/TimeLookup.gif border=0 class=Icon align=absmiddle
+       onclick="TimeLookupFrame(UpdateForm.opard061);"></td>
+</tr>
 
 <tr><td class=DataLabel>Anaesthetic Type</td>
     <td class=DataField>

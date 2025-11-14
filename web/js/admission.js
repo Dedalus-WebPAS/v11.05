@@ -1,4 +1,4 @@
-//jsVersion  : V11.05.01
+//jsVersion  : V11.05.02
 //========================================================================
 // Program   : admission.js
 //
@@ -3111,4 +3111,27 @@ function valMYHR2(pmsvx125,PCEHR,ptcndumh) {
   if((pmsvx125.value!="0")&&(pmsvx125.value!="1")){
      DefaultMYHR(pmsvx125,ptcndumh);}      // upload myhr default
 }
+
+function checkDemographicsUpdated(noDaysDiff,minimumDays,WarningType) {
+  notifyChange = false;
+  if (WarningType.length>4){
+    if (isNaN(noDaysDiff) || (noDaysDiff>minimumDays)){
+      if(WarningType[5]=="1") {
+        warning = "Patient demographics may be out of date.\n";
+        warning += "Please check demographics before continuing\n";
+        warning += "Select 'Ok' to Continue or 'Cancel' to return";
+        if (!confirm(warning)){
+          notifyChange = true;
+        }
+      } else if (WarningType[5]=="2"){
+        warning = "Patient Demographics are out of date\n"
+        warning += "Please check demographics before continuing";
+        alert(warning);
+        notifyChange = true;
+      }
+    }
+  }
+  return notifyChange;
+}
+
 

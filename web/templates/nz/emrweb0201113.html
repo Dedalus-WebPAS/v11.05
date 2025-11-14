@@ -1,4 +1,4 @@
-<meta name="TemplateVersion" content="V11.05.01">
+<meta name="TemplateVersion" content="V11.05.02">
 <meta name="TemplateHome" content="nz">
 <meta name="HelpFileName" content="NoContextSet.html">
 <meta name="CrossBrowser" content="true">
@@ -7,6 +7,15 @@
 <script language=javascript src="../js/EmrMandatory.js"> </script>
 <script language=javascript src="../js/emrweb02100.js"> </script>
 <script language=javascript>
+function DisplayPresentComplaintAddInfo() {
+  f = document.triage;
+  if (f.emcprcmp.value == "1") {
+    document.getElementById('PresentComplaintAddInfo').style.display = "";
+  }
+  else {
+    document.getElementById('PresentComplaintAddInfo').style.display = "none";
+  }
+}
 function SplitComplaint()  {
 words=triage.comptext.value.split(/\s+/);
 triage.emvis004.value=""
@@ -140,7 +149,7 @@ width: 160px;
 }
 </style>
 %START.OF.PAGE
-<body onload="PageLoad(event);DisplayDiv()">
+<body onload="PageLoad(event);DisplayDiv();DisplayPresentComplaintAddInfo();">
 <div id=PatientHeading></div>
 <script type="text/javascript">
 PatientURN="%EMRWEB02.01.003";
@@ -205,6 +214,8 @@ InsertEmergencyHeader()
 <input type=hidden name=emvis026 value="%EMRWEB02.01.126.3">
 <input type=hidden name=savelocn value="%EMRWEB02.01.106.1">
 <input type=hidden name=savelocd value="%EMRWEB02.01.106.0">
+<input type=hidden name=emcprcmp id=emcprcmp
+ value="%STANDARD.01.025.122.051.1.1">
 
 <table width=100% border=0 cellspacing=0 cellpadding=1>
 <tr><td class=DataLabel width=20%>Presenting Complaint </td>
@@ -218,13 +229,26 @@ InsertEmergencyHeader()
     </td></tr>
 
 <tr><td></td>
-    <td><textarea wrap=hard name=prcom001 cols=50 rows=3
+    <td><textarea wrap=hard name=prcom001 cols=50 rows=6 
+                  title="Presenting Complaint"
                   onkeydown="ValidateKeyInput(this,6)"
                   onblur="ValidateTextLimits(this,6)"></textarea>
     <input type=hidden name=emvis004 value="%EMRWEB02.01.104">
     <input type=hidden name=emvis005 value="%EMRWEB02.01.105">
     <input type=hidden name=nocodes>
     </td></tr>
+
+<tr valign=top id=PresentComplaintAddInfo>
+  <td class=DataLabel></td>
+  <td>
+    <textarea type=text name=vicmt023 id=vicmt023 wrap=hard
+     cols=50 rows=6 class=AsciiOnly
+     title="Presenting Complaint - Additional Information"
+     onkeydown="CheckPresentCompAddInfoTextLimit(this);"
+     onblur="TextareaBlurHandler(this);">
+    </textarea>
+  </td>
+</tr>
 </table>
 <div id=Triage></div>
 <table width=100% border=0 cellspacing=0 cellpadding=1>

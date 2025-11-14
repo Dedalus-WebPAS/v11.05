@@ -1,4 +1,4 @@
-<meta name="TemplateVersion" content="V11.05.02">
+<meta name="TemplateVersion" content="V11.05.03">
 <meta name="TemplateHome" content="sjog-wa">
 <meta name="HelpFileName" content="NoContextSet.html">
 <meta name="CrossBrowser" content="true">
@@ -200,14 +200,23 @@ function SubmitAdm() {
   if (!validateMandatory(document.UpdateForm)) {
     return;
   }
-    if (document.UpdateForm.oecchbox.checked==true) {
-      if (!validateOECRequired(document.UpdateForm)) {
-         return;
-      }
-      if (!validateParticipant(document.UpdateForm.ptmis013.value,"OEC")) {
-         return;
-      }
+
+  if (document.UpdateForm.admitbox.value==1) {
+    dateDiff=parseInt(SetDateYYYYMMDD(document.UpdateForm.ptmis001.value)) -
+             parseInt(DemConDate);
+    if (checkDemographicsUpdated(dateDiff,NoDayDemVl,ConfDemogs)){
+      return;
     }
+  }
+
+  if (document.UpdateForm.oecchbox.checked==true) {
+    if (!validateOECRequired(document.UpdateForm)) {
+       return;
+    }
+    if (!validateParticipant(document.UpdateForm.ptmis013.value,"OEC")) {
+       return;
+    }
+  }
   if (!isWhitespace(UpdateForm.ptmis013.value)) {
     if (!validateHFT(20,UpdateForm.ptmis013,UpdateForm.ptmis014,
                         UpdateForm.funddesc,UpdateForm.tabldesc)) {
@@ -498,6 +507,9 @@ PatientCLH="%STANDARD.01.017.CL";
 PatientHFT="%PATWEB89.03.086.094";
 PatientCDM="%PATWEB89.03.086.095";
 PatientVDH="%PATWEB89.03.086.099.015";
+ConfDemogs="%STANDARD.01.045.PTCNCDOA";
+NoDayDemVl=trim("%STANDARD.01.045.PTCNNDCD");
+DemConDate=SetDateYYYYMMDD("%PATWEB89.03.085.059");
 InsertPatientHeader()
 </script>
 <div id=PatientMenu></div>
@@ -707,7 +719,7 @@ InsertPatientHeader()
             %PATWEB89.03.127.5
             </select>
          %STANDARD.01.017.U9
-         <select name=ptmis064 tabindex=17 onchange="setAlert();"
+         <select name=ptmis064 id=ptmis064 tabindex=17 onchange="setAlert();"
           title="%STANDARD.01.017.U9">
            <option></option>
             %PATWEB89.03.155.5

@@ -1,8 +1,9 @@
-<meta name="TemplateVersion" content="V11.05.00">
+<meta name="TemplateVersion" content="V11.05.01">
 <meta name="TemplateHome" content="standard">
 <meta name="HelpFileName" content="NoContextSet.html">
 <meta name="CrossBrowser" content="true">
 <script type="text/javascript" src="../js/ReportStandard.js"></script>
+%START.OF.PAGE
 <script type="text/javascript">
 function selectView(viewTypeValue) {
   document.SelectView.viewtype.value=viewTypeValue
@@ -193,6 +194,27 @@ function SetUpLabelForm() {
     }
   }
 }
+function bulkPrintA4Sheet() {
+  var num_patients = 0
+  for(var e = 0; e < ProcessForm.elements.length; e++) {
+    var el=ProcessForm.elements[e] ;
+    if(el.name.match(/admissno/) && el.checked==true) {
+      num_patients++
+    }
+  }
+  if(num_patients == 0) {
+     alert("No Print Label (Patient) checkboxes selected!");
+     return;
+  }
+  var template="452";
+  var PTCNA4TM=trim("%STANDARD.01.045.PTCNA4TM");
+  if(!isWhitespace(PTCNA4TM)) {
+     template=PTCNA4TM;
+  }
+  linkurl="patweb98.pbl?reportno=01&template=" + template + "&nourselc=1";
+  Left=(document.body.clientWidth-390)/2;
+  DFrameLink(linkurl,100,Left,390,140);
+}
 </script>
 </head>
 <body onload="PageLoad(event);
@@ -200,7 +222,6 @@ function SetUpLabelForm() {
               SetCop();
               disablePrintFields();
               SetUpLabelForm()">
-%START.OF.PAGE
 <form name=SelectPeriod action=patweb92.pbl method=get style="margin:0">
  <input type=hidden name=reportno value=6>
  <input type=hidden name=template value=4>
@@ -270,7 +291,7 @@ function SetUpLabelForm() {
   <tr><td class=HeadingCell align=center colspan=6>Bulk Print List</td></tr>
  </table>
 
- <table cellspacing=0 border=1 width=100%>
+ <table id=tblPatients cellspacing=0 border=1 width=100%>
   <tr id=spnAus><td class=HeadingCell><b>Visit No.</b></td>
       <td class=HeadingCell><b>Patient Name</b></td>
       <td class=HeadingCell><b>Status</b></td>
@@ -347,12 +368,20 @@ function SetUpLabelForm() {
           <input type=button class="button" id="prntbttn" Value="Print"
            onclick="bulkPrint();">
           <input class="button" type=button value=Reset
-                 onClick="clearData();"></td></tr>
+                 onClick="clearData();">
+          <span id="InsertA4LabelButton" style="display: none">
+          <input type=button class="button" id="prntbttn"
+           value="Print A4 Labels" onclick="bulkPrintA4Sheet();">
+          </span>
+ </td></tr>
  </table>
 </form>
 
 <script type="text/javascript">
-//
+ var PTCNA4LB="%STANDARD.01.045.PTCNA4LB";
+ if(PTCNA4LB == "1") {
+   document.getElementById("InsertA4LabelButton").style.display="";
+ }
  ptcnhdps="%STANDARD.01.025.080.250.1.1";
  if (ptcnhdps==1) {
    document.getElementById('spnNz').style.display = "";

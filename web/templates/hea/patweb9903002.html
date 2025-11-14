@@ -1,4 +1,4 @@
-<meta name="TemplateVersion" content="V11.05.01">
+<meta name="TemplateVersion" content="V11.05.02">
 <meta name="TemplateHome" content="hea">
 <meta name="HelpFileName"    content="NoContextSet.html">
 <meta name="CrossBrowser"    content="true">
@@ -473,23 +473,26 @@ function setInsurance() {
   Insurance Code<br>  
    <input type=text name=doctc058 id=doctc058
       title="Insurance Code" size=6 maxlength=6
+      id="doctc058" value="%PATWEB99.03.060"
       onblur="validateCode(36,doctc058,desc_doctc058);">
    <input type=text name=desc_doctc058 id=desc_doctc058 size=35 readonly>
       <img src="../images/SearchIcon.gif" class=Icon
-      onclick="InsuranceCodeSearch(doctc058,desc_doctc058);">
+         onclick="InsuranceCodeSearch(doctc058,desc_doctc058);">
       <img src="../images/erase.gif" class=Icon
-      onclick="clrFields(doctc058,desc_doctc058);">
+         onclick="clrFields(doctc058,desc_doctc058);">
 </span>
 
 <span id="InsuranceSPAN2" style="display:none">
   Insurance Code<br>  
   <input type="text" name="doctc058" id=doctc058 title="Insurance Code"
-       size="6" maxlength="6" tabindex="110"/>
-    <input type="text" name="desc_doctc058" id=desc_doctc058 size="35" readonly />
-           <img src="../images/SearchIcon.gif" align="absmiddle" class=Icon
-                    onclick="InsuranceSearchFrame(doctc058,desc_doctc058);" />
-           <img src="../images/erase.gif" align="absmiddle" class=Icon
-                    onclick="clrFields(doctc058,desc_doctc058);" />
+   size="6" maxlength="6" tabindex="110"
+   id="doctc058" value="%PATWEB99.03.060"
+   onblur="validateCode(36,doctc058,desc_doctc058);" />
+  <input type="text" name="desc_doctc058" id=desc_doctc058 size="35" readonly />
+     <img src="../images/SearchIcon.gif" align="absmiddle" class=Icon
+        onclick="InsuranceSearchFrame(doctc058,desc_doctc058);" />
+     <img src="../images/erase.gif" align="absmiddle" class=Icon
+        onclick="clrFields(doctc058,desc_doctc058);" />
 </span>
 
 <SCRIPT LANGUAGE=javascript>

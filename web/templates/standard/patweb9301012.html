@@ -1,7 +1,8 @@
-<meta name="TemplateVersion" content="V11.05.00">
+<meta name="TemplateVersion" content="V11.05.01">
 <meta name="TemplateHome" content="standard">
 <meta name="HelpFileName" content="NoContextSet.html">
 <meta name="CrossBrowser" content="true">
+%START.OF.PAGE
 <script type="text/javascript">
 function submitPrgplb() {
   if (validateMandatory(PrintLabels) && validateSelections()) {
@@ -144,8 +145,29 @@ function SetFormsPrintMand(SelCopies,SelStatCod,SelPrinter) {
     SelPrinter.className="Mandatory SelectBig"
   }
 }
+function bulkPrintA4Sheet() {
+  var num_patients = 0
+  for(var e = 0; e < PrintLabels.elements.length; e++) {
+    var el=PrintLabels.elements[e] ;
+    if(el.name.match(/inplabar/) && el.checked==true) {
+      num_patients++
+    }
+  }
+  if(num_patients == 0) {
+     alert("No Print Label (Patient) checkboxes selected!");
+     return;
+  }
+  var template="452";
+  var PTCNA4TM=trim("%STANDARD.01.045.PTCNA4TM");
+  if(!isWhitespace(PTCNA4TM)) {
+     template=PTCNA4TM;
+
+  }
+  linkurl="patweb98.pbl?reportno=01&template=" + template + "&nourselc=1";
+  Left=(document.body.clientWidth-390)/2;
+  DFrameLink(linkurl,100,Left,390,140);
+}
 </script>
-%START.OF.PAGE
 <body onload="PageLoad(event);SetCount();SetFormsPrint();">
 
 <form name=SelectWard action=patweb93.pbl method=get style="margin:0">
@@ -351,12 +373,20 @@ function SetFormsPrintMand(SelCopies,SelStatCod,SelPrinter) {
 <tr>
   <td>
     <input type=button value=Ok class="button" onclick="submitPrgplb();">
+    <span id="InsertA4LabelButton" style="display: none">
+    <input type=button class="button" id="prntbttn"
+     value="Print A4 Labels" onclick="bulkPrintA4Sheet();">
+    </span>
   </td>
 </tr>
 </table>
 </form>
 
 <script type="text/javascript">
+var PTCNA4LB="%STANDARD.01.045.PTCNA4LB";
+if(PTCNA4LB == "1") {
+  document.getElementById("InsertA4LabelButton").style.display="";
+}
 function SetCount() {
   SelectWard.numofpat.value="%PATWEB93.01.012" 
   SelectWard.numunbed.value="%PATWEB93.01.010" 

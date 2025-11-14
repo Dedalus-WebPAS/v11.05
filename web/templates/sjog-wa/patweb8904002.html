@@ -1,4 +1,4 @@
-<meta name="TemplateVersion" content="V11.05.01">
+<meta name="TemplateVersion" content="V11.05.02">
 <meta name="TemplateHome" content="sjog-wa">
 <meta name="HelpFileName" content="NoContextSet.html">
 <meta name="CrossBrowser" content="true">
@@ -26,6 +26,13 @@ function SubmitAdm() {
         return;
       }
     }
+  }
+
+  dateDiff =  parseInt(SetDateYYYYMMDD(document.UpdateForm.ptmis001.value)) -
+              parseInt(DemConDate);
+
+  if (checkDemographicsUpdated(dateDiff,NoDayDemVl,ConfDemogs)){
+    return;
   }
 
   if (document.UpdateForm.dispt001!=undefined &&
@@ -118,6 +125,9 @@ PatientCLH="%STANDARD.01.017.CL";
 PatientHFT="%PATWEB89.04.086.094";
 PatientCDM="%PATWEB89.04.086.095";
 PatientVDH="%PATWEB89.04.086.099.015";
+ConfDemogs="%STANDARD.01.045.PTCNCDOA";
+NoDayDemVl=trim("%STANDARD.01.045.PTCNNDCD");
+DemConDate=SetDateYYYYMMDD("%PATWEB89.04.085.059");
 InsertPatientHeader()
 </script>
 <div id=PatientMenu></div>

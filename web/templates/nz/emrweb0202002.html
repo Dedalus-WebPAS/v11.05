@@ -1,4 +1,4 @@
-<meta name="TemplateVersion" content="V11.05.00">
+<meta name="TemplateVersion" content="V11.05.01">
 <meta name="TemplateHome" content="nz">
 <meta name="HelpFileName" content="NoContextSet.html">
 <meta name="CrossBrowser" content="true">
@@ -8,7 +8,15 @@
 <script type="text/javascript" src="../js/emrweb0202002.js"></script>
 <script type="text/javascript" src="../js/emrweb0201102.js"></script>
 <script type="text/javascript">
-
+function DisplayPresentComplaintAddInfo() {
+  f = document.UpdateForm;
+  if (f.emcprcmp.value == "1") {
+    document.getElementById('PresentComplaintAddInfo').style.display = "";
+  }
+  else {
+    document.getElementById('PresentComplaintAddInfo').style.display = "none";
+  }
+}
 function Validateprecom001(){
   var formatedtext=formateText(UpdateForm.prcom001,'50');
   if((formatedtext.split(/[\r\n]/).length>6)|| 
@@ -105,7 +113,8 @@ function showMobilePhoneDet() {
 %START.OF.PAGE
 <body onLoad="PageLoad(event);checkReferred();DisplayResidency();
               showMobilePhoneDet();DispPrefGivenName();
-              ChkIdentifyGenderPronounTitle(document.UpdateForm);">
+              ChkIdentifyGenderPronounTitle(document.UpdateForm);
+              DisplayPresentComplaintAddInfo();">
 <div id=PatientHeading></div>
 <script type="text/javascript">
 PatientURN="%EMRWEB02.02.003";
@@ -170,6 +179,8 @@ InsertEmergencyHeader();
 <input type=hidden name=nhmas003 value="%EMRWEB02.02.070.005">
 <input type=hidden name=nhmas004 value="%EMRWEB02.02.070.006">
 <input type=hidden name=nhmas005 value="%EMRWEB02.02.070.007">
+<input type=hidden name=emcprcmp id=emcprcmp
+ value="%STANDARD.01.025.122.051.1.1">
 
 <table align=center width=100% border=0 cellspacing=0 cellpadding=0>
 <tr><td class=HeadingCell colspan=6 width=100% align=center>
@@ -564,9 +575,22 @@ InsertEmergencyHeader();
     <select name=emvis060 class="SelectBig Mandatory" tabindex=55>
     </select></td>
     <td colspan=4>
-    <textarea type="text" name=prcom001 wrap=hard cols=50 rows=2 tabindex=60 
+    <textarea type="text" name=prcom001 wrap=hard cols=50 rows=6 tabindex=60 
      onblur="TextareaBlurHandler(this);Validateprecom001();"></textarea>
     </td></tr>
+
+<tr valign=top id=PresentComplaintAddInfo>
+  <td></td>
+  <td></td>
+  <td colspan=4>
+    <textarea type=text name=vicmt023 id=vicmt023 wrap=hard tabindex=60
+     cols=50 rows=6 class=AsciiOnly
+     title="Presenting Complaint - Additional Information"
+     onkeydown="CheckPresentCompAddInfoTextLimit(this);"
+     onblur="TextareaBlurHandler(this);">
+    </textarea>
+  </td>
+</tr>
 </table>
 
 <table width=100% border=0>

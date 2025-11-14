@@ -1,4 +1,4 @@
-<meta name="TemplateVersion" content="V11.05.03">
+<meta name="TemplateVersion" content="V11.05.04">
 <meta name="TemplateHome" content="sjog-nsw">
 <meta name="HelpFileName" content="NoContextSet.html">
 <meta name="CrossBrowser" content="true">
@@ -193,6 +193,15 @@ function SubmitAdm() {
     if (!validateMandatory(document.UpdateForm)) {
        return;
     }
+
+    if (document.UpdateForm.admitbox.value==1) {
+      dateDiff=parseInt(SetDateYYYYMMDD(document.UpdateForm.ptmis001.value)) -
+               parseInt(DemConDate);
+      if (checkDemographicsUpdated(dateDiff,NoDayDemVl,ConfDemogs)){
+        return;
+      }
+    }
+
     if (document.UpdateForm.oecchbox.checked==true) {
       if (!validateOECRequired(document.UpdateForm)) {
          return;
@@ -479,6 +488,9 @@ PatientCDM="%PATWEB89.03.086.095";
 PatientVDH="%PATWEB89.03.086.099.015";
 PatientConRole="%PATWEB89.03.199.002";
 PatientConType="%PATWEB89.03.199.001";
+ConfDemogs="%STANDARD.01.045.PTCNCDOA";
+NoDayDemVl=trim("%STANDARD.01.045.PTCNNDCD");
+DemConDate=SetDateYYYYMMDD("%PATWEB89.03.085.059");
 InsertPatientHeader()
 
 </script>

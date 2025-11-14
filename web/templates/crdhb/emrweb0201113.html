@@ -1,4 +1,4 @@
-<meta name="TemplateVersion" content="V11.05.01">
+<meta name="TemplateVersion" content="V11.05.02">
 <meta name="TemplateHome" content="crdhb">
 <meta name="HelpFileName" content="NoContextSet.html">
 <link rel="stylesheet" href="../html/validate.css" type="text/css">
@@ -12,6 +12,86 @@
 <!-- 08 Add the following javascript --> 
 <script type="text/javascript" src="../js/emrweb0201113.js"> </script>
 <script language=javascript>
+function SavePresComplAddInfoBLANK1(ReturnCode) {
+  onblurHandler(window.event)
+
+  var formatedtext=formateTextBLANK(triage.vicmt023,'50')
+  var serverURL="../cgi-bin/emrweb02.pbl?reportno=27" +
+                "&admissno=" + triage.admissno.value.replace(/ /g,"+") +
+                "&updateky=" + triage.updateky.value.replace(/ /g,"+") +
+                "&webuseid=" + PatientLinks.webuseid.value.replace(/ /g,"+") +
+                "&vicmt023=" + escape(formatedtext)
+
+  if (IEBrowser) {
+    var returnValue = RSExecute(serverURL);
+
+    if (returnValue.status==0) {
+       ReturnValue=returnValue.return_value.split("|")
+       triage.updateky.value = ReturnValue[0]; }
+    else {
+       alert("The screen will now be refreshed.\n" +
+             " Changes have not been retained.");
+       location.reload();
+       setTimeout('ReturnCode.select();',100);
+       return;
+    }
+    if (top.menu==undefined) { return; }
+    if (top.menu.document.all.EmergencyFrame==undefined) { return; }
+    if (top.menu.document.all.EmergencyFrame.src=="") { return; }
+    if (top.menu.EmergencyFrame.document.UpdateForm==undefined) { return; }
+    if (top.menu.EmergencyFrame.document.UpdateForm.vicmt023==undefined) {
+      return;
+    }
+    ClinicalPage="emrweb02.pbl?reportno=1&template=100"
+    if (top.menu.document.all.EmergencyFrame.src.substr(0,36)==ClinicalPage) {
+      top.menu.EmergencyFrame.document.UpdateForm.vicmt023.value=
+          triage.vicmt023.value
+    }
+  }
+  else {
+    var returnValue = RSExecuteFetch(serverURL);
+
+    returnValue.then (
+      function (returnValue) {
+        returnValue = ParseFetchData(returnValue);  // parse fetch() result
+
+        if (returnValue.status==0) {
+           ReturnValue=returnValue.return_value.split("|")
+           triage.updateky.value = ReturnValue[0]; }
+        else {
+           alert("The screen will now be refreshed.\n" +
+                 " Changes have not been retained.");
+           location.reload();
+           setTimeout('ReturnCode.select();',100);
+           return;
+        }
+        if (top.menu==undefined){ return; }
+        if (top.menu.document.all.EmergencyFrame==undefined){ return; }
+        if (top.menu.document.all.EmergencyFrame.src==""){ return; }
+        if (top.menu.EmergencyFrame.document.UpdateForm==undefined){return;}
+        if (top.menu.EmergencyFrame.document.UpdateForm.vicmt023==undefined) {
+          return;
+        }
+        ClinicalPage="emrweb02.pbl?reportno=1&template=100"
+        if (top.menu.document.all.EmergencyFrame.src.substr(0,36)==ClinicalPage)
+        {
+          top.menu.EmergencyFrame.document.UpdateForm.vicmt023.value=
+                        triage.vicmt023.value
+        }
+      }
+    )
+  }
+}
+function DisplayPresentComplaintAddInfo() {
+  f = document.triage;
+  if (f.emcprcmp.value == "1") {
+    document.getElementById('PresentComplaintAddInfo').style.display = "";
+  }
+  else {
+    document.getElementById('PresentComplaintAddInfo').style.display = "none";
+  }
+  f.vicmt023.value=trim(f.pcompadd.value)
+}
 function SplitComplaint()  {
 words=triage.comptext.value.split(/\s+/);
 triage.emvis004.value=""
@@ -208,7 +288,8 @@ width: 160px;
 }
 </style>
 %START.OF.PAGE
-<body onload="PageLoad(event);sortSelect(document.getElementById('emvis055'));DisplayDiv();EnableAllergies();">
+<body onload="PageLoad(event);sortSelect(document.getElementById('emvis055'));
+              DisplayDiv();EnableAllergies();DisplayPresentComplaintAddInfo();">
 <div id=PatientHeading></div>
 <script type="text/javascript">
 PatientURN="%EMRWEB02.01.003";
@@ -272,6 +353,9 @@ InsertEmergencyHeader()
  <input type=hidden name=emvis026 value="%EMRWEB02.01.126.3">
  <input type=hidden name=savelocn value="%EMRWEB02.01.106.1">
  <input type=hidden name=savelocd value="%EMRWEB02.01.106.0">
+ <input type=hidden name=emcprcmp id=emcprcmp
+ value="%STANDARD.01.025.122.051.1.1">
+ <input type=hidden name=pcompadd value="%EMRWEB02.01.955.023.0">
 <!-- 06 : TAS : Add triage date validation -->
  <input type=hidden name=emvis001 value="%EMRWEB02.01.101.0">
  <input type=hidden name=emvis002 value="%EMRWEB02.01.102">
@@ -381,7 +465,7 @@ InsertEmergencyHeader()
 	<br/><br/>&nbsp;&nbsp;
 	<span id="charsUsed"></span></td>
     <td><textarea name=prcom001 id=prcom001 wrap=hard 
-		cols=50 rows=4 maxlength=300 tabindex=18 
+		cols=50 rows=6 maxlength=300 tabindex=18 
 		title="Triage Note" class="Mandatory"
 		onkeyup="NumCharsUsed(this, 300, document.getElementById('charsUsed'));"
         onblur="prcom001TopFrame();">
@@ -391,6 +475,18 @@ InsertEmergencyHeader()
     <input type=hidden name=emvis005 value="%EMRWEB02.01.105">
     <input type=hidden name=nocodes>
     </td>
+</tr>
+
+<tr valign=top id=PresentComplaintAddInfo>
+  <td></td>
+  <td>
+    <textarea type=text name=vicmt023 id=vicmt023 wrap=hard tabindex=18
+     cols=50 rows=6 class=AsciiOnly
+     title="Triage Note - Additional Information"
+     onkeydown="CheckPresentCompAddInfoTextLimit(this);"
+     onblur="TextareaBlurHandler(this);SavePresComplAddInfoBLANK1(this);">
+    </textarea>
+  </td>
 </tr>
 
 <tr>

@@ -10,6 +10,9 @@
 .  *     Modifications:                                                       *
 .  *                                                                          *
 .  ****************************************************************************
+.  *     V11.05.16  05/11/2025  Nikitha Bhaskar  TSK 0958928                  *
+.  *                Added PATCN662 - Broadcast Outpatient Expected Discharge  *
+.  *                Date and Time in PV2.9                                    *
 .  *     V11.05.15  24/06/2025  Jacob Jackson    TSK 0944962                  *
 .  *                Added PATCN661/PTCNVIMS - Verify Inbound SIU^12 Inpatient *
 .  *                Message                                                   *
@@ -1728,6 +1731,8 @@ PATCN660  DIM       1     * Read Discharge Type Cat D/DD for ECLIPSE(PTCNSDTY)
 .
 PATCN661  DIM       1     * Verify Inbound SIU^12 Inpatient Message Segment 
 .                           SCH.22 to 
+PATCN662  DIM       1     * Broadcast Outpatient Expected Discharge Date and
+.                         * Time in PV2.9 0 or Blank = Disabled 1 = Enabled
 IBACN001  DIM       1     * Multi hospital
 IBACN002  DIM       1     * Using Medclaims (0=No/1=Yes)
 IBACN003  DIM       1     * Using HL7 Messaging (0=No/1=Yes)

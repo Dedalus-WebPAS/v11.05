@@ -1,3 +1,4 @@
+. V11.05.01 07/11/2025 EC C-0968096 Added type 8
 . V11.01.01 19/03/2021 PV C-0900574 Added Days of Week Comment
 . V11.00.01 17/11/2020 EC C-0876663 Created FD                                  
 . *----------------------------------------------------------------------
@@ -34,6 +35,7 @@ CMPATYPE  DIM       3      3        524   Parameter Type
 .                                         "  5" - Yes/No                       
 .                                         "  6" - Numeric                      
 .                                         "  7" - Days of Week
+.                                         "  8" - Selection List
 CMPAACTV  DIM       1      1        527   Status (0=Active 1=Inactive)       
 CMPACDAT  DIM       8      8        528   Date Record Created (CCYYMMDD)     
 CMPACTIM  DIM       8      8        536   Time Record Created (HH:MM:SS)     

@@ -1,4 +1,4 @@
-<meta name="TemplateVersion" content="V11.05.02">
+<meta name="TemplateVersion" content="V11.05.03">
 <meta name="TemplateHome" content="standard">
 <meta name="HelpFileName" content="NoContextSet.html">
 <meta name="CrossBrowser" content="true">
@@ -279,6 +279,11 @@ function PostForm() {
   } else {
      document.UpdateForm.patcn659.value="1";
   }
+  if(document.UpdateForm.d_patcn662.checked==false) {
+     document.UpdateForm.patcn662.value="0";
+  } else {
+     document.UpdateForm.patcn662.value="1";
+  }
 
   setFormactn('U');
 }
@@ -359,6 +364,7 @@ function CheckSite(){
 <input type=hidden name=patcn657 value=" ">
 <input type=hidden name=patcn658 value=" ">
 <input type=hidden name=patcn659 value=" ">
+<input type=hidden name=patcn662 value=" ">
 <input type=hidden name=viewonly value="%COMWEB98.07.007">
 
 <table align=center width=100% border=0 cellspacing=0 cellpadding=0>
@@ -671,7 +677,14 @@ function CheckSite(){
     <td class=DataItem><input type=checkbox name=d_patcn278
      title="Ignore delete segment for NK1/ZAL segments" 
      value="1">
-    </td></tr>
+    </td>
+    <td class=DataLabel>
+        Broadcast Outpatient Expected Discharge Date and Time in PV2.9</td>
+    <td class=DataItem><input type=checkbox name=d_patcn662
+     title="Broadcast Outpatient Expected Discharge Date and Time in PV2.9"
+     value="1">
+    </td> 
+</tr>
 
 <tr><td class=DataLabel>
        HL7 using ED Discharge Doctor (emviur02)</td>
@@ -1103,5 +1116,9 @@ function CheckSite(){
  if(PTCNSAPC=="1") {
    document.UpdateForm.d_patcn659.checked=1;
  } 
+ PTCNEDDT="%COMWEB98.07.199.562"
+ if(PTCNEDDT=="1") {
+   document.UpdateForm.d_patcn662.checked=1;
+ }
 //
 </script>

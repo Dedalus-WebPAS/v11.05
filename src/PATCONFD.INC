@@ -11,6 +11,9 @@
 .*     Mods.        :             look for (spare) or (moved) for free space  *
 .*                                                                            *
 .******************************************************************************
+.*       V11.05.18  05/11/2025  Nikitha Bhaskar  TSK 0958928                  *
+.*                  Added PTCNEDDT - Broadcast Outpatient Expected Discharge  *
+.*                  Date and Time in PV2.9                                    *
 .*       V11.05.17  24/06/2025  Jacob Jackson    TSK 0944962                  *
 .*                  Added PATCN661/PTCNVIMS - Verify Inbound SIU^12 Inpatient *
 .*                  Message                                                   *
@@ -4805,6 +4808,10 @@ PTCNVIMS  DIM       1        119   Verify Inbound SIU^12 Inpatient Message
 .                                  0 = Approval Number
 .                                  1 = Hospital Code
 .
-.End of Record               120
+PTCNEDDT  DIM       1        120   Broadcast Outpatient Expected Discharge Date
+.                                  and Time in PV2.9
+.                                  0 or Blank = Disabled
+.                                  1 = Enabled
+.End of Record               121
 +
 

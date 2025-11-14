@@ -8,6 +8,9 @@
 . *----------------------------------------------------------------------
 .  Modifications Done :
 .------------------------------------------------------------------------
+.  V11.05.03  11.11.2025  Bella Turco    Task 0968146 
+.             Added websecaf read at the end of ALRE0630 tag to restore logged
+.             in user details. Made same change to all instances of RDWBSE1
 .  V11.05.02  19.12.2024  DA Sarkies     Task 0954547 
 .             Commented out <cat> tags to prevent browser incompatibility
 .  V11.05.01  26/11/2024  Ebon Clements  Task 0954547 
@@ -440,6 +443,9 @@ ALRE0090  MATCH     SP70,ALREUCLO
             MOVE      ALREUCLO,WBSENAM
           ENDIF
           WRITE     HTMLFILE;WBSENAM;
+.
+          PACK      KEY10,USERID,SP70
+          CALL      RDWBSE1
           GOTO      ALRE9999
 .
 ALRE0100  MOVE      "LN",CATEGORY
@@ -466,6 +472,9 @@ ALRE0130  MATCH     SP70,ALREUCAN
             MOVE      ALREUCAN,WBSENAM
           ENDIF
           WRITE     HTMLFILE;WBSENAM;
+.
+          PACK      KEY10,USERID,SP70
+          CALL      RDWBSE1
           GOTO      ALRE9999
 .
 ALRE0140  MOVE      "LI",CATEGORY
@@ -500,6 +509,9 @@ ALRE0180  MATCH     SP70,ALREUINA
             MOVE      ALREUINA,WBSENAM
           ENDIF
           WRITE     HTMLFILE;WBSENAM;
+.
+          PACK      KEY10,USERID,SP70
+          CALL      RDWBSE1
           GOTO      ALRE9999
 .
 ALRE0190  MATCH     ALRERDAT,SP70
@@ -886,6 +898,9 @@ ALRE0630  MATCH     SP70,ALRECUID
             MOVE      ALRECUID,WBSENAM
           ENDIF
           WRITE     HTMLFILE;WBSENAM;
+.
+          PACK      KEY10,USERID,SP70
+          CALL      RDWBSE1                
           GOTO      ALRE9999
 .
 ALRE0640  MATCH     ALREUDAT,SP70
@@ -907,6 +922,9 @@ ALRE0660  MATCH     SP70,ALREUUID
             MOVE      ALREUUID,WBSENAM
           ENDIF
           WRITE     HTMLFILE;WBSENAM;
+.
+          PACK      KEY10,USERID,SP70
+          CALL      RDWBSE1
           GOTO      ALRE9999
 .
 ALRE0670  UNPACK    DIM127,D1,KEY1,DIM127    * Clinic Type of Referral
@@ -937,6 +955,9 @@ ALRE0680  MATCH     SP70,USERID              * display the current user
             MOVE      USERID,WBSENAM
           ENDIF
           WRITE     HTMLFILE;WBSENAM;
+.
+          PACK      KEY10,USERID,SP70
+          CALL      RDWBSE1
           GOTO      ALRE9999
 .
 ALRE0690  PACK      KEY8,ALREURNO
@@ -1228,6 +1249,9 @@ ALREX020  MATCH     SP70,ALRESRUI
             MOVE      ALRESRUI,WBSENAM
           ENDIF
           WRITE     HTMLFILE;WBSENAM;
+.
+          PACK      KEY10,USERID,SP70
+          CALL      RDWBSE1
           GOTO      ALREX999
 .
 ALREX030  MATCH     ALREUDT5,SP70
@@ -1257,6 +1281,9 @@ ALREX060  MATCH     SP70,ALREUDID
             MOVE      ALREUDID,WBSENAM
           ENDIF
           WRITE     HTMLFILE;WBSENAM;
+.
+          PACK      KEY10,USERID,SP70
+          CALL      RDWBSE1
           GOTO      ALREX999
 .
 ALREX070  MATCH     ALREUDT6,SP70

@@ -1,4 +1,4 @@
-<meta name="TemplateVersion" content="V11.05.01">
+<meta name="TemplateVersion" content="V11.05.02">
 <meta name="TemplateHome" content="standard">
 <meta name="HelpFileName" content="NoContextSet.html">
 <meta name="CrossBrowser" content="true">
@@ -20,6 +20,16 @@ function CheckEnquiry() {
     document.getElementById('imgDateJoinedPractice').style.display = "none";
     document.getElementById('imgDateLeftPractice').style.display = "none";
   }
+}
+function UpdateButton() {
+  if(!validateMandatory(UpdateForm)) {return;}
+  if(document.UpdateForm.d_pmhcg027.value != "0"){
+    if(document.UpdateForm.pmhcl012.checked == true){
+      alert("The Practice is inactive. HCP can only be linked as inactive status.");
+      return;
+    }
+  }
+  setFormactn('U');
 }
 </script>
 </head>
@@ -43,6 +53,7 @@ function CheckEnquiry() {
    <input type=hidden name=d_pmhlctim value="%PATWEB99.07.214">
    <input type=hidden name=d_mins value="0">
    <input type=hidden name=menuflag value="%PATWEB99.07.115">
+   <input type=hidden name=d_pmhcg027 value="%PATWEB99.07.027">
 
 <table border=0 width=98% align=center cellspacing="0" cellpadding="1">
 <tr><td class=DataField align=center>
@@ -86,7 +97,7 @@ function CheckEnquiry() {
 
 <tr><td colspan=2 align=center><br>
     <input type=button value="Update" class=button name=btnUpdate
-     onclick="setFormactn('U');">
+     onclick="UpdateButton();">
     <span id="DeleteButton">
      <input type=button value="Delete" class=button name=btnDelete
       onclick="setFormactn('D');">

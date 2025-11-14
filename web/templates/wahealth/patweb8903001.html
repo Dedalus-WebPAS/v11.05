@@ -1,4 +1,4 @@
-<meta name="TemplateVersion" content="V11.05.02">
+<meta name="TemplateVersion" content="V11.05.03">
 <meta name="TemplateHome" content="wahealth">
 <!-- $Id: patweb8903001.html 4223 2018-11-20 08:10:33Z  $ -->
 <!-- $URL: http://lxfm700sub/svn/webpas/trunk/web/custom/patweb8903001.html $ -->
@@ -27,6 +27,16 @@ function SubmitAdm() {
     return;
   }
  }
+
+  if (document.UpdateForm.admitbox.value==1) {
+    dateDiff=parseInt(SetDateYYYYMMDD(document.UpdateForm.ptmis001.value)) -
+             parseInt(DemConDate);
+    if (checkDemographicsUpdated(dateDiff,NoDayDemVl,ConfDemogs)){
+      HideWaitScreen();
+      return;
+    }
+  }
+
 // validate registrar
  if(!isWhitespace(p.ptvis062.value)){
  if(!ValidateHCPDateHospital(18,2,p.ptvis062,p.d_ptvis062,p.ptmis001,p.wbsehosp)){
@@ -297,6 +307,9 @@ PatientCLH="%STANDARD.01.017.CL";
 PatientHFT="%PATWEB89.03.086.094";
 PatientCDM="%PATWEB89.03.086.095";
 PatientVDH="%PATWEB89.03.086.099.015";
+ConfDemogs="%STANDARD.01.045.PTCNCDOA";
+NoDayDemVl=trim("%STANDARD.01.045.PTCNNDCD");
+DemConDate=SetDateYYYYMMDD("%PATWEB89.03.085.059");
 InsertPatientHeader()
 </script>
 <div id=PatientMenu></div>

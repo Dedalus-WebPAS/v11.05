@@ -1,9 +1,31 @@
-<meta name="TemplateVersion" content="V11.05.02">
+<meta name="TemplateVersion" content="V11.05.03">
 <meta name="TemplateHome"    content="kids">
 <meta name="HelpFileName"    content="NoContextSet.html">
 <meta name="CrossBrowser"    content="true"> 
+<style type=text/css>
+ pre {
+ font-family: arial;
+ }
+</style>
 <script type="text/javascript" src="../js/TableSort.js"> </script>
 <script type="text/javascript">
+function selectActions() {
+  if(document.getElementById('rsch').selected) {
+    if(document.PatientLinks.bookstat.value=="4") {
+      alert("Error: Appointment has been Attended");
+      document.getElementById('ActionsSelectionList').selectedIndex=0;
+      return;
+    }
+    if(document.PatientLinks.bookstat.value=="5") {
+      alert("Error: Appointment has been Non-Attended");
+      document.getElementById('ActionsSelectionList').selectedIndex=0;
+      return;
+    }
+  }
+  LinkedReferral();
+  PMenuLinkTo(document.getElementById('ActionsSelectionList'));
+}
+
 function LinkedReferral() {
   if (document.all.ActionsSelectionList.value ==
       "allweb03.pbl|01|002|1|800|520") {
@@ -123,13 +145,13 @@ InsertPatientHeader()
      onclick='PMenuLinkTo("outweb02.pbl|02|004|0|0|0");'>
     <img src=../images/RefreshIcon.gif class=Icon title="Refresh"
      onclick='location.reload();'>
-    <select onchange="LinkedReferral();PMenuLinkTo(this);" 
-     class=PMenuSelectList name="ActionsSelectionList">
+    <select onchange="selectActions();" 
+     class=PMenuSelectList id=ActionsSelectionList name="ActionsSelectionList">
     <option>Actions</option>
     <option value="outweb02.pbl|03|009|1|920|900">Update</option>
     <option value="outweb02.pbl|03|003|1|920|900">Attendance</option>
     <option value="outweb02.pbl|03|004|1|920|900">Follow Up Appointment</option>
-    <option value="outweb02.pbl|03|005|1|750|475">Reschedule</option>
+    <option id=rsch value="outweb02.pbl|03|005|1|750|475">Reschedule</option>
     <option value="outweb02.pbl|03|006|1|920|450">Discharge</option>
     <option value="outweb02.pbl|03|013|1|700|400">Labels & Forms</option>
     <option value="outweb02.pbl|03|002|1|800|450">Non-Attendance</option>
@@ -245,6 +267,7 @@ function AddTableRows() {
 <input type=hidden name=obacompd value="%OUTWEB02.03.321.3">
 <input type=hidden name=lnkdrefn value="%OUTWEB02.03.682">
 <input type=hidden name=deptcode value="%OUTWEB02.03.683">
+<input type=hidden name=bookstat value="%OUTWEB02.03.608.1">
 </form>
 
 <form name=UpdateStatus>

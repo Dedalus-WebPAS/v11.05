@@ -1,4 +1,4 @@
-<meta name="TemplateVersion" content="V11.05.01">
+<meta name="TemplateVersion" content="V11.05.02">
 <meta name="TemplateHome" content="nz">
 <meta name="HelpFileName" content="NoContextSet.html">
 <meta name="CrossBrowser" content="true">
@@ -195,7 +195,8 @@ function checkIfEnter(e){
 
   <tr><td class=DataLabel>Visit Number </td>
       <td><input type=text name=admissno value="" size=10 maxlength=8
-                 title="Patient Visit No" tabindex="2">
+                 title="Patient Visit No" tabindex="2"
+                 onblur="validateVisit();">
           <input type=text name=dat value="" size=12 readonly tabindex=-1
                  class="readonly">
           <input type=text name=typ value="" size=15 readonly tabindex=-1

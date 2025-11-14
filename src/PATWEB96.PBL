@@ -5,6 +5,11 @@
 .
 . Modifications :
 .----------------------------------------------------------------------
+. V11.05.17 30/10/2025 Alina Bhari       TSK 0947952
+.           Added check if same vist number for statistical discharge -USDVL010
+. V11.05.16 30/10/2025 Alina Bhari       TSK 0947952
+.           Correctly checked PTMILSDN for linked statistical discharge
+.           number - USDVL010
 . V11.05.15 15/10/2025 Alina Bhari       TSK 0947952
 .           Added Supervisor functionality to unlink and update the statistical
 .           discharge visit - PTMIS009,PTMIS011,MAIN2500,USDV0000             
@@ -2959,7 +2964,7 @@ CHWCADMN  DIM       8        * Check Admission Number (Workers Compensation)
 .
 .------------------------------------------------------------------------------
 PRGID     INIT      "PATWEB96"
-VERSION   INIT      "V11.05.15"
+VERSION   INIT      "V11.05.17"
 PRGNAM    INIT      "Admission Discharge Transfer Server"
 .------------------------------------------------------------------------------
 .
@@ -6578,6 +6583,7 @@ RMPWB000  PACK      KEY6,SAVWARD,SAVBED
 .
           MATCH     SP3,AWARD
           GOTO      RMPWB950 IF EQUAL
+
 .
           MOVE      WSTBY,STBYPAT
           MOVE      AWARD,STBYWRD
@@ -15508,17 +15514,15 @@ USDVL010  MATCH     "1",TRNCANCP
           CALL      RDMISS1
           BRANCH    OVRCD,USDVL900
 .
-.         Unlink as not an Statistical Discharge                          
+          MATCH     SP70,PTMILSDN   * Check Linked Statistical Discharge Number
+          GOTO      USDVL999 IF EQUAL
+          MOVE      PTMILSDN,DIM8
+.
+.         Check if the admissno exist                                    
           PACK      KEY8,ADMISSNO,SP70
           CALL      RDMISS1
           BRANCH    OVRCD,USDVL900
 .
-          MATCH     SP70,PTMILSDN         * Check if statistical discharged 
-          GOTO      USDVL999 IF EQUAL
-.
-          MOVE      SP70,PTMILSDN
-          CALL      UPMISS1 
-.         
 .         Break the link between the statistical discharge and admission
           PACK      KEY8,ADMISSNO,SP70
           CALL      RDDSCH1
@@ -15527,8 +15531,8 @@ USDVL010  MATCH     "1",TRNCANCP
           MATCH     SP70,PTDSLSDN         * Check if statistical discharged 
           GOTO      USDVL999 IF EQUAL
 .
-.          MATCH     PTDSLSDN,STATVISN     * Check if visitno are same
-.          GOTO      USDVL999 IF NOT EQUAL
+          MATCH     ADMISSNO,DIM8         * Check if visitno are same
+          GOTO      USDVL999 IF NOT EQUAL
 .
           MATCH     SP70,DSCHSTAT         * Update  Cat D
           IF        !@EQUAL
@@ -15550,6 +15554,7 @@ USDVL010  MATCH     "1",TRNCANCP
 .
           MOVE      PTMIS009,ASRCE
           MOVE      PTMIS011,ACLSS
+          MOVE      SP70,PTMILSDN            * Unlink stat Discharge number
           CALL      UPMISS1 
            
           GOTO      USDVL999

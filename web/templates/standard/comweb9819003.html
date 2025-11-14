@@ -1,7 +1,8 @@
-<meta name="TemplateVersion" content="V11.05.00">
+<meta name="TemplateVersion" content="V11.05.01">
 <meta name="TemplateHome" content="standard">
 <meta name="HelpFileName"    content="NoContextSet.html">
 <meta name="CrossBrowser" content="true">
+<script type="text/javascript" src="../js/comweb9819.js"></script>
 <script type="text/javascript">
 function SubmitUpd(){
   if(!validateMandatory(UpdateForm)){
@@ -184,6 +185,12 @@ Update Hospital Parameter
   <input type=hidden name=d_cmpar004 value="%COMWEB98.19.104.0">
 </div>
 
+<div id="ShowSelectionList" style="display: none">
+ <select name=d_cmpar004 class="Mandatory" title="Value">
+ <option value="   "></option>
+ </select>
+</div>
+
 <script type="text/javascript">
 if(document.UpdateForm.ibcnmhos.value=="1") {
    document.getElementById('HospLabel').innerHTML=
@@ -254,6 +261,11 @@ if(ParameterType =="  0") {
    if (document.UpdateForm.d_cmpar004.value.substr(7,1)=="1") {
      document.UpdateForm.exceptsu.checked=true;
    }
+} else if( ParameterType =="  8") { 
+  ParameterV.innerHTML=document.getElementById('ShowSelectionList').innerHTML;
+  parameterName=document.UpdateForm.cmpar002.value.split("|")[0];
+  defaultValue="%COMWEB98.19.104.0";
+  Type8SelectionList(parameterName,document.UpdateForm.d_cmpar004,defaultValue);
 }
 
 Active="%COMWEB98.19.106"

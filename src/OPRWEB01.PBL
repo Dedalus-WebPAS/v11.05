@@ -5,6 +5,9 @@
 .
 . Modifications  :
 . ---------------------------------------------------------------------------
+. V11.05.17 05/11/2025  Thanh T        TSK 0937505
+.           Fixed issue with extend procedure description not update when
+.           comments field is not entered
 . V11.05.16 13/10/2025  Ebon Clements  TSK 0962780
 .           Added using clinic or surgeon parameter OPCNCLSU test to get
 .           surgeon name - GSURNS00
@@ -2780,7 +2783,7 @@ WEEKNUMB  FORM      3
 .***********************************************************************
 PRGID     INIT      "OPRWEB01"
 PRGNAM    INIT      "Theatre Information Server"
-VERSION   INIT      "V11.05.16"
+VERSION   INIT      "V11.05.17"
 .***********************************************************************
           CALL      WEBINT00       * Initialise Fifo Etc.
           CALL      INIT0000       * Open Files
@@ -7654,7 +7657,7 @@ AUEXDS10  READ      EXPCMTFI,SEQ;OPCOMLIN
           MOVE      ZERO,OPCOMCNT
           GOTO      AUEXDS10
 .
-AUEXDS30  MATCH     SP70,OPDDDATA
+AUEXDS30  MATCH     SP70,OPCOMLIN
           GOTO      AUEXDS10 IF EQUAL       * Do not save blank lines
           GOTO      AUEXDS10 IF EOS         * Do not save blank lines
 .

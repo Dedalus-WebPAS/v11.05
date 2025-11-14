@@ -1,4 +1,4 @@
-<meta name="TemplateVersion" content="V11.05.00">
+<meta name="TemplateVersion" content="V11.05.01">
 <meta name="TemplateHome" content="standard">
 <meta name="HelpFileName"    content="NoContextSet.html">
 <meta name="CrossBrowser" content="true">
@@ -83,6 +83,11 @@ function ShowValues(category,defvalue) {
     document.AddForm.d_cmpar004.value=defvalue;
   } else if(ParameterType =="  7") {
   ParameterV.innerHTML=document.getElementById('ShowDaysOfWeekValue').innerHTML;
+  } else if(ParameterType =="  8") {
+    ParameterV.innerHTML=document.getElementById('ShowSelectionList').innerHTML;
+    parameterName=document.AddForm.cmpar002.value.split("|")[0];
+    defaultValue=document.AddForm.cmpar002.value.split("|")[4];
+    Type8SelectionList(parameterName,document.AddForm.d_cmpar004,defaultValue);
   } else {
     ParameterV.innerHTML="";
   }
@@ -217,6 +222,12 @@ Add Hospital Parameter
   <input type=checkbox value=1 name=exceptsa>
   <input type=checkbox value=1 name=exceptsu> 
   <input type=hidden name=d_cmpar004 value="00000000">
+</div>
+
+<div id="ShowSelectionList" style="display: none">
+ <select name=d_cmpar004 class="Mandatory" title="Value">
+ <option value="   "></option>
+ </select>
 </div>
 
 <script type="text/javascript">

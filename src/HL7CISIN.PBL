@@ -13,6 +13,12 @@
 .******************************************************************************
 .* Mods      :                                                                *
 .******************************************************************************
+.*       V11.05.18 12/11/2025  Nikitha B        TSK 0958928                   *
+.*                 Added CLBKD000 to Broadcast Outpatient Expected Discharge  *
+.*                 Date and Time in PV2.9                                     *
+.*       V11.05.17 25/10/2025  Nikitha B        TSK 0958929                   *
+.*                 Recompiled for HL7COMN - Sending HCP code from EMCNDCLI    *
+.*                 when EMCNEDCL is on.                                       *
 .*       V11.05.16 21/10/2025  Bella Turco      TSK 0960178                   *
 .*                 Recompiled for HL7COMN - added ZXP.77 (Sending Estimated   *
 .*                 DOB Flag)                                                  *
@@ -1236,6 +1242,7 @@
           INC       EMRLOCFD/INC
           INC       EMRSITFD/INC
           INC       EMRQUEFD/INC
+          INC       GTCMPATD/INC
           INC       HL7CISVR/INC
           INC       HL7URHFD/INC
           INC       MEHLERFD/INC
@@ -1419,6 +1426,7 @@ DPATHVAR  DIM       100
 DVCOLOUR  DIM       3
 .
 EDIMFLAG  FORM      1             * edi send email flag
+ENDDTIME  DIM       5             * End time calulation
 EMRVDOCT  DIM       10
 ERORFLAG  FORM      1             * error flag
 .                                     0 = no errors occured
@@ -1451,6 +1459,7 @@ FNAME     DIM       8
 FULLPATH  DIM       100
 .
 HOURTM    DIM       2
+HOUR      FORM      2
 .
 I12RFAIL  FORM      8
 I12RRJCT  FORM      8
@@ -1474,6 +1483,7 @@ I14WSENT  FORM      8
 .
 LINKDHCG  DIM       10            * practice
 LINKDHCP  DIM       10            * hcp
+LOOPCNTR  FORM      6
 MTCHFLAG  FORM      1             * match flag for message id
 .                                     0 = match
 .                                     1 = no match
@@ -1481,6 +1491,8 @@ MESSAGID  DIM       20
 MESSTYPE  DIM       3             * message type (ie A01)
 .
 MINTIME   DIM       2
+MIN       DIM       2
+MINUTES   FORM      3
 .
 M01OFAIL  FORM      8
 M01OSENT  FORM      8
@@ -1540,6 +1552,7 @@ S15ARJCT  FORM      8
 TCPIPORT  DIM       40            * receiving machine name and port number
 TIMSTAMP  DIM       8
 TMPSTRNG  DIM       127           * buffer for reading in message
+TIME      FORM      3
 .
 VISNUMBR  DIM       8
 .
@@ -1648,7 +1661,7 @@ ZEROURNO  INIT      "       0"
 .-----------------------------------------------------------------------
 PRGID     INIT      "HL7CISIN"
 PRGNAM    INIT      "HL7 Broadcast Message Server"
-VERSION   INIT      "V11.05.16"
+VERSION   INIT      "V11.05.18"
 .-----------------------------------------------------------------------
 +
 .******************************************************************************
@@ -1816,7 +1829,8 @@ INIT0300  MOVE      ZERO,NUMRETRY                * initialise retry counter
           READ      CONTROLF,HUND30;*86,PTCNGDX3:
                                     *115,PTCNDBVC:
                                     *116,PTCNDBVP:
-                                    *117,PTCNSAPC
+                                    *117,PTCNSAPC:
+                                    *120,PTCNEDDT
 .
 .         Get multi-hospital parameter & health care establishment
 .
@@ -11288,6 +11302,23 @@ OPV20000  UNPACK    OBATIME,CHOUR,ANS,CMIN
           RESET     PV2012
           STRIP     PV2012
 .
+.        Broadcast Outpatient Expected Discharge Date and Time in PV2.9
+.
+          MATCH     "1",PTCNEDDT                
+          IF        @EQUAL
+            CALL      CLBKD000                  * Calculate expected 
+.                                               * discharge date and time 
+            MATCH     SP70,ENDDTIME
+            IF        !@EQUAL
+              MOVE      OBADATE,PV2009            * expected disc date
+              ENDSET    PV2009
+              APPEND    ENDDTIME,PV2009         * expected disc time
+              APPEND    "00",PV2009
+              RESET     PV2009
+              SQUEEZE   PV2009
+            ENDIF
+          ENDIF
+.
 OPV29999  RETURN
 +
 .*****************************************************************************
@@ -18460,6 +18491,80 @@ WZST9200  MOVE      TWO,EXIT
 WZST9999  RETURN
 +
 .*****************************************************************************
+.*  Calculate expected Discharge Date and Time 
+.*****************************************************************************
+CLBKD000  PACK      ENDDTIME,SP70                * Expected Discharge Time
+.
+          PACK      KEY5,ANSC,ANSV,OBAVISIT,SP70
+          CALL      RDCODE1
+          IF        OVRCD=1
+            MOVE      ONE,TCFORM6
+          ENDIF
+          MOVE      ZERO,LOOPCNTR
+.
+          MOVE      OBASITE,KEY6                 * get site prefix
+          CALL      RDSITA1                      * site found ?
+          BRANCH    OVRCD,CLBKD999
+.
+          PACK      FNAME,OSTFILE,FILSESA1
+          MOVE      ZERO,OVRCD
+          TRAP      OVERCOND IF IO
+          OPEN      OUTSESA1,FNAME               * open O/P clinic master file
+          TRAPCLR   IO
+          BRANCH    OVRCD,CLBKD999               * file not found
+.
+          PACK      KEY25,OBASITE,OBACLIN,OBADATE,OBASTRT,SP70
+          CALL      RDSESA1                      * session on file ?
+          BRANCH    OVRCD,CLBKD999               * no - try clinic master
+.
+          PACK      FNAME,OSTFILE,FILHEDA1
+          MOVE      ZERO,OVRCD
+          TRAP      OVERCOND IF IO
+          OPEN      OUTHEDA1,FNAME               * open O/P clinic master file
+          TRAPCLR   IO
+          BRANCH    OVRCD,CLBKD999               * file not found
+.
+          PACK      KEY28,OSESITE,OSECLIN,OSEDAY,OSESTRT,OSESSHNO,OSESSDAT,SP70
+          CALL      RDOTHED1                     * master header on file ?
+          BRANCH    OVRCD,CLBKD999               * no - try clinic master
+.
+          UNPACK    OBATIME,KEY2,KEY1,MIN   * HH:MM
+.
+CLBKD100  MOVE      KEY2,HOUR               * HH to Form
+          MOVE      MIN,MINUTES             * MM to Form
+.
+          ADD       OTHEDURN,MINUTES   * Add Duration time to minutes
+          ASSIGN    MINUTES-SIXTY,TIME
+          IF        TIME >= 0
+            IF        TIME >= 60
+              MOVE      TIME,MINUTES
+              ASSIGN    MINUTES-SIXTY,TIME
+              MOVE      TIME,F2
+              MOVE      F2,MIN
+              ADD       TWO,HOUR                 * Add Two Hours
+            ELSE
+              MOVE      TIME,F2
+              MOVE      F2,MIN
+              ADD       ONE,HOUR                 * Add One Hour
+            ENDIF
+          ELSE
+            MOVE      MINUTES,F2            * No Hour Change
+            MOVE      F2,MIN
+          ENDIF
+.
+          PACK      ENDDTIME,HOUR,MIN        * pack time save variable (HH:MM)
+          REPLACE   " 0",ENDDTIME            * replace spaces with zero
+.
+          ADD       ONE,LOOPCNTR
+. 
+          COMPARE   TCFORM6,LOOPCNTR
+          IF        @LESS
+            UNPACK    ENDDTIME,KEY2,MIN   * HH:MM
+            GOTO      CLBKD100
+          ENDIF
+.
+CLBKD999  RETURN
+.*****************************************************************************
 .*        I/O Includes                                                       *
 .*****************************************************************************
 .
@@ -18479,6 +18584,8 @@ WZST9999  RETURN
           INC       HL7COMN                      * HL7 common routines
           INC       TFILENAM
           INC       CLPMSQPX
+          INC       GTCMPA00
+          INC       CLCOMPAR
 .
           INC       ALLDIAIO/INC
           INC       ALLEIDIO/INC

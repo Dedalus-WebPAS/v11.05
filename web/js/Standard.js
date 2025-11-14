@@ -1,4 +1,4 @@
-//jsVersion  : V11.05.25
+//jsVersion  : V11.05.26
 //========================================================================
 // Global Variables
 //========================================================================
@@ -17008,6 +17008,8 @@ function filterCatCodeList(SelectObject,FiltField,FiltValue,FiltOption){
 // Attaches a function (event handler) to an element's (specified) event
 //======================================================================
 function AttachEventHandler(elID, evName, handlerFn) {
+  if (isWhitespace(elID)) return;
+
   var el = document.getElementById(elID) ? document.getElementById(elID) : document.getElementsByName(elID)[0];
 
   if (!el || (el == undefined))
